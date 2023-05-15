@@ -2,7 +2,7 @@ import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from .data import MyDataset
+from .arch1_data import ARCH1_Dataset
 from torch.utils.data import DataLoader
 from .model1 import MyModel1
 from tqdm import tqdm
@@ -27,12 +27,12 @@ class MyTrainer:
         batch_size = hyper_param['batch_size']
         max_length = hyper_param['max_length']
         
-        train_dataset = MyDataset(self.data_path, mode='train', max_length=max_length, device=self.device)
-        valid_dataset = MyDataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
+        train_dataset = ARCH1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
+        valid_dataset = ARCH1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
         
         train_dataloader = DataLoader(dataset=train_dataset,
                                       batch_size = batch_size,
-                                      shuffle = False,
+                                      shuffle = True,
                                     #   num_workers=4,
                                       )
         

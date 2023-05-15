@@ -42,6 +42,7 @@ class MyModel1(torch.nn.Module):
         #self.max_length = 30
         self.alpha = hyper_param['alpha']
         #self.alpha = 2
+        # self.dropout = hyper_param['dropout']
         if hyper_param['act'] =='relu':
             self.act = nn.ReLU()
         self.gpt_model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
@@ -67,7 +68,7 @@ class MyModel1(torch.nn.Module):
         for t in range(len(expression_list) - 1):
             if expression_list[t] != expression_list[t+1]:
                 T.append(t+1)
-
+        
         return expression_list, T
     
     
@@ -97,7 +98,11 @@ class MyModel1(torch.nn.Module):
         # give weight to text when transition occur
         if self.give_weight:
             for t in T:
+                if t == 0:
+                    break  # padding appear
                 for i, (audio_start, audio_end) in enumerate(zip(start, end)):
+                    if (audio_start == 0) and (audio_end == 0):
+                        break  # padding appear
                     if audio_start < (t / self.fps) < audio_end:
                         tokens['attention_mask'][0][i] = 1 * self.alpha
         return tokens
@@ -211,7 +216,7 @@ class MyModel1(torch.nn.Module):
         print("==== Step 2. [Give weight to word]\t spent time: {:.4f} ====".format(time.time()-step2))
         
         step3 = time.time()
-        # audio_feature = self.get_audio_feature(audio_path)
+        # waveform = self.get_audio_feature(audio_path)
         audio_feature = torch.mean(waveform, dim=1)
 
         #inputs_embeds = self.embedding_layer.weight.data[tokens['input_ids'][0]]
