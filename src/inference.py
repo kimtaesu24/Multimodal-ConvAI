@@ -1,19 +1,19 @@
 import torch
 import sys
+import os
 import cv2
 import torchaudio
 from PIL import Image
 import moviepy.editor as mp
 from transformers import AutoTokenizer
-
-sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
 from model.model1 import MyModel1
 
+# sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
+   
 tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
 tokenizer.pad_token = tokenizer.eos_token
 
-def preprocess_video(input_video, max_length):
-    # video -> video frames 
+def video2frames(input_video):
     image_list = []
     vidcap = cv2.VideoCapture(input_video)
     success,image = vidcap.read()
@@ -23,27 +23,22 @@ def preprocess_video(input_video, max_length):
         image_list.append(Image.fromarray(image).convert('RGB'))
         success,image = vidcap.read()
         count += 1
-    print("finish! convert video to frame")
-    
-    # video -> audio
+    return image_list
+
+def video2audio(input_video):
     my_clip = mp.VideoFileClip(input_video)
     my_clip.audio.write_audiofile(filename="sample.wav")
     audio_path = '/home2/s20235100/Conversational-AI/MyModel/src/sample.wav'
-    print("finish! convert video to audio")
-    
-    # audio -> text
-    SPEECH_FILE = audio_path
+    return audio_path
 
+def audio2text(audio_path):
     bundle= torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
     model = bundle.get_model()
 
-    waveform, sample_rate = torchaudio.load(SPEECH_FILE)
+    waveform, sample_rate = torchaudio.load(audio_path)
 
     if sample_rate != bundle.sample_rate:
         waveform = torchaudio.functional.resample(waveform, sample_rate, bundle.sample_rate)
-        
-    # with torch.inference_mode():
-    #     features, _ = model.extract_features(waveform)
         
     with torch.inference_mode():
         emission, _ = model(waveform)
@@ -70,38 +65,41 @@ def preprocess_video(input_video, max_length):
     decoder = GreedyCTCDecoder(labels=bundle.get_labels())
     transcript = decoder(emission[0])
     word = transcript.replace("|", " ").lower()
+    
+    return transcript, word
 
-    print("finish! convert audio to text")
+def preprocess_video(input_video):
+    image_list = video2frames(input_video=input_video)
+    audio_path = video2audio(input_video=input_video)
+    transcript, word = audio2text(audio_path)
     
-    tokens = tokenizer(word,
-                        padding='max_length',
-                        max_length=max_length,
-                        truncation=True,
-                        return_attention_mask=True,
-                        return_tensors='pt'
-                        )
+    # text -> token
+    tokens = tokenizer(word + tokenizer.eos_token,
+                       return_tensors='pt',
+                       )
     
-    waveform = torch.load('/home2/dataset/MELD/audio_feature/train/dia0_utt3.pt')
+    name_without_extension = os.path.splitext(input_video)[0]
+    waveform = torch.load('/home2/dataset/MELD/audio_feature/train/'+name_without_extension+'.pt')
     
     return [image_list, audio_path, tokens, transcript, waveform]
     
-def main(param,
-         hyper_param,
-         input_video
-         ):
+def main(param, hyper_param, input_video):
+    weight_path = '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/architecture1_10epochs.pt'
     device = param['device']
-    model = MyModel1(param=param, hyper_param=hyper_param)
-    model.to(device)
     
-    weight_path = '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/modal_fusion_F/architecture1_100epochs.pt'
-    model = torch.load(weight_path, map_location=device)
+    model = MyModel1(param=param, hyper_param=hyper_param)
+    model.load_state_dict(torch.load(weight_path, map_location=device))
     model.eval()
     
-    print(model)
-
-    inputs = preprocess_video(input_video, hyper_param['max_length'])
-    output = model.inference(inputs)
-    sentence = tokenizer.decode(output[0], skip_special_tokens=True)
+    print("==== preprocessing ====")
+    inputs = preprocess_video(input_video)
+    history = inputs[2].input_ids.shape[-1]
+    
+    print("==== model forward start ====")
+    outputs = model.inference(inputs, tokenizer.eos_token_id)
+    print(outputs)
+    print(outputs[0])
+    sentence = tokenizer.decode(outputs[:, history:][0], skip_special_tokens=True)
     print("Response: {}".format(sentence))
 
 if __name__ == '__main__':

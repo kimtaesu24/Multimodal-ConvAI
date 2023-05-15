@@ -16,7 +16,7 @@ class MyDataset(Dataset):
             self.FA = pd.read_csv(self.data_path + 'valid_FA.csv')
             self.fer = pd.read_csv(self.data_path + 'valid_fer.csv')
         self.max_length = max_length
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer.pad_token = self.tokenizer.eos_token
 
     def __len__(self):
@@ -46,10 +46,10 @@ class MyDataset(Dataset):
             T = fer['T_list'].apply(eval).values.tolist()[:-1]  # string-> list / get values / to 2d list / slice label
             # print('T: ', T)
             
-            tokens = self.tokenizer(word[0],
-                                    padding='max_length',
-                                    max_length=self.max_length,
-                                    truncation=True,
+            tokens = self.tokenizer(word[0] + self.tokenizer.eos_token,
+                                    # padding='max_length',
+                                    # max_length=self.max_length,
+                                    # truncation=True,
                                     return_attention_mask=True,
                                     return_tensors='pt'
                                     )
@@ -57,12 +57,13 @@ class MyDataset(Dataset):
             #for utt_n in utt_list:
             waveform = torch.load(self.audio_feature_path+'dia{}_utt0.pt'.format(idx), map_location=self.device)
             
-            label_token = self.tokenizer(word[1],
-                                padding='max_length',
-                                max_length=self.max_length,
-                                truncation=True,
+            label_token = self.tokenizer(word[1] + self.tokenizer.eos_token,
+                                # padding='max_length',
+                                # max_length=self.max_length,
+                                # truncation=True,
+                                return_attention_mask=True,
                                 return_tensors='pt'
-                                ).input_ids
+                                )
             
             inputs = [torch.tensor(start[0]).to(self.device),
                     torch.tensor(end[0]).to(self.device), 

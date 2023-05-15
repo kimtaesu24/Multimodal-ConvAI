@@ -13,13 +13,14 @@ class MyTrainer:
         self.device = device
         self.data_path = data_path
         self.train_losses = []
-        self.train_recall = []
-        self.train_ndcg = []
+        # self.train_recall = []
+        # self.train_ndcg = []
         self.valid_losses = []
-        self.valid_recall = []
-        self.valid_ndcg = []
+        # self.valid_recall = []
+        # self.valid_ndcg = []
 
     def train_with_hyper_param(self, param, hyper_param):
+        save_at_every = param['save_at_every']
         epochs = hyper_param['epochs']
         learning_rate = hyper_param['learning_rate']
         decay_rate = hyper_param['decay_rate']
@@ -40,7 +41,7 @@ class MyTrainer:
                                       shuffle = False,
                                     #   num_workers=4,
                                       )
-            
+        
         # train_batch_len = len(train_dataloader)
         # valid_batch_len = len(valid_dataloader)
         
@@ -66,11 +67,6 @@ class MyTrainer:
             model.train()
             for inputs, labels in tqdm(train_dataloader, position=1, leave=False, desc='batch'):
                 optimizer.zero_grad()
-                
-                # inputs = inputs.to(self.device)
-                # labels = labels.to(self.device)
-
-                # train
                 #loss, recall_k, ndcg = model(inputs, labels)
                 loss = model(inputs, labels)
 
@@ -91,10 +87,10 @@ class MyTrainer:
             with torch.no_grad():
                 model.eval()
                 for inputs, labels in tqdm(valid_dataloader, position=1, leave=False, desc='batch'):
-                    
                     loss = model(inputs, labels)
 
                     total_valid_loss += loss.item()
+                    # print(loss.item())
                     valid_batch_len += 1
                     '''
                     if val_ndcg >= highest_val_ndcg:
@@ -118,8 +114,18 @@ class MyTrainer:
             self.train_losses.append(total_train_loss/train_batch_len)
             self.valid_losses.append(total_valid_loss/valid_batch_len)
             
-            if (epoch + 1) % 10 == 0:
-                torch.save(model, '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/architecture1_'+str(epoch + 1)+'epochs.pt')
+            if (epoch + 1) % save_at_every == 0:
+                if param['give_weight'] == True:
+                    give_weight = 'T'
+                else:
+                    give_weight = 'F'
+                    
+                if param['modal_fusion'] == True:
+                    modal_fusion = 'T'
+                else:
+                    modal_fusion = 'F'
+
+                torch.save(model.state_dict(), '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_'+give_weight+'/modal_fusion_'+modal_fusion+'/'+str(epoch + 1)+'epochs.pt')
                 pbar.write('Pretrained model has saved at Epoch: {:02} '.format(epoch+1))
 
             '''
@@ -132,7 +138,7 @@ class MyTrainer:
             '''
                 
             pbar.write('Epoch {:02}: train loss: {:.4}'.format(epoch+1, total_train_loss/train_batch_len))
-            pbar.write('Epoch {:02}: valid loss: {:.4}'.format(epoch+1, total_valid_loss/valid_batch_len))
+            pbar.write('Epoch {:02}: val loss: {:.4}'.format(epoch+1, total_valid_loss/valid_batch_len))
             pbar.update()
 
         pbar.close()

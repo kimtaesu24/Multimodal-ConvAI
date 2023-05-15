@@ -7,7 +7,6 @@ import pandas as pd
 
 from utils import set_random_seed
 from model.train import MyTrainer
-from model.eval import MyEvaluator
 from utils import log_param
 from loguru import logger
 
@@ -34,14 +33,16 @@ def main(model='model',
          fps=24,
          give_weight=True,
          modal_fusion=True,
+        #  max_history=10,
          epochs=100,
          act='relu',
          batch_size=1,
-         learning_rate=0.0001,
+         learning_rate=1e-3,
          max_length=60,
          alpha=2,
          dropout=0.2,
          decay_rate=0.98,
+         save_at_every=10,
          ):
 
     # Step 0. Initialization
@@ -57,6 +58,7 @@ def main(model='model',
     param['fps'] = fps
     param['give_weight'] = give_weight
     param['modal_fusion'] = modal_fusion
+    param['save_at_every'] = save_at_every
     log_param(param)
 
     # Step 1. Load datasets
@@ -78,6 +80,7 @@ def main(model='model',
     hyper_param['alpha'] = alpha
     hyper_param['dropout'] = dropout
     hyper_param['decay_rate'] = decay_rate
+    # hyper_param['max_history'] = max_history
     log_param(hyper_param)
 
     if model == 'model':
