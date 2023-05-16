@@ -6,11 +6,11 @@ import torchaudio
 from PIL import Image
 import moviepy.editor as mp
 from transformers import AutoTokenizer
-from model.model1 import MyModel1
+from model.architecture1 import MyArch1
 
 # sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
-   
-tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+
+tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
 tokenizer.pad_token = tokenizer.eos_token
 
 def video2frames(input_video):
@@ -84,10 +84,10 @@ def preprocess_video(input_video):
     return [image_list, audio_path, tokens, transcript, waveform]
     
 def main(param, hyper_param, input_video):
-    weight_path = '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/architecture1_10epochs.pt'
+    weight_path = '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_T/modal_fusion_T/40epochs.pt'
     device = param['device']
     
-    model = MyModel1(param=param, hyper_param=hyper_param)
+    model = MyArch1(param=param, hyper_param=hyper_param)
     model.load_state_dict(torch.load(weight_path, map_location=device))
     model.eval()
     
@@ -116,5 +116,6 @@ if __name__ == '__main__':
     hyper_param['batch_size'] = 1
     hyper_param['max_length'] = 60
     hyper_param['alpha'] = 2
+    hyper_param['dropout'] = 0.2
     
     main(param, hyper_param, input_video)

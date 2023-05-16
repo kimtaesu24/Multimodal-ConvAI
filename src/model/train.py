@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 
 from .arch1_data import ARCH1_Dataset
 from torch.utils.data import DataLoader
-from .model1 import MyModel1
+from .architecture1 import MyArch1
+from .architecture2 import MyArch2
 from tqdm import tqdm
 from loguru import logger
 
@@ -20,6 +21,7 @@ class MyTrainer:
         # self.valid_ndcg = []
 
     def train_with_hyper_param(self, param, hyper_param):
+        model = param['model']
         save_at_every = param['save_at_every']
         epochs = hyper_param['epochs']
         learning_rate = hyper_param['learning_rate']
@@ -27,25 +29,42 @@ class MyTrainer:
         batch_size = hyper_param['batch_size']
         max_length = hyper_param['max_length']
         
-        train_dataset = ARCH1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
-        valid_dataset = ARCH1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
+        if model == 'arch1':
+            model = MyArch1(param, hyper_param).to(self.device)
+            
+            train_dataset = ARCH1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
+            valid_dataset = ARCH1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
+            
+            train_dataloader = DataLoader(dataset=train_dataset,
+                                        batch_size = batch_size,
+                                        shuffle = False,
+                                        #   num_workers=4,
+                                        )
+            valid_dataloader = DataLoader(dataset=valid_dataset,
+                                        batch_size = 1,
+                                        shuffle = False,
+                                        #   num_workers=4,
+                                        )
+        elif model == 'arch2':
+            model = MyArch1(param, hyper_param).to(self.device)
+            
+            train_dataset = ARCH1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
+            valid_dataset = ARCH1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
+            
+            train_dataloader = DataLoader(dataset=train_dataset,
+                                        batch_size = batch_size,
+                                        shuffle = True,
+                                        #   num_workers=4,
+                                        )
+            valid_dataloader = DataLoader(dataset=valid_dataset,
+                                        batch_size = 1,
+                                        shuffle = False,
+                                        #   num_workers=4,
+                                        )
+            
+        train_batch_len = len(train_dataloader)
+        valid_batch_len = len(valid_dataloader)
         
-        train_dataloader = DataLoader(dataset=train_dataset,
-                                      batch_size = batch_size,
-                                      shuffle = True,
-                                    #   num_workers=4,
-                                      )
-        
-        valid_dataloader = DataLoader(dataset=valid_dataset,
-                                      batch_size = 1,
-                                      shuffle = False,
-                                    #   num_workers=4,
-                                      )
-        
-        # train_batch_len = len(train_dataloader)
-        # valid_batch_len = len(valid_dataloader)
-        
-        model = MyModel1(param, hyper_param).to(self.device)
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=batch_size, gamma=decay_rate)
         
@@ -60,8 +79,6 @@ class MyTrainer:
             total_valid_loss = 0
             #total_recall = 0
             #total_ndcg = 0
-            train_batch_len = 0
-            valid_batch_len = 0
             
             # training
             model.train()
@@ -81,7 +98,6 @@ class MyTrainer:
                 
                 #self.train_recall.append(recall_k)
                 #self.train_ndcg.append(ndcg)
-                train_batch_len += 1
 
             # validation
             with torch.no_grad():
@@ -91,7 +107,6 @@ class MyTrainer:
 
                     total_valid_loss += loss.item()
                     # print(loss.item())
-                    valid_batch_len += 1
                     '''
                     if val_ndcg >= highest_val_ndcg:
                         highest_val_ndcg = val_ndcg

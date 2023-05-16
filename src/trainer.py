@@ -15,25 +15,18 @@ def run_mymodel(device, data_path, param, hyper_param):
     trainer = MyTrainer(device=device,
                         data_path=data_path,
                         )
-    model = trainer.train_with_hyper_param(param=param,
-                                           hyper_param=hyper_param)
+    trainer.train_with_hyper_param(param=param,
+                                   hyper_param=hyper_param)
 
     logger.info("train has completed")
-    return 100.0
-    evaluator = MyEvaluator(device=device)
-    loss = evaluator.evaluate(model, 
-                              data_path=data_path
-                              )
-    return loss
 
 
-def main(model='model',
+def main(model='arch1',
          data_name='MELD',
          seed=0,
          fps=24,
          give_weight=True,
          modal_fusion=True,
-        #  max_history=10,
          epochs=100,
          act='relu',
          batch_size=1,
@@ -80,25 +73,12 @@ def main(model='model',
     hyper_param['alpha'] = alpha
     hyper_param['dropout'] = dropout
     hyper_param['decay_rate'] = decay_rate
-    # hyper_param['max_history'] = max_history
     log_param(hyper_param)
 
-    if model == 'model':
-        loss = run_mymodel(device=device,
-                            data_path=data_path,
-                            param=param,
-                            hyper_param=hyper_param)
-
-        # - If you want to add other model, then add an 'elif' statement with a new runnable function
-        #   such as 'run_my_model' to the below
-        # - If models' hyperparamters are varied, need to implement a function loading a configuration file
-    else:
-        logger.error("The given \"{}\" is not supported...".format(model))
-        return
-
-    # Step 3. Report and save the final results
-    logger.info("The model has been trained. The test loss is {:.4} .".format(loss))
-
+    run_mymodel(device=device,
+                data_path=data_path,
+                param=param,
+                hyper_param=hyper_param)
 
 if __name__ == "__main__":
     # torch.multiprocessing.set_start_method('spawn')

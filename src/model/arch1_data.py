@@ -12,6 +12,9 @@ def pad(inputs, max_length):
 
 class ARCH1_Dataset(Dataset):
     def __init__(self, data_path, device, mode='train',max_length=30):
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
+        self.tokenizer.pad_token = self.tokenizer.eos_token
+        # self.tokenizer.padding_side = 'left'
         self.data_path = data_path
         self.audio_feature_path = self.data_path + 'audio_feature/'+ mode
         self.device = device
@@ -23,12 +26,9 @@ class ARCH1_Dataset(Dataset):
             self.FA = pd.read_csv(self.data_path + 'valid_FA.csv')
             self.fer = pd.read_csv(self.data_path + 'valid_fer.csv')
             
-        self.timestamp_padding = max(len(i) for i  in self.FA['start'].apply(eval))  # 69
-        self.T_padding = max(len(i) for i  in self.fer['T_list'].apply(eval))  # 459
+        self.timestamp_padding = max(len(i) for i in self.FA['start'].apply(eval))  # 69
+        self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
         self.max_length = max_length
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        # self.tokenizer.padding_side = 'left'
         self.manual_index = 0
 
     def __len__(self):
@@ -52,12 +52,12 @@ class ARCH1_Dataset(Dataset):
         
         start = ast.literal_eval(self.FA['start'][idx])
         end = ast.literal_eval(self.FA['end'][idx])
-        if len(start) < self.timestamp_padding:
+        if len(start) < self.timestamp_padding:  # padding
             start = pad(start, self.timestamp_padding)
             end = pad(end, self.timestamp_padding)
         
         T = ast.literal_eval(self.fer['T_list'][idx])
-        if len(start) < self.T_padding:
+        if len(T) < self.T_padding:  # padding
             T = pad(T, self.T_padding)
         
         tokens = self.tokenizer(context + self.tokenizer.eos_token,
@@ -75,7 +75,7 @@ class ARCH1_Dataset(Dataset):
                                 return_tensors='pt'
                                 )
         
-        waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
+        waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
         
         inputs = [torch.tensor(start).to(self.device),
                   torch.tensor(end).to(self.device), 
