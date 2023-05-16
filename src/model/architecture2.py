@@ -299,7 +299,7 @@ if __name__ == "__main__":
                              ).input_ids
     print(labels_token)
     
-    model = MyArch1(param, hyper_param).to(device)
+    model = MyArch2(param, hyper_param).to(device)
     inputs = [word_timestamp[1], word_timestamp[2], T, tokens.to(device), waveform]
     loss = model(inputs, labels_token)
     
