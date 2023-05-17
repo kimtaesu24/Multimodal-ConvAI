@@ -43,7 +43,10 @@ class ARCH1_Dataset(Dataset):
             self.manual_index += 1
             idx += 1
             # print('----------------------------------------')
-        # print(idx)
+        while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):
+            self.manual_index += 1
+            idx += 1
+        
         
         context = ' '.join(ast.literal_eval(self.FA['word'][idx])).lower()
         response = ' '.join(ast.literal_eval(self.FA['word'][idx+1])).lower()

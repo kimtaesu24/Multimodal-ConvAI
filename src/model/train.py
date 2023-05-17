@@ -9,6 +9,8 @@ from .architecture2 import MyArch2
 from tqdm import tqdm
 from loguru import logger
 
+import wandb
+
 class MyTrainer:
     def __init__(self, device, data_path):
         self.device = device
@@ -45,8 +47,9 @@ class MyTrainer:
                                         shuffle = False,
                                         #   num_workers=4,
                                         )
+        '''
         elif model == 'arch2':
-            model = MyArch1(param, hyper_param).to(self.device)
+            model = MyArch2(param, hyper_param).to(self.device)
             
             train_dataset = ARCH1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
             valid_dataset = ARCH1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
@@ -61,17 +64,14 @@ class MyTrainer:
                                         shuffle = False,
                                         #   num_workers=4,
                                         )
-            
+        '''    
         train_batch_len = len(train_dataloader)
         valid_batch_len = len(valid_dataloader)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=batch_size, gamma=decay_rate)
         
-        # patience = 20
-        # inc = 0
-        # early_stopping = False
-        # highest_val_ndcg = 0
+        wandb.init(project=f"dialog_Gen_{param['model']}")
 
         pbar = tqdm(range(epochs), position=0, leave=False, desc='epoch')
         for epoch in pbar:
@@ -82,10 +82,13 @@ class MyTrainer:
             
             # training
             model.train()
-            for inputs, labels in tqdm(train_dataloader, position=1, leave=False, desc='batch'):
+            prog_bar = tqdm(train_dataloader, position=1, leave=False, desc='batch')
+            for i, (inputs, labels) in enumerate(prog_bar):
                 optimizer.zero_grad()
-                #loss, recall_k, ndcg = model(inputs, labels)
+                
                 loss = model(inputs, labels)
+                #loss, recall_k, ndcg = model(inputs, labels)
+                prog_bar.set_postfix({'loss': loss.item()})
 
                 loss.backward()
                 optimizer.step()
@@ -98,6 +101,8 @@ class MyTrainer:
                 
                 #self.train_recall.append(recall_k)
                 #self.train_ndcg.append(ndcg)
+                if i % 100 == 0:
+                    wandb.log({'train_loss':loss.item()})
 
             # validation
             with torch.no_grad():
@@ -107,25 +112,10 @@ class MyTrainer:
 
                     total_valid_loss += loss.item()
                     # print(loss.item())
-                    '''
-                    if val_ndcg >= highest_val_ndcg:
-                        highest_val_ndcg = val_ndcg
-                        inc = 0
-                    else:
-                        inc += 1
-
-                
-                # early stopping
-                if inc >= patience:
-                    early_stopping = True
-                    break
-                
-
-            if early_stopping:
-                pbar.write('Early stop at epoch: {}, batch steps: {}'.format(epoch+1, batch))
-                pbar.update(pbar.total)
-                break
-            '''
+                    
+            wandb.log({'train_loss_epoch': total_train_loss/train_batch_len})
+            wandb.log({'valid_loss_epoch': total_valid_loss/valid_batch_len})
+            
             self.train_losses.append(total_train_loss/train_batch_len)
             self.valid_losses.append(total_valid_loss/valid_batch_len)
             
@@ -151,11 +141,7 @@ class MyTrainer:
                 'Epoch {:02}: valid loss: {:.4}\t  valid recall@20: {:.4}\t  valid NDCG: {:.4}\n'
                 .format(epoch+1, val_loss, val_recall_k, val_ndcg))
             '''
-                
-            pbar.write('Epoch {:02}: train loss: {:.4}'.format(epoch+1, total_train_loss/train_batch_len))
-            pbar.write('Epoch {:02}: val loss: {:.4}'.format(epoch+1, total_valid_loss/valid_batch_len))
             pbar.update()
-
         pbar.close()
 
         # plot training loss graph
@@ -192,4 +178,3 @@ class MyTrainer:
         plt.clf()'''
 
         return model
-

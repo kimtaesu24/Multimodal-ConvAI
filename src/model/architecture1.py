@@ -50,6 +50,8 @@ class MyArch1(torch.nn.Module):
         self.MMfusion = nn.Linear(1280+768, 1280, bias=True)
         self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
+        
+        self.loss_function = nn.CrossEntropyLoss()
 
 
     def FER(self, frames):
@@ -185,14 +187,15 @@ class MyArch1(torch.nn.Module):
         
         output = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
-                                labels=concat_labels
+                                labels=concat_labels.squeeze()
                                 )
-        # loss = nn.CrossEntropyLoss()
-        # predicted_token_ids = torch.argmax(output.logits, dim=-1)
-        # print(predicted_token_ids)
+        # loss = output.loss
         
-        return output.loss
-        # return loss(output.hidden_states[:,61:], labels[:,61:])
+        sft_idx = tokens['input_ids'].shape[-1]
+        p_loss = self.loss_function(output.logits[:,sft_idx:].view(-1,50257), labels['input_ids'].squeeze(0)[:, 0:].view(-1))
+        
+        return p_loss
+        
 
     def inference(self, inputs, eos_token_id=50256):
         '''
