@@ -6,6 +6,7 @@ from torch import nn
 import torch.nn.functional as F
 import os
 import time
+from copy import deepcopy
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -51,7 +52,7 @@ class MyArch1(torch.nn.Module):
         self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
         
-        self.loss_function = nn.CrossEntropyLoss()
+        self.loss_function = nn.CrossEntropyLoss(ignore_index=50256)
 
 
     def FER(self, frames):
@@ -99,14 +100,15 @@ class MyArch1(torch.nn.Module):
         '''
         # give weight to text when transition occur
         if self.give_weight:
-            for t in T:
-                if t == 0:
-                    break  # padding appear
-                for i, (audio_start, audio_end) in enumerate(zip(start, end)):
-                    if (audio_start == 0) and (audio_end == 0):
+            for mini_batch in range(self.batch_size):
+                for t in T[mini_batch]:
+                    if t == 0:
                         break  # padding appear
-                    if audio_start < (t / self.fps) < audio_end:
-                        tokens['attention_mask'][0][i] = 1 * self.alpha
+                    for i, (audio_start, audio_end) in enumerate(zip(start[mini_batch], end[mini_batch])):
+                        if (audio_start == 0) and (audio_end == 0):
+                            break  # padding appear
+                        if audio_start < (t / self.fps) < audio_end:
+                            tokens['attention_mask'][mini_batch][i] = 1 * self.alpha
         return tokens
     
     def get_audio_feature(self, SPEECH_FILE):
@@ -135,9 +137,9 @@ class MyArch1(torch.nn.Module):
         Input:  text embedding / audio feature
         Output: multimodal fused embedding
         '''
-        # print(inputs_embeds.shape)
-        audio_feature = audio_feature.repeat(len(inputs_embeds), 1)  # [1,768] -> [n ,768]
-        x = torch.cat((inputs_embeds, audio_feature), dim=1)
+        audio_feature = torch.unsqueeze(audio_feature, dim=1)
+        audio_feature = audio_feature.repeat(1, len(inputs_embeds[0]),1)  # [batch, feature_dim] -> [batch, padding_size, feature_dim]
+        x = torch.cat((inputs_embeds, audio_feature), dim=2)
         embedding = self.MMfusion(x)
         return self.act(embedding)
 
@@ -147,52 +149,60 @@ class MyArch1(torch.nn.Module):
         inputs: start time, end time, T, tokens= single sentence, waveform= audio feature
         labels: responsive sentence
         '''
-        start = inputs[0]
-        end = inputs[1]
-        T = inputs[2]
+        start = inputs[0]   # [batch, start_len]
+        end = inputs[1]     # [batch, end_len]
+        T = inputs[2]       # [batch, T_len]
         tokens = inputs[3]
-        waveform = inputs[4]
+        audio_feature = inputs[4]   # [batch, 1, feature_dim]
         
-        concat_labels = torch.cat([tokens['input_ids'], labels['input_ids']], dim=2)  # [1,1,sentence_length]
-        # print(concat_labels)
+        # preprocess
+        audio_feature = torch.squeeze(audio_feature, dim=1)
+        tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=1)
+        tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=1)
+        labels['input_ids'] = torch.squeeze(labels['input_ids'], dim=1)
+        labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=1)
         
+        
+        concat_labels = torch.cat([tokens['input_ids'], labels['input_ids']], dim=1)  # [batch,sentence_length]
+        
+        '''
         if self.batch_size == 1:
             start = torch.squeeze(start, dim=0)
             end = torch.squeeze(end, dim=0)
             T = torch.squeeze(T, dim=0)
             tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=0)
             tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=0)
-            waveform = torch.squeeze(waveform, dim=0)
+            audio_feature = torch.squeeze(audio_feature, dim=0)'''
         
         # ==== step 1. Give weight to word ====
         new_tokens = self.weighted_word(T, start, end, tokens)
         
         # ==== step 2. Extract audio feature ====
-        audio_feature = torch.mean(waveform, dim=1)
         audio_feature = self.projection_layer(audio_feature)
         
         # ==== step 3. Generate next sentence ====
-        inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids'][0]]  # get the embedding layer weights
-        labels_embeds = self.embedding_layer.weight.data[labels['input_ids'][0]]  # get the embedding layer weights
+        
+        inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids']]  # get the embedding layer weights
+        labels_embeds = self.embedding_layer.weight.data[labels['input_ids']]  # get the embedding layer weights
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
             
-        if self.batch_size == 1:
+        '''if self.batch_size == 1:
             inputs_embeds = torch.unsqueeze(inputs_embeds, 0)
-            labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=0)
+            labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=0)'''
         
         concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length, word_dimension]
         concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [1, sentence_length]
         
         output = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
-                                labels=concat_labels.squeeze()
+                                labels=concat_labels
                                 )
         # loss = output.loss
-        
         sft_idx = tokens['input_ids'].shape[-1]
-        p_loss = self.loss_function(output.logits[:,sft_idx:].view(-1,50257), labels['input_ids'].squeeze(0)[:, 0:].view(-1))
+        
+        p_loss = self.loss_function(output.logits[:,sft_idx:].contiguous().view(-1,50257), labels['input_ids'][:, 0:].contiguous().view(-1))
         
         return p_loss
         

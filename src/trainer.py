@@ -1,9 +1,6 @@
-import os.path
 import sys
 import fire
 import torch
-from pathlib import Path
-import pandas as pd
 
 from utils import set_random_seed
 from model.train import MyTrainer
@@ -29,8 +26,8 @@ def main(model='arch1',
          modal_fusion=True,
          epochs=100,
          act='relu',
-         batch_size=1,
-         learning_rate=1e-3,
+         batch_size=32,
+         learning_rate=1e-5,
          max_length=60,
          alpha=2,
          dropout=0.2,
