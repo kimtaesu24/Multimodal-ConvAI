@@ -43,7 +43,7 @@ class MyTrainer:
                                         #   num_workers=4,
                                         )
             valid_dataloader = DataLoader(dataset=valid_dataset,
-                                        batch_size = 1,
+                                        batch_size = batch_size,
                                         shuffle = False,
                                         #   num_workers=4,
                                         )
@@ -69,7 +69,7 @@ class MyTrainer:
         valid_batch_len = len(valid_dataloader)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=batch_size, gamma=decay_rate)
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
         
         wandb.init(project=f"dialog_Gen_{param['model']}")
 
@@ -92,7 +92,6 @@ class MyTrainer:
 
                 loss.backward()
                 optimizer.step()
-                scheduler.step()
 
                 # log
                 total_train_loss += loss.item()
@@ -101,7 +100,7 @@ class MyTrainer:
                 
                 #self.train_recall.append(recall_k)
                 #self.train_ndcg.append(ndcg)
-                if i % 100 == 0:
+                if i % (100//batch_size) == 0:
                     wandb.log({'train_loss':loss.item()})
 
             # validation
@@ -130,7 +129,7 @@ class MyTrainer:
                 else:
                     modal_fusion = 'F'
 
-                torch.save(model.state_dict(), '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_'+give_weight+'/modal_fusion_'+modal_fusion+'/'+str(epoch + 1)+'epochs.pt')
+                torch.save(model.state_dict(), '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_'+give_weight+'/modal_fusion_'+modal_fusion+'/'+str(hyper_param)+'.pt')
                 pbar.write('Pretrained model has saved at Epoch: {:02} '.format(epoch+1))
 
             '''
@@ -141,6 +140,7 @@ class MyTrainer:
                 'Epoch {:02}: valid loss: {:.4}\t  valid recall@20: {:.4}\t  valid NDCG: {:.4}\n'
                 .format(epoch+1, val_loss, val_recall_k, val_ndcg))
             '''
+            scheduler.step()
             pbar.update()
         pbar.close()
 

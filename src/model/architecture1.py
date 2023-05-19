@@ -77,34 +77,32 @@ class MyArch1(torch.nn.Module):
     def forced_alignment(self, audio_path, transcript):
         '''
         Input: raw voice data of single speaker
-        Output: dictionary of word and timestamp 
-                    = {'I': [0.0, 0.05],
-                       'am': [0.06, 0.09],
-                       ...
-                       }
+        Output: 2d array = [['word1', word2', ...], [start_t1, start_t2,...], [end_t1, end_t2, ...]]
         
         Module: WAV2VEC 
         '''
         from .Forced_Alignment.FA import get_dic as FA
         word_timestamp = FA(audio_path, transcript)
+        
         return word_timestamp
     
     
     def weighted_word(self, T, start, end, tokens):
         '''
         Input: timestamp of expression transition / raw voice data of single speaker
-        
-        Module: huggingface tokenizer
+        Output: 
         
         Goal: give weight to specific word's attention mask
         '''
         # give weight to text when transition occur
         if self.give_weight:
-            for mini_batch in range(self.batch_size):
+            for mini_batch in range(start.shape[0]):
                 for t in T[mini_batch]:
                     if t == 0:
                         break  # padding appear
                     for i, (audio_start, audio_end) in enumerate(zip(start[mini_batch], end[mini_batch])):
+                        if i > len(tokens['attention_mask'][mini_batch]):
+                            continue  # ignore longger than padding_size
                         if (audio_start == 0) and (audio_end == 0):
                             break  # padding appear
                         if audio_start < (t / self.fps) < audio_end:
@@ -117,7 +115,7 @@ class MyArch1(torch.nn.Module):
         model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h")
         processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
         
-        audio_input, _ = librosa.load(SPEECH_FILE, sr=16_000)  # 48000
+        audio_input, _ = librosa.load(SPEECH_FILE, sr=16_000)
         
         # Preprocess the audio input
         inputs = processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
@@ -165,15 +163,6 @@ class MyArch1(torch.nn.Module):
         
         concat_labels = torch.cat([tokens['input_ids'], labels['input_ids']], dim=1)  # [batch,sentence_length]
         
-        '''
-        if self.batch_size == 1:
-            start = torch.squeeze(start, dim=0)
-            end = torch.squeeze(end, dim=0)
-            T = torch.squeeze(T, dim=0)
-            tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=0)
-            tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=0)
-            audio_feature = torch.squeeze(audio_feature, dim=0)'''
-        
         # ==== step 1. Give weight to word ====
         new_tokens = self.weighted_word(T, start, end, tokens)
         
@@ -187,10 +176,6 @@ class MyArch1(torch.nn.Module):
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
-            
-        '''if self.batch_size == 1:
-            inputs_embeds = torch.unsqueeze(inputs_embeds, 0)
-            labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=0)'''
         
         concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length, word_dimension]
         concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [1, sentence_length]
@@ -199,10 +184,9 @@ class MyArch1(torch.nn.Module):
                                 attention_mask=concat_mask,
                                 labels=concat_labels
                                 )
-        # loss = output.loss
-        sft_idx = tokens['input_ids'].shape[-1]
         
-        p_loss = self.loss_function(output.logits[:,sft_idx:].contiguous().view(-1,50257), labels['input_ids'][:, 0:].contiguous().view(-1))
+        sft_idx = tokens['input_ids'].shape[-1]
+        p_loss = self.loss_function(output.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), labels['input_ids'][:, :].contiguous().view(-1))
         
         return p_loss
         
@@ -220,37 +204,32 @@ class MyArch1(torch.nn.Module):
         
         prompt = tokens.input_ids
         
-
         step1 = time.time()
         _ , T = self.FER(frames)
+        T = torch.unsqueeze(torch.tensor(T), dim=0)  # [batch_size=1, T_len]
         print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
         
         step2 = time.time()
         word_timestamp = self.forced_alignment(audio_path, transcript)
-        start = word_timestamp[1]
-        end = word_timestamp[2]
+        start = torch.unsqueeze(torch.tensor(word_timestamp[1]), dim=0)  # [batch_size=1, start_len]
+        end = torch.unsqueeze(torch.tensor(word_timestamp[2]), dim=0)  # [batch_size=1, end_len]
         new_tokens = self.weighted_word(T, start, end, tokens)
         print("==== Step 2. [Give weight to word]\t spent time: {:.4f} ====".format(time.time()-step2))
         
         step3 = time.time()
         # waveform = self.get_audio_feature(audio_path)
-        audio_feature = torch.mean(waveform, dim=1)
-        audio_feature = self.projection_layer(audio_feature)
+        audio_feature = self.projection_layer(waveform)
 
-        #inputs_embeds = self.embedding_layer.weight.data[tokens['input_ids'][0]]
         inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
-        inputs_embeds = torch.squeeze(inputs_embeds)
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
         print("==== Step 3. [Audio feature Fusion]\t spent time: {:.4f} ====".format(time.time()-step3))
         
         step4 = time.time()
-        if self.batch_size == 1:
-            inputs_embeds = torch.unsqueeze(inputs_embeds, 0)
 
         output = self.gpt_model.generate(input_ids=prompt,
-                                         max_length=1000, 
+                                         max_length=100,
                                          pad_token_id=eos_token_id,
                                          inputs_embeds=inputs_embeds,
                                          attention_mask=new_tokens['attention_mask'],
