@@ -68,23 +68,27 @@ def audio2text(audio_path):
     
     return transcript, word
 
-def preprocess_video(input_video):
+def preprocess_video(input_video, max_length):
     image_list = video2frames(input_video=input_video)
     audio_path = video2audio(input_video=input_video)
     transcript, word = audio2text(audio_path)
     
     # text -> token
     tokens = tokenizer(word + tokenizer.eos_token,
-                       return_tensors='pt',
-                       )
-    
+                        padding='max_length',
+                        max_length=max_length,
+                        truncation=True,
+                        return_attention_mask=True,
+                        return_tensors='pt'
+                        )
     name_without_extension = os.path.splitext(input_video)[0]
     waveform = torch.load('/home2/dataset/MELD/audio_feature/train/'+name_without_extension+'.pt')
+    audio_feature = torch.mean(waveform, dim=1)
     
-    return [image_list, audio_path, tokens, transcript, waveform]
+    return [image_list, audio_path, tokens, transcript, audio_feature]
     
 def main(param, hyper_param, input_video):
-    weight_path = '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_T/modal_fusion_T/40epochs.pt'
+    weight_path = "/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_F/modal_fusion_T/40_epochs{'epochs': 100, 'act': 'relu', 'batch_size': 32, 'learning_rate': 5e-05, 'max_length': 60, 'alpha': 2, 'dropout': 0.2, 'decay_rate': 0.8}.pt"
     device = param['device']
     
     model = MyArch1(param=param, hyper_param=hyper_param)
@@ -92,14 +96,15 @@ def main(param, hyper_param, input_video):
     model.eval()
     
     print("==== preprocessing ====")
-    inputs = preprocess_video(input_video)
-    history = inputs[2].input_ids.shape[-1]
+    inputs = preprocess_video(input_video, hyper_param['max_length'])
+    # history = inputs[2].input_ids.shape[-1]
     
     print("==== model forward start ====")
-    outputs = model.inference(inputs, tokenizer.eos_token_id)
+    outputs = model.inference(inputs)
+    print(outputs.shape)
     print(outputs)
-    print(outputs[0])
-    sentence = tokenizer.decode(outputs[:, history:][0], skip_special_tokens=True)
+    # sentence = tokenizer.decode(outputs[:, history:][0], skip_special_tokens=True)
+    sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
     print("Response: {}".format(sentence))
 
 if __name__ == '__main__':
@@ -108,7 +113,7 @@ if __name__ == '__main__':
     param = dict()
     param['device'] = "cuda" if torch.cuda.is_available() else "cpu"
     param['fps'] = 24
-    param['give_weight'] = True
+    param['give_weight'] = False
     param['modal_fusion'] = True
 
     hyper_param = dict()

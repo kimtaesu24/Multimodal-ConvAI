@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader
 from .architecture1 import MyArch1
 from .architecture2 import MyArch2
 from tqdm import tqdm
-from loguru import logger
 
 import wandb
 
@@ -15,12 +14,6 @@ class MyTrainer:
     def __init__(self, device, data_path):
         self.device = device
         self.data_path = data_path
-        self.train_losses = []
-        # self.train_recall = []
-        # self.train_ndcg = []
-        self.valid_losses = []
-        # self.valid_recall = []
-        # self.valid_ndcg = []
 
     def train_with_hyper_param(self, param, hyper_param):
         model = param['model']
@@ -69,16 +62,14 @@ class MyTrainer:
         valid_batch_len = len(valid_dataloader)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
+        # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
         
         wandb.init(project=f"dialog_Gen_{param['model']}")
 
         pbar = tqdm(range(epochs), position=0, leave=False, desc='epoch')
         for epoch in pbar:
-            total_train_loss = 0
-            total_valid_loss = 0
-            #total_recall = 0
-            #total_ndcg = 0
+            total_train_loss=0
+            total_valid_loss=0
             
             # training
             model.train()
@@ -87,7 +78,6 @@ class MyTrainer:
                 optimizer.zero_grad()
                 
                 loss = model(inputs, labels)
-                #loss, recall_k, ndcg = model(inputs, labels)
                 prog_bar.set_postfix({'loss': loss.item()})
 
                 loss.backward()
@@ -95,11 +85,7 @@ class MyTrainer:
 
                 # log
                 total_train_loss += loss.item()
-                #total_recall += recall_k
-                #total_ndcg += ndcg
                 
-                #self.train_recall.append(recall_k)
-                #self.train_ndcg.append(ndcg)
                 if i % (100//batch_size) == 0:
                     wandb.log({'train_loss':loss.item()})
 
@@ -110,14 +96,10 @@ class MyTrainer:
                     loss = model(inputs, labels)
 
                     total_valid_loss += loss.item()
-                    # print(loss.item())
                     
             wandb.log({'train_loss_epoch': total_train_loss/train_batch_len})
             wandb.log({'valid_loss_epoch': total_valid_loss/valid_batch_len})
-            
-            self.train_losses.append(total_train_loss/train_batch_len)
-            self.valid_losses.append(total_valid_loss/valid_batch_len)
-            
+
             if (epoch + 1) % save_at_every == 0:
                 if param['give_weight'] == True:
                     give_weight = 'T'
@@ -129,52 +111,11 @@ class MyTrainer:
                 else:
                     modal_fusion = 'F'
 
-                torch.save(model.state_dict(), '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_'+give_weight+'/modal_fusion_'+modal_fusion+'/'+str(hyper_param)+'.pt')
+                torch.save(model.state_dict(), '/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_'+give_weight+'/modal_fusion_'+modal_fusion+'/'+str(epoch+1)+'_epochs'+str(hyper_param)+'.pt')
                 pbar.write('Pretrained model has saved at Epoch: {:02} '.format(epoch+1))
 
-            '''
-            pbar.write(
-                'Epoch {:02}: train loss: {:.4}\t  train recall@20: {:.4}\t  train NDCG: {:.4}'
-                .format(epoch+1, total_loss/batch_len, total_recall/batch_len, total_ndcg/batch_len))
-            pbar.write(
-                'Epoch {:02}: valid loss: {:.4}\t  valid recall@20: {:.4}\t  valid NDCG: {:.4}\n'
-                .format(epoch+1, val_loss, val_recall_k, val_ndcg))
-            '''
-            scheduler.step()
+            # scheduler.step()
             pbar.update()
         pbar.close()
-
-        # plot training loss graph
-        plt.figure(figsize=(10, 5))
-        plt.title(" Training Loss")
-        plt.plot(self.train_losses, label="train")
-        plt.plot(self.valid_losses, label="val")
-        plt.xlabel("epochs")
-        plt.ylabel("cross entropy loss")
-        plt.legend()
-        plt.savefig('training loss.png')
-        plt.clf()
-        
-        # plot training metric graph
-        '''plt.figure(2, figsize=(10, 5))
-        plt.title(" Training metric")
-        plt.plot(self.train_recall, label="recall")
-        plt.plot(self.train_ndcg, label="ndcg")
-        plt.xlabel("time step (=iterations)")
-        plt.ylabel("accuracy")
-        plt.legend()
-        plt.savefig(' training metric --data_name ' + str(data_name) + ' --seed ' + str(seed) + ' --emb ' + str(embedding_size) + '.png')
-        plt.clf()
-
-        # plot validation metric graph
-        plt.figure(3, figsize=(10, 5))
-        plt.title(" Validation metric")
-        plt.plot(self.val_recall, label="recall")ß
-        plt.plot(self.val_ndcg, label="ndcg")
-        plt.xlabel("time step (=batch_size/10)")
-        plt.ylabel("accuracy")
-        plt.legend()
-        plt.savefig(' validation metric --data_name ' + str(data_name) + ' --seed ' + str(seed) + ' --emb ' + str(embedding_size) + '.png')
-        plt.clf()'''
 
         return model

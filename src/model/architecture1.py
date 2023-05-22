@@ -23,36 +23,30 @@ class MyArch1(torch.nn.Module):
         self.num_layers = num_layers
         '''
         self.fps = param['fps']
-        #self.fps = 24
         self.give_weight = param['give_weight']
-        #self.give_weight = True
         self.modal_fusion = param['modal_fusion']
-        #self.modal_fusion = False
         self.device = param['device']
-        #self.device = device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.batch_size = hyper_param['batch_size']
-        #self.batch_size = 1
         self.max_length = hyper_param['max_length']
-        #self.max_length = 30
         self.alpha = hyper_param['alpha']
-        #self.alpha = 2
         self.dropout = hyper_param['dropout']
         if hyper_param['act'] =='relu':
             self.act = nn.ReLU()
+        self.audio_feature_dimension = 768
         self.gpt_model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.embedding_layer = self.gpt_model.get_input_embeddings()
 
-        self.projection_layer = nn.Linear(768, 768, bias=False)
+        self.projection_layer = nn.Linear(self.audio_feature_dimension, self.audio_feature_dimension, bias=False)
         self.projection_layer.weight = torch.nn.init.xavier_uniform_(self.projection_layer.weight)
                                                              
-        self.MMfusion = nn.Linear(1280+768, 1280, bias=True)
+        self.MMfusion = nn.Linear(1280+self.audio_feature_dimension, 1280, bias=True)
         self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
         
-        self.loss_function = nn.CrossEntropyLoss(ignore_index=50256)
+        self.loss_function = nn.CrossEntropyLoss(ignore_index=self.tokenizer.pad_token_id)
 
 
     def FER(self, frames):
@@ -97,16 +91,18 @@ class MyArch1(torch.nn.Module):
         # give weight to text when transition occur
         if self.give_weight:
             for mini_batch in range(start.shape[0]):
+                non_zero = torch.count_nonzero(tokens['attention_mask'][mini_batch])
+                zeros = tokens['attention_mask'][mini_batch].shape[-1] - non_zero
                 for t in T[mini_batch]:
                     if t == 0:
                         break  # padding appear
                     for i, (audio_start, audio_end) in enumerate(zip(start[mini_batch], end[mini_batch])):
                         if i > len(tokens['attention_mask'][mini_batch]):
-                            continue  # ignore longger than padding_size
+                            continue  # ignore when longger than padding_size
                         if (audio_start == 0) and (audio_end == 0):
                             break  # padding appear
                         if audio_start < (t / self.fps) < audio_end:
-                            tokens['attention_mask'][mini_batch][i] = 1 * self.alpha
+                            tokens['attention_mask'][mini_batch][i+zeros] *= self.alpha
         return tokens
     
     def get_audio_feature(self, SPEECH_FILE):
@@ -155,13 +151,10 @@ class MyArch1(torch.nn.Module):
         
         # preprocess
         audio_feature = torch.squeeze(audio_feature, dim=1)
-        tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=1)
+        tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=1)  # [batch_size, padding_size]
         tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=1)
         labels['input_ids'] = torch.squeeze(labels['input_ids'], dim=1)
         labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=1)
-        
-        
-        concat_labels = torch.cat([tokens['input_ids'], labels['input_ids']], dim=1)  # [batch,sentence_length]
         
         # ==== step 1. Give weight to word ====
         new_tokens = self.weighted_word(T, start, end, tokens)
@@ -169,29 +162,27 @@ class MyArch1(torch.nn.Module):
         # ==== step 2. Extract audio feature ====
         audio_feature = self.projection_layer(audio_feature)
         
-        # ==== step 3. Generate next sentence ====
-        
+        # ==== step 3. Generate next sentence ====  
         inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids']]  # get the embedding layer weights
         labels_embeds = self.embedding_layer.weight.data[labels['input_ids']]  # get the embedding layer weights
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
         
-        concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length, word_dimension]
-        concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [1, sentence_length]
+        concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length*2, word_dimension]
+        concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [batch, sentence_length*2]
         
         output = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
-                                labels=concat_labels
                                 )
-        
         sft_idx = tokens['input_ids'].shape[-1]
+
         p_loss = self.loss_function(output.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), labels['input_ids'][:, :].contiguous().view(-1))
-        
+            
         return p_loss
         
 
-    def inference(self, inputs, eos_token_id=50256):
+    def inference(self, inputs):
         '''
         inputs: [image_list, audio_path, tokens, transcript, waveform], tokenizer.eos_token_id
         outputs: [text]
@@ -202,7 +193,7 @@ class MyArch1(torch.nn.Module):
         transcript= inputs[3]
         waveform = inputs[4]
         
-        prompt = tokens.input_ids
+        # prompt = tokens.input_ids
         
         step1 = time.time()
         _ , T = self.FER(frames)
@@ -220,7 +211,8 @@ class MyArch1(torch.nn.Module):
         # waveform = self.get_audio_feature(audio_path)
         audio_feature = self.projection_layer(waveform)
 
-        inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
+        # inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
+        inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids']]  # get the embedding layer weights
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
@@ -228,9 +220,9 @@ class MyArch1(torch.nn.Module):
         
         step4 = time.time()
 
-        output = self.gpt_model.generate(input_ids=prompt,
-                                         max_length=100,
-                                         pad_token_id=eos_token_id,
+        print(inputs_embeds.shape)
+        output = self.gpt_model.generate(max_length=100,
+                                         pad_token_id=self.tokenizer.pad_token_id,
                                          inputs_embeds=inputs_embeds,
                                          attention_mask=new_tokens['attention_mask'],
                                          )
@@ -293,7 +285,7 @@ if __name__ == "__main__":
     
     model = MyArch1(param, hyper_param).to(device)
     inputs = [word_timestamp[1], word_timestamp[2], T, tokens.to(device), waveform]
-    loss = model(inputs, labels_token)
+    loss = model.inference(inputs)
     
     print('loss: ', loss.item())
 

@@ -27,11 +27,11 @@ def main(model='arch1',
          epochs=100,
          act='relu',
          batch_size=32,
-         learning_rate=1e-5,
+         learning_rate=5e-5,
          max_length=60,
          alpha=2,
          dropout=0.2,
-         decay_rate=0.98,
+         decay_rate=0.8,
          save_at_every=10,
          ):
 
