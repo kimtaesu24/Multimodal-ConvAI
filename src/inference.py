@@ -3,26 +3,30 @@ import sys
 import os
 import cv2
 import torchaudio
+import pickle
+import librosa
+import soundfile as sf
 from PIL import Image
 import moviepy.editor as mp
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, Wav2Vec2Processor, Wav2Vec2Model
 from model.architecture1 import MyArch1
+from model.architecture2 import MyArch2
 
 # sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
 
 tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-tokenizer.pad_token = tokenizer.eos_token
+tokenizer.pad_token = '!'
+
+wave_model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h")
+wave_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
 
 def video2frames(input_video):
     image_list = []
     vidcap = cv2.VideoCapture(input_video)
     success,image = vidcap.read()
-    count = 0
     while success:
-        #cv2.imwrite(input_video+"/%06d.jpg" % count, image)     # save frame as JPEG file
         image_list.append(Image.fromarray(image).convert('RGB'))
         success,image = vidcap.read()
-        count += 1
     return image_list
 
 def video2audio(input_video):
@@ -64,57 +68,113 @@ def audio2text(audio_path):
 
     decoder = GreedyCTCDecoder(labels=bundle.get_labels())
     transcript = decoder(emission[0])
-    word = transcript.replace("|", " ").lower()
+    # transcript = "DON'T|YELL|AT|ME|OKAY|THIS|IS|THE|MOST|I'VE|SEEN|YOU|ALL|WEEK|"
+    print(transcript)
+    context = transcript.replace("|", " ").lower()
+    context = context[:-1] + "."
+    print(context, type(context))
     
-    return transcript, word
+    return transcript, context
+
+def audio2feature(SPEECH_FILE, desired_sampling_rate=16000):
+    audio, sr = librosa.load(SPEECH_FILE, sr=None)  # Load the input audio
+    print("1st sr: ",sr)
+    resampled_audio = librosa.resample(audio, sr, desired_sampling_rate)  # Resample the audio to the desired sampling rate
+    sf.write(SPEECH_FILE, resampled_audio, desired_sampling_rate)  # Save the resampled audio to a new file
+    
+    # Preprocess the audio input
+    audio, sr = librosa.load(SPEECH_FILE, sr=16_000)  # Load the input audio
+    print("2nd sr: ",sr)
+    inputs = wave_processor(audio, sampling_rate=16_000, return_tensors="pt")
+    with torch.no_grad():
+        outputs = wave_model(**inputs)
+
+    features = outputs.last_hidden_state  # Extract the audio features from the output
+    print(features.shape)
+    
+    return features
 
 def preprocess_video(input_video, max_length):
     image_list = video2frames(input_video=input_video)
     audio_path = video2audio(input_video=input_video)
-    transcript, word = audio2text(audio_path)
+    transcript, context = audio2text(audio_path)
     
     # text -> token
-    tokens = tokenizer(word + tokenizer.eos_token,
+    tokens = tokenizer(context + tokenizer.eos_token,
                         padding='max_length',
                         max_length=max_length,
                         truncation=True,
                         return_attention_mask=True,
                         return_tensors='pt'
                         )
-    name_without_extension = os.path.splitext(input_video)[0]
-    waveform = torch.load('/home2/dataset/MELD/audio_feature/train/'+name_without_extension+'.pt')
-    audio_feature = torch.mean(waveform, dim=1)
     
-    return [image_list, audio_path, tokens, transcript, audio_feature]
+    waveform = audio2feature(audio_path, desired_sampling_rate=16000)
     
-def main(param, hyper_param, input_video):
-    weight_path = "/home2/s20235100/Conversational-AI/MyModel/pretrained_model/arch1/give_weight_F/modal_fusion_T/40_epochs{'epochs': 100, 'act': 'relu', 'batch_size': 32, 'learning_rate': 5e-05, 'max_length': 60, 'alpha': 2, 'dropout': 0.2, 'decay_rate': 0.8}.pt"
+    return [image_list, audio_path, tokens, transcript, waveform]
+    
+def main(param, hyper_param, input_video, checkpoint):
+    print(checkpoint)
+    path = "/home2/s20235100/Conversational-AI/MyModel/pretrained_model/"
+    weigth = checkpoint+"_epochs{'epochs': 200, 'act': 'relu', 'batch_size': 32, 'learning_rate': 5e-05, 'max_length': 60, 'alpha': 2, 'dropout': 0.2, 'decay_rate': 0.98}.pt"
+    
+    if param['give_weight'] == True:
+        give_weight = 'give_weight_T'
+    else:
+        give_weight = 'give_weight_F'
+    if param['modal_fusion'] == True:
+        modal_fusion = 'modal_fusion_T'
+    else:
+        modal_fusion = 'modal_fusion_F'
+    if param['trans_encoder'] == True:
+        trans_encoder = 'trans_encoder_T'
+    else:
+        trans_encoder = 'trans_encoder_F'
+    if param['multi_task'] == True:
+        multi_task = 'multi_task_T'
+    else:
+        multi_task = 'multi_task_F'
+        
+    if param['model'] == 'Dialogpt' or param['model'] == 'Arch1':
+        weight_path = path + f"Arch1/{give_weight}/{modal_fusion}/" + weigth
+        model = MyArch1(param=param, hyper_param=hyper_param)
+    elif param['model'] == 'Arch2':
+        weight_path = path + f"Arch2/{trans_encoder}/{multi_task}/" + weigth
+        model = MyArch2(param=param, hyper_param=hyper_param)
+    # elif param['model'] == 'Arch3':
+    #     weight_path = path + f"Arch3/{trans_encoder}/{multi_task}" + weigth
+    #     model = MyArch3(param=param, hyper_param=hyper_param)
+    
     device = param['device']
-    
-    model = MyArch1(param=param, hyper_param=hyper_param)
     model.load_state_dict(torch.load(weight_path, map_location=device))
     model.eval()
     
     print("==== preprocessing ====")
     inputs = preprocess_video(input_video, hyper_param['max_length'])
-    # history = inputs[2].input_ids.shape[-1]
-    
-    print("==== model forward start ====")
+    '''
+    file_path = "/home2/s20235100/Conversational-AI/MyModel/src/model/inference_file.pickle"
+    with open(file_path, "wb") as file:
+        pickle.dump(inputs, file)
+    file.close()
+    '''
+    print("==== model inference start ====")
     outputs = model.inference(inputs)
-    print(outputs.shape)
     print(outputs)
-    # sentence = tokenizer.decode(outputs[:, history:][0], skip_special_tokens=True)
     sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
     print("Response: {}".format(sentence))
 
 if __name__ == '__main__':
     input_video = 'dia0_utt3.mp4'
+    # input_video = 'dia231_utt10.mp4'
+    # input_video = 'dia12_utt9.mp4'
     
     param = dict()
+    param['model'] = 'Arch1'
     param['device'] = "cuda" if torch.cuda.is_available() else "cpu"
     param['fps'] = 24
-    param['give_weight'] = False
+    param['give_weight'] = True
     param['modal_fusion'] = True
+    param['trans_encoder'] = True
+    param['multi_task'] = False
 
     hyper_param = dict()
     hyper_param['act'] = 'relu'
@@ -123,4 +183,4 @@ if __name__ == '__main__':
     hyper_param['alpha'] = 2
     hyper_param['dropout'] = 0.2
     
-    main(param, hyper_param, input_video)
+    main(param, hyper_param, input_video, sys.argv[1])

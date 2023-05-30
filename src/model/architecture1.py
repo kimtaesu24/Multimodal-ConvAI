@@ -36,7 +36,7 @@ class MyArch1(torch.nn.Module):
         self.audio_feature_dimension = 768
         self.gpt_model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.pad_token = '!'
         self.embedding_layer = self.gpt_model.get_input_embeddings()
 
         self.projection_layer = nn.Linear(self.audio_feature_dimension, self.audio_feature_dimension, bias=False)
@@ -93,16 +93,19 @@ class MyArch1(torch.nn.Module):
             for mini_batch in range(start.shape[0]):
                 non_zero = torch.count_nonzero(tokens['attention_mask'][mini_batch])
                 zeros = tokens['attention_mask'][mini_batch].shape[-1] - non_zero
+                # pre_t = 0
                 for t in T[mini_batch]:
-                    if t == 0:
-                        break  # padding appear
+                    if t == 0:  # padding appear
+                        break
+                    # if (t - pre_t) >= self.fps:  # at least 1 second
                     for i, (audio_start, audio_end) in enumerate(zip(start[mini_batch], end[mini_batch])):
-                        if i > len(tokens['attention_mask'][mini_batch]):
-                            continue  # ignore when longger than padding_size
-                        if (audio_start == 0) and (audio_end == 0):
-                            break  # padding appear
+                        if i > len(tokens['attention_mask'][mini_batch]):  # ignore when longger than padding_size
+                            continue
+                        if (audio_start == 0) and (audio_end == 0):  # padding appear
+                            break
                         if audio_start < (t / self.fps) < audio_end:
-                            tokens['attention_mask'][mini_batch][i+zeros] *= self.alpha
+                            if tokens['attention_mask'][mini_batch][i+zeros] < self.alpha:  # duplication block
+                                tokens['attention_mask'][mini_batch][i+zeros] *= self.alpha 
         return tokens
     
     def get_audio_feature(self, SPEECH_FILE):
@@ -172,13 +175,13 @@ class MyArch1(torch.nn.Module):
         concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length*2, word_dimension]
         concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [batch, sentence_length*2]
         
-        output = self.gpt_model(inputs_embeds=concat_inputs,
+        outputs = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
                                 )
         sft_idx = tokens['input_ids'].shape[-1]
 
-        p_loss = self.loss_function(output.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), labels['input_ids'][:, :].contiguous().view(-1))
-            
+        p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), labels['input_ids'][:, :].contiguous().view(-1))
+        
         return p_loss
         
 
@@ -189,104 +192,63 @@ class MyArch1(torch.nn.Module):
         ''' 
         frames = inputs[0]
         audio_path = inputs[1]
-        tokens = inputs[2]
+        tokens = inputs[2].to(self.device)
         transcript= inputs[3]
-        waveform = inputs[4]
-        
-        # prompt = tokens.input_ids
+        waveform = inputs[4].to(self.device)
         
         step1 = time.time()
-        _ , T = self.FER(frames)
-        T = torch.unsqueeze(torch.tensor(T), dim=0)  # [batch_size=1, T_len]
-        print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
+        if self.give_weight:
+            _ , T = self.FER(frames)
+            T = torch.unsqueeze(torch.tensor(T), dim=0)  # [batch_size=1, T_len]
+        else:
+            T = None
+        # print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
         
         step2 = time.time()
         word_timestamp = self.forced_alignment(audio_path, transcript)
-        start = torch.unsqueeze(torch.tensor(word_timestamp[1]), dim=0)  # [batch_size=1, start_len]
-        end = torch.unsqueeze(torch.tensor(word_timestamp[2]), dim=0)  # [batch_size=1, end_len]
+        # print(word_timestamp)
+        # word_timestamp[1] = [0.4014375, 0.602125, 0.8630625, 1.1039375, 1.1641875, 1.364875, 1.5455625, 1.766375, 1.9269375]
+        # word_timestamp[2] =[0.562, 0.802875, 1.0638125, 1.124, 1.3448125, 1.5255, 1.74625, 1.88675, 2.187875]
+        start = pad(word_timestamp[1], self.max_length)
+        start = torch.unsqueeze(torch.tensor(start), dim=0)  # [batch_size=1, start_len]
+        end = pad(word_timestamp[2], self.max_length)
+        end = torch.unsqueeze(torch.tensor(end), dim=0)  # [batch_size=1, end_len]
         new_tokens = self.weighted_word(T, start, end, tokens)
-        print("==== Step 2. [Give weight to word]\t spent time: {:.4f} ====".format(time.time()-step2))
+        # print("==== Step 2. [Give weight to word]\t spent time: {:.4f} ====".format(time.time()-step2))
         
         step3 = time.time()
-        # waveform = self.get_audio_feature(audio_path)
-        audio_feature = self.projection_layer(waveform)
+        # print(waveform.shape)
+        # waveform = torch.load('/home2/dataset/MELD/audio_feature/train/dia0_utt3_16000.pt')
+        audio_feature = torch.mean(waveform, dim=1)
+        # print(audio_feature.shape)
+        audio_feature = self.projection_layer(audio_feature)
 
         # inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
         inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids']]  # get the embedding layer weights
         
         if self.modal_fusion:
             inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
-        print("==== Step 3. [Audio feature Fusion]\t spent time: {:.4f} ====".format(time.time()-step3))
+        # print("==== Step 3. [Audio feature Fusion]\t spent time: {:.4f} ====".format(time.time()-step3))
         
         step4 = time.time()
 
-        print(inputs_embeds.shape)
         output = self.gpt_model.generate(max_length=100,
                                          pad_token_id=self.tokenizer.pad_token_id,
                                          inputs_embeds=inputs_embeds,
                                          attention_mask=new_tokens['attention_mask'],
+                                        #  do_sample=True,
+                                        #  top_k=50,
+                                        #  top_p=0.90,
                                          )
         
-        print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step4))
+        # print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step4))
         
         return output
-    
-if __name__ == "__main__":
-    tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-    tokenizer.pad_token = tokenizer.eos_token
-    
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    max_length = 30
-    
-    SPEECH_FILE = '/home2/dataset/MELD/audio_feature/train/dia0_utt3.pt'
-    
-    #word_timestamp = [" ".join(["OH", "MY", "GOD", "HE'S", "LOST", "IT", "HE'S", "TOTALLY", "LOST", "IT"]),[0.1208125, 0.302125, 0.5035625, 0.8056875, 1.0876875, 1.4905625, 1.59125, 1.73225, 2.115, 2.5178125],[0.282, 0.423, 0.765375, 0.9668125, 1.41, 1.551, 1.692, 2.0545625, 2.417125, 2.558125]]
-    #T = [12, 14, 15, 16, 18, 22, 41, 47, 82, 84, 85, 86, 87, 88, 89, 91, 102, 103, 104, 106, 109, 110, 111, 112, 114, 116, 118, 121, 140, 142]
-    
-    word_timestamp = [" ".join(["SO", "LET'S", "TALK", "A", "LITTLE", "BIT", "ABOUT", "YOUR", "DUTIES"]),[0.4014375, 0.602125, 0.8630625, 1.1039375, 1.1641875, 1.364875, 1.5455625, 1.766375, 1.9269375],[0.562, 0.802875, 1.0638125, 1.124, 1.3448125, 1.5255, 1.74625, 1.88675, 2.187875]]
-    T = [54, 55, 58, 59, 60, 61, 62, 63, 64]
-    
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    param = dict()
-    param['device'] = device
-    param['fps'] = 24
-    param['give_weight'] = True
-    param['modal_fusion'] = True
-    
-    hyper_param = dict()
-    hyper_param['act'] = 'relu'
-    hyper_param['batch_size'] = 1
-    hyper_param['max_length'] = 30
-    hyper_param['alpha'] = 2
-    hyper_param['embedding_size'] = 1024
-    
-    print(word_timestamp[0])
-    tokens = tokenizer("so let's talk a little bit about your duties",
-                       padding='max_length',
-                       max_length=max_length,
-                       truncation=True,
-                       return_attention_mask=True,
-                       return_tensors='pt'
-                       )
-    print(tokens)
-    
-    waveform = torch.load(SPEECH_FILE)
-    #print(torch.mean(waveform, 1).shape)
-    
-    labels = "What?"
-    labels_token = tokenizer(labels,
-                             padding='max_length',
-                             max_length=max_length,
-                             truncation=True,
-                             return_tensors='pt'
-                             ).input_ids
-    print(labels_token)
-    
-    model = MyArch1(param, hyper_param).to(device)
-    inputs = [word_timestamp[1], word_timestamp[2], T, tokens.to(device), waveform]
-    loss = model.inference(inputs)
-    
-    print('loss: ', loss.item())
 
-    
+def pad(inputs, max_length):
+    tmp = [0 for i in range(max_length)]
+    if len(inputs) > max_length:
+        tmp[:len(inputs)] = inputs[:max_length]  # truncation
+    else:
+        tmp[:len(inputs)] = inputs  # padding
+    return tmp

@@ -18,21 +18,24 @@ def run_mymodel(device, data_path, param, hyper_param):
     logger.info("train has completed")
 
 
-def main(model='arch1',
+def main(model='Arch2',
          data_name='MELD',
          seed=0,
          fps=24,
-         give_weight=True,
+         give_weight=False,
          modal_fusion=True,
-         epochs=100,
+         trans_encoder=True,
+         multi_task=True,
+         epochs=200,
          act='relu',
          batch_size=32,
          learning_rate=5e-5,
          max_length=60,
          alpha=2,
          dropout=0.2,
-         decay_rate=0.8,
-         save_at_every=10,
+         decay_rate=0.98,
+         save_at_every=20,
+         debug=False,
          ):
 
     # Step 0. Initialization
@@ -48,7 +51,10 @@ def main(model='arch1',
     param['fps'] = fps
     param['give_weight'] = give_weight
     param['modal_fusion'] = modal_fusion
+    param['trans_encoder'] = trans_encoder
+    param['multi_task'] = multi_task
     param['save_at_every'] = save_at_every
+    param['debug'] = debug
     log_param(param)
 
     # Step 1. Load datasets
@@ -72,11 +78,14 @@ def main(model='arch1',
     hyper_param['decay_rate'] = decay_rate
     log_param(hyper_param)
 
-    run_mymodel(device=device,
-                data_path=data_path,
-                param=param,
-                hyper_param=hyper_param)
-
+    if 'Arch' in param['model']:
+        run_mymodel(device=device,
+                    data_path=data_path,
+                    param=param,
+                    hyper_param=hyper_param)
+    else:
+        print('wrong model name!')
+        
 if __name__ == "__main__":
     # torch.multiprocessing.set_start_method('spawn')
     sys.exit(fire.Fire(main))

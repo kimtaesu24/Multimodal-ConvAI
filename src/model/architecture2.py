@@ -6,8 +6,12 @@ from torch import nn
 import torch.nn.functional as F
 import os
 import time
+import wave
+from copy import deepcopy
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+torch.set_printoptions(profile="full")
 
 class MyArch2(torch.nn.Module):
     def __init__(
@@ -22,34 +26,44 @@ class MyArch2(torch.nn.Module):
         self.num_layers = num_layers
         '''
         self.fps = param['fps']
-        #self.fps = 24
         self.give_weight = param['give_weight']
-        #self.give_weight = True
+        self.give_weight = False
         self.modal_fusion = param['modal_fusion']
-        #self.modal_fusion = False
+        self.modal_fusion = True
+        self.multi_task = param['multi_task']
+        self.trans_encoder = param['trans_encoder']
         self.device = param['device']
-        #self.device = device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.batch_size = hyper_param['batch_size']
-        #self.batch_size = 1
         self.max_length = hyper_param['max_length']
-        #self.max_length = 30
         self.alpha = hyper_param['alpha']
-        #self.alpha = 2
         self.dropout = hyper_param['dropout']
         if hyper_param['act'] =='relu':
             self.act = nn.ReLU()
+        self.audio_feature_dimension = 768
+        self.word_dimension = 1280
+        self.num_emotion = 7
+        
         self.gpt_model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.pad_token = '!'
+        self.tokenizer.bos_token = '#'
         self.embedding_layer = self.gpt_model.get_input_embeddings()
 
-        self.projection_layer = nn.Linear(768, 768, bias=False)
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=self.word_dimension, nhead=8, batch_first=True)
+        self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=6)
+        
+        self.projection_layer = nn.Linear(self.audio_feature_dimension*2, self.word_dimension, bias=False)
         self.projection_layer.weight = torch.nn.init.xavier_uniform_(self.projection_layer.weight)
-                                                             
-        self.MMfusion = nn.Linear(1280+768, 1280, bias=True)
+        
+        self.MMfusion = nn.Linear((25+1)*self.word_dimension, self.word_dimension, bias=True)
         self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
+        
+        self.emotion_analysis = nn.Linear(self.word_dimension, self.num_emotion, bias=True)
+        self.emotion_analysis.weight = torch.nn.init.xavier_uniform_(self.emotion_analysis.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
+        
+        self.loss_function = nn.CrossEntropyLoss(ignore_index=self.tokenizer.pad_token_id)
 
 
     def FER(self, frames):
@@ -74,37 +88,38 @@ class MyArch2(torch.nn.Module):
     def forced_alignment(self, audio_path, transcript):
         '''
         Input: raw voice data of single speaker
-        Output: dictionary of word and timestamp 
-                    = {'I': [0.0, 0.05],
-                       'am': [0.06, 0.09],
-                       ...
-                       }
+        Output: 2d array = [['word1', word2', ...], [start_t1, start_t2,...], [end_t1, end_t2, ...]]
         
         Module: WAV2VEC 
         '''
         from .Forced_Alignment.FA import get_dic as FA
         word_timestamp = FA(audio_path, transcript)
+        
         return word_timestamp
     
     
     def weighted_word(self, T, start, end, tokens):
         '''
         Input: timestamp of expression transition / raw voice data of single speaker
-        
-        Module: huggingface tokenizer
+        Output: 
         
         Goal: give weight to specific word's attention mask
         '''
         # give weight to text when transition occur
         if self.give_weight:
-            for t in T:
-                if t == 0:
-                    break  # padding appear
-                for i, (audio_start, audio_end) in enumerate(zip(start, end)):
-                    if (audio_start == 0) and (audio_end == 0):
+            for mini_batch in range(start.shape[0]):
+                non_zero = torch.count_nonzero(tokens['attention_mask'][mini_batch])
+                zeros = tokens['attention_mask'][mini_batch].shape[-1] - non_zero
+                for t in T[mini_batch]:
+                    if t == 0:
                         break  # padding appear
-                    if audio_start < (t / self.fps) < audio_end:
-                        tokens['attention_mask'][0][i] = 1 * self.alpha
+                    for i, (audio_start, audio_end) in enumerate(zip(start[mini_batch], end[mini_batch])):
+                        if i > len(tokens['attention_mask'][mini_batch]):
+                            continue  # ignore when longger than padding_size
+                        if (audio_start == 0) and (audio_end == 0):
+                            break  # padding appear
+                        if audio_start < (t / self.fps) < audio_end:
+                            tokens['attention_mask'][mini_batch][i+zeros] *= self.alpha
         return tokens
     
     def get_audio_feature(self, SPEECH_FILE):
@@ -113,7 +128,7 @@ class MyArch2(torch.nn.Module):
         model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h")
         processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
         
-        audio_input, _ = librosa.load(SPEECH_FILE, sr=16_000)  # 48000
+        audio_input, _ = librosa.load(SPEECH_FILE, sr=16_000)
         
         # Preprocess the audio input
         inputs = processor(audio_input, sampling_rate=16_000, return_tensors="pt", padding=True)
@@ -128,181 +143,194 @@ class MyArch2(torch.nn.Module):
         return features
     
     
-    def multimodal_fusion(self, inputs_embeds, audio_feature):
+    def multimodal_fusion(self, inputs_embeds, audio_feature, mask):
         '''
         Input:  text embedding / audio feature
         Output: multimodal fused embedding
         '''
-        # print(inputs_embeds.shape)
-        audio_feature = audio_feature.repeat(len(inputs_embeds), 1)  # [1,768] -> [n ,768]
-        x = torch.cat((inputs_embeds, audio_feature), dim=1)
-        embedding = self.MMfusion(x)
-        return self.act(embedding)
-
+        inputs_embeds = torch.unsqueeze(inputs_embeds, dim=2) # [batch, max_length, 1, 1280]
+        x = torch.cat((inputs_embeds, audio_feature), dim=2) # [batch, max_length, 26, 1280] 
+        x = x.view(x.shape[0], x.shape[1], -1)  # [batch, max_length, 33280]
+        multimodal_embedding = self.act(self.MMfusion(x))  # [batch, max_length, word_dimension]
+        
+        if self.trans_encoder:
+            bos = self.embedding_layer.weight.data[self.tokenizer.bos_token_id]  # bos_token
+            bos_multimodal_embedding = torch.cat([bos.repeat(multimodal_embedding.shape[0],1,1), multimodal_embedding], dim=1)  # [batch, max_length + 1, word_dimension]
+            
+            bos_mask = torch.ones(multimodal_embedding.shape[0], 1).to(self.device)
+            bos_concat_mask = torch.cat([bos_mask, mask], dim=1)  # [batch, max_length + 1]
+            
+            feature = self.transformer_encoder(bos_multimodal_embedding, src_key_padding_mask=bos_concat_mask)
+            final_embeds = feature[:,1:,:]
+            emotions = feature[:,:1,:]
+        else:
+            final_embeds = multimodal_embedding
+            emotions = None
+            
+        return final_embeds, emotions
 
     def forward(self, inputs, labels):
         '''
         inputs: start time, end time, T, tokens= single sentence, waveform= audio feature
         labels: responsive sentence
         '''
-        start = inputs[0]
-        end = inputs[1]
-        T = inputs[2]
+        start = inputs[0]   # [batch, max_length]
+        end = inputs[1]     # [batch, max_length]
+        T = inputs[2]       # [batch, T_pad_len]
         tokens = inputs[3]
-        waveform = inputs[4]
+        audio_feature = inputs[4]   # [batch, max_length, audio_pad_len, feature_dim]
         
-        concat_labels = torch.cat([tokens['input_ids'], labels['input_ids']], dim=2)  # [1,1,sentence_length]
-        # print(concat_labels)
+        tokens_labels = labels[0]
+        emotion_label = labels[1]
         
-        if self.batch_size == 1:
-            start = torch.squeeze(start, dim=0)
-            end = torch.squeeze(end, dim=0)
-            T = torch.squeeze(T, dim=0)
-            tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=0)
-            tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=0)
-            waveform = torch.squeeze(waveform, dim=0)
+        # preprocess
+        audio_feature = audio_feature.view(audio_feature.shape[0], audio_feature.shape[1], audio_feature.shape[2]//2, -1)  # [batch, max_length, audio_pad_len/2, feature_dim*2]
+        tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=1)  # [batch_size, max_length]
+        tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=1)  # [batch_size, max_length]
+        tokens_labels['input_ids'] = torch.squeeze(tokens_labels['input_ids'], dim=1)
+        tokens_labels['attention_mask'] = torch.squeeze(tokens_labels['attention_mask'], dim=1)
         
         # ==== step 1. Give weight to word ====
         new_tokens = self.weighted_word(T, start, end, tokens)
         
         # ==== step 2. Extract audio feature ====
-        audio_feature = torch.mean(waveform, dim=1)
-        audio_feature = self.projection_layer(audio_feature)
-        
-        # ==== step 3. Generate next sentence ====
-        inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids'][0]]  # get the embedding layer weights
-        labels_embeds = self.embedding_layer.weight.data[labels['input_ids'][0]]  # get the embedding layer weights
+        audio_feature = self.projection_layer(audio_feature)  # [batch, max_length, audio_pad_len/2, word_dimension]
+        # ==== step 3. Generate next sentence ====  
+        inputs_embeds = self.embedding_layer.weight.data[new_tokens['input_ids']]  # get the embedding layer weights
+        labels_embeds = self.embedding_layer.weight.data[tokens_labels['input_ids']]  # get the embedding layer weights
         
         if self.modal_fusion:
-            inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
-            
-        if self.batch_size == 1:
-            inputs_embeds = torch.unsqueeze(inputs_embeds, 0)
-            labels['attention_mask'] = torch.squeeze(labels['attention_mask'], dim=0)
+            inputs_embeds, emotions = self.multimodal_fusion(inputs_embeds, audio_feature, new_tokens['attention_mask'])
+            if self.multi_task:
+                emotion_logits = self.emotion_analysis(emotions)
+                emotion_analysis_loss = self.loss_function(emotion_logits.contiguous().view(-1,self.num_emotion), emotion_label.contiguous().view(-1))
+            else:
+                emotion_analysis_loss = 0.
         
-        concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length, word_dimension]
-        concat_mask = torch.cat([new_tokens['attention_mask'], labels['attention_mask']], dim=1)  # [1, sentence_length]
+        concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, max_length*2, word_dimension]
+        concat_mask = torch.cat([new_tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  # [batch, max_length*2]
         
-        output = self.gpt_model(inputs_embeds=concat_inputs,
-                                attention_mask=concat_mask,
-                                labels=concat_labels
-                                )
-        # loss = nn.CrossEntropyLoss()
-        # predicted_token_ids = torch.argmax(output.logits, dim=-1)
-        # print(predicted_token_ids)
-        
-        return output.loss
-        # return loss(output.hidden_states[:,61:], labels[:,61:])
+        outputs = self.gpt_model(inputs_embeds=concat_inputs,
+                                 attention_mask=concat_mask,
+                                 )
+        sft_idx = tokens['input_ids'].shape[-1]
 
-    def inference(self, inputs, eos_token_id=50256):
+        p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), tokens_labels['input_ids'][:, :].contiguous().view(-1))
+        
+        return 0.8*p_loss + 0.2*emotion_analysis_loss
+        
+
+    def inference(self, inputs):
         '''
         inputs: [image_list, audio_path, tokens, transcript, waveform], tokenizer.eos_token_id
         outputs: [text]
         ''' 
         frames = inputs[0]
         audio_path = inputs[1]
-        tokens = inputs[2]
+        tokens = inputs[2].to(self.device)
         transcript= inputs[3]
-        waveform = inputs[4]
+        waveform = inputs[4].to(self.device)
         
-        prompt = tokens.input_ids
-        
-
-        step1 = time.time()
-        _ , T = self.FER(frames)
-        print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
+        # step1 = time.time()
+        # _ , T = self.FER(frames)
+        # T = torch.unsqueeze(torch.tensor(T), dim=0)  # [batch_size=1, T_len]
+        # print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
         
         step2 = time.time()
         word_timestamp = self.forced_alignment(audio_path, transcript)
-        start = word_timestamp[1]
-        end = word_timestamp[2]
-        new_tokens = self.weighted_word(T, start, end, tokens)
-        print("==== Step 2. [Give weight to word]\t spent time: {:.4f} ====".format(time.time()-step2))
+        start = pad(word_timestamp[1], self.max_length)
+        start = torch.unsqueeze(torch.tensor(start), dim=0)  # [batch_size=1, start_len]
+        
+        end = pad(word_timestamp[2], self.max_length)
+        end = torch.unsqueeze(torch.tensor(end), dim=0)  # [batch_size=1, end_len]
+        # new_tokens = self.weighted_word(T, start, end, tokens)
+        print("==== Step 1. [Word forced alignment]\t spent time: {:.4f} ====".format(time.time()-step2))
         
         step3 = time.time()
         # waveform = self.get_audio_feature(audio_path)
-        audio_feature = torch.mean(waveform, dim=1)
-        audio_feature = self.projection_layer(audio_feature)
-
-        #inputs_embeds = self.embedding_layer.weight.data[tokens['input_ids'][0]]
-        inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
-        inputs_embeds = torch.squeeze(inputs_embeds)
+        waveform = torch.squeeze(waveform)
         
-        if self.modal_fusion:
-            inputs_embeds = self.multimodal_fusion(inputs_embeds, audio_feature)
-        print("==== Step 3. [Audio feature Fusion]\t spent time: {:.4f} ====".format(time.time()-step3))
+        duration = get_wav_duration(audio_path)
+        
+        a = (waveform.shape[0] / duration)
+        waveform_start = torch.tensor(start) * a
+        waveform_end = torch.tensor(end) * a
+        FA_waveform = []
+        audio_padding = 50
+        for i, (s, e) in enumerate(zip(waveform_start[0], waveform_end[0])):
+            if (i != 0) and (s == 0.) and (e == 0.):  # padding appear
+                word_waveform = torch.zeros(audio_padding, waveform.shape[-1])
+            else:
+                word_waveform = waveform[int(s):int(e), :]  # split waveform along to word duration
+                word_waveform = audio_pad(word_waveform, audio_padding)
+            FA_waveform.append(word_waveform)
+        FA_waveform = torch.stack(FA_waveform, dim=0)  # list to torch.tensor
+        print("==== Step 2. [Audio forced alignment]\t spent time: {:.4f} ====".format(time.time()-step3))
         
         step4 = time.time()
-        if self.batch_size == 1:
-            inputs_embeds = torch.unsqueeze(inputs_embeds, 0)
+        FA_waveform = torch.unsqueeze(FA_waveform, dim=0)
+        FA_waveform = FA_waveform.contiguous().view(FA_waveform.shape[0], FA_waveform.shape[1], FA_waveform.shape[2]//2, -1)  # [batch, max_length, audio_pad_len/2, feature_dim*2]
+        audio_feature = self.projection_layer(FA_waveform)
 
-        output = self.gpt_model.generate(input_ids=prompt,
-                                         max_length=1000, 
-                                         pad_token_id=eos_token_id,
+        # inputs_embeds = self.gpt_model.transformer.wte(new_tokens['input_ids'])
+        inputs_embeds = self.embedding_layer.weight.data[tokens['input_ids']]  # get the embedding layer weights
+        
+        if self.modal_fusion:
+            inputs_embeds, emotions = self.multimodal_fusion(inputs_embeds, audio_feature, tokens['attention_mask'])
+            if self.multi_task:
+                emotion_dic = {'neutral':0,
+                                'surprise':1,
+                                'fear':2,
+                                'sadness':3,
+                                'joy':4,
+                                'disgust':5,
+                                'anger':6}
+                reverse_emotion_dic = {v:k for k,v in emotion_dic.items()}
+                emotion_logits = self.emotion_analysis(emotions)
+                print(reverse_emotion_dic.get(int(torch.argmax(emotion_logits))))
+        print("==== Step 3. [Audio feature Fusion]\t spent time: {:.4f} ====".format(time.time()-step4))
+        
+        step5 = time.time()
+
+        output = self.gpt_model.generate(max_length=100,
+                                         pad_token_id=self.tokenizer.pad_token_id,
                                          inputs_embeds=inputs_embeds,
-                                         attention_mask=new_tokens['attention_mask'],
+                                         attention_mask=tokens['attention_mask'],
+                                        #  do_sample=True,
+                                        #  top_k=50,
+                                        #  top_p=0.90,
                                          )
         
-        print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step4))
+        print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step5))
         
         return output
-    
-if __name__ == "__main__":
-    tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-    tokenizer.pad_token = tokenizer.eos_token
-    
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    max_length = 30
-    
-    SPEECH_FILE = '/home2/dataset/MELD/audio_feature/train/dia0_utt3.pt'
-    
-    #word_timestamp = [" ".join(["OH", "MY", "GOD", "HE'S", "LOST", "IT", "HE'S", "TOTALLY", "LOST", "IT"]),[0.1208125, 0.302125, 0.5035625, 0.8056875, 1.0876875, 1.4905625, 1.59125, 1.73225, 2.115, 2.5178125],[0.282, 0.423, 0.765375, 0.9668125, 1.41, 1.551, 1.692, 2.0545625, 2.417125, 2.558125]]
-    #T = [12, 14, 15, 16, 18, 22, 41, 47, 82, 84, 85, 86, 87, 88, 89, 91, 102, 103, 104, 106, 109, 110, 111, 112, 114, 116, 118, 121, 140, 142]
-    
-    word_timestamp = [" ".join(["SO", "LET'S", "TALK", "A", "LITTLE", "BIT", "ABOUT", "YOUR", "DUTIES"]),[0.4014375, 0.602125, 0.8630625, 1.1039375, 1.1641875, 1.364875, 1.5455625, 1.766375, 1.9269375],[0.562, 0.802875, 1.0638125, 1.124, 1.3448125, 1.5255, 1.74625, 1.88675, 2.187875]]
-    T = [54, 55, 58, 59, 60, 61, 62, 63, 64]
-    
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    param = dict()
-    param['device'] = device
-    param['fps'] = 24
-    param['give_weight'] = True
-    param['modal_fusion'] = True
-    
-    hyper_param = dict()
-    hyper_param['act'] = 'relu'
-    hyper_param['batch_size'] = 1
-    hyper_param['max_length'] = 30
-    hyper_param['alpha'] = 2
-    hyper_param['embedding_size'] = 1024
-    
-    print(word_timestamp[0])
-    tokens = tokenizer("so let's talk a little bit about your duties",
-                       padding='max_length',
-                       max_length=max_length,
-                       truncation=True,
-                       return_attention_mask=True,
-                       return_tensors='pt'
-                       )
-    print(tokens)
-    
-    waveform = torch.load(SPEECH_FILE)
-    #print(torch.mean(waveform, 1).shape)
-    
-    labels = "What?"
-    labels_token = tokenizer(labels,
-                             padding='max_length',
-                             max_length=max_length,
-                             truncation=True,
-                             return_tensors='pt'
-                             ).input_ids
-    print(labels_token)
-    
-    model = MyArch2(param, hyper_param).to(device)
-    inputs = [word_timestamp[1], word_timestamp[2], T, tokens.to(device), waveform]
-    loss = model(inputs, labels_token)
-    
-    print('loss: ', loss.item())
+   
+def pad(inputs, max_length):
+    tmp = [0 for i in range(max_length)]
+    if len(inputs) > max_length:
+        tmp[:len(inputs)] = inputs[:max_length]  # truncation
+    else:
+        tmp[:len(inputs)] = inputs  # padding
+    return tmp
+ 
+def get_wav_duration(file_path):
+    with wave.open(file_path, 'rb') as wav_file:
+        # Get the number of frames in the WAV file
+        num_frames = wav_file.getnframes()
 
-    
+        # Get the frame rate (number of frames per second)
+        frame_rate = wav_file.getframerate()
+
+        # Calculate the duration in seconds
+        duration = num_frames / frame_rate
+
+        return duration
+        
+def audio_pad(inputs, padding_size):
+    tmp = torch.zeros(padding_size, inputs.shape[-1])
+    if inputs.shape[0] > padding_size:
+        tmp[:inputs.shape[0], :] = inputs[:padding_size]  # truncation
+    else:
+        tmp[:inputs.shape[0], :] = inputs  # padding
+    return tmp
+
