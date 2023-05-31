@@ -1,0 +1,11 @@
+transformers/models/gpt2/modeling_gpt2.py - [822~829 line]
+
+'''
+give attention for architecture 1
+'''
+print(attention_mask)
+if 2 in attention_mask:
+    print('success!')
+    attention_mask = (1.0 - attention_mask>0) * torch.finfo(self.dtype).min + attention_mask -1
+else:
+    attention_mask = (1.0 - attention_mask) * torch.finfo(self.dtype).min

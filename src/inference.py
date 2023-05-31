@@ -11,6 +11,7 @@ import moviepy.editor as mp
 from transformers import AutoTokenizer, Wav2Vec2Processor, Wav2Vec2Model
 from model.architecture1 import MyArch1
 from model.architecture2 import MyArch2
+from utils import log_param
 
 # sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
 
@@ -68,7 +69,6 @@ def audio2text(audio_path):
 
     decoder = GreedyCTCDecoder(labels=bundle.get_labels())
     transcript = decoder(emission[0])
-    # transcript = "DON'T|YELL|AT|ME|OKAY|THIS|IS|THE|MOST|I'VE|SEEN|YOU|ALL|WEEK|"
     print(transcript)
     context = transcript.replace("|", " ").lower()
     context = context[:-1] + "."
@@ -157,30 +157,35 @@ def main(param, hyper_param, input_video, checkpoint):
     file.close()
     '''
     print("==== model inference start ====")
-    outputs = model.inference(inputs)
+    outputs = model.inference(inputs, greedy=True)
     print(outputs)
     sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
     print("Response: {}".format(sentence))
 
 if __name__ == '__main__':
     input_video = 'dia0_utt3.mp4'
+    # input_video = 'dia855_utt6.mp4'
     # input_video = 'dia231_utt10.mp4'
     # input_video = 'dia12_utt9.mp4'
     
     param = dict()
-    param['model'] = 'Arch1'
+    param['model'] = 'MyArch'
     param['device'] = "cuda" if torch.cuda.is_available() else "cpu"
     param['fps'] = 24
     param['give_weight'] = True
+    param['forced_align'] = True
     param['modal_fusion'] = True
     param['trans_encoder'] = True
-    param['multi_task'] = False
+    param['multi_task'] = True
+    log_param(param)
 
     hyper_param = dict()
     hyper_param['act'] = 'relu'
     hyper_param['batch_size'] = 1
     hyper_param['max_length'] = 60
+    hyper_param['audio_pad_size'] = 50
     hyper_param['alpha'] = 2
     hyper_param['dropout'] = 0.2
+    log_param(hyper_param)
     
     main(param, hyper_param, input_video, sys.argv[1])

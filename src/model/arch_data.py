@@ -2,40 +2,39 @@ import numpy as np
 import pandas as pd
 import torch
 import ast
+from . import modules
 from torch.utils.data import Dataset
 from transformers import AutoTokenizer
 
-def pad(inputs, max_length):
-    tmp = [0 for i in range(max_length)]
-    if len(inputs) > max_length:
-        tmp[:len(inputs)] = inputs[:max_length]  # truncation
-    else:
-        tmp[:len(inputs)] = inputs  # padding
-    return tmp
-
-class Arch1_Dataset(Dataset):
-    def __init__(self, data_path, device, mode='train',max_length=30):
+class MyArch_Dataset(Dataset):
+    def __init__(self, data_path, device, mode='train', max_length=30, FA=True, audio_padding=50):
+        self.data_path = data_path
+        self.device = device
+        self.audio_feature_path = self.data_path + 'audio_feature/'+ mode
+        self.audio_file_path = self.data_path + mode
+        self.max_length = max_length
+        self.forced_align = FA
+        self.audio_padding = audio_padding
+        
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer.pad_token = '!'
+        self.tokenizer.bos_token = '#'
         self.tokenizer.padding_side = 'left'
         
         self.label_tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.label_tokenizer.pad_token = '!'
-        
-        self.data_path = data_path
-        self.audio_feature_path = self.data_path + 'audio_feature/'+ mode
-        self.device = device
+        self.tokenizer.bos_token = '#'
         
         if mode == 'train':
             self.FA = pd.read_csv(self.data_path + 'train_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'train_fer_matched.csv')
+            self.emotion = pd.read_csv(self.data_path + 'train_emotion_matched.csv')
         else:
             self.FA = pd.read_csv(self.data_path + 'valid_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'valid_fer_matched.csv')
+            self.emotion = pd.read_csv(self.data_path + 'valid_emotion_matched.csv')
             
-        # self.timestamp_padding = max(len(i) for i in self.FA['start'].apply(eval))  # 69
         self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
-        self.max_length = max_length
         self.manual_index = 0
 
     def __len__(self):
@@ -50,14 +49,13 @@ class Arch1_Dataset(Dataset):
             self.manual_index = 0  # initialize
             
         idx += self.manual_index
-        if self.FA['Dialogue_ID'][idx] != self.FA['Dialogue_ID'][idx+1]:
+        if self.FA['Dialogue_ID'][idx] != self.FA['Dialogue_ID'][idx+1]:  # next dialogue appear
             self.manual_index += 1
             idx += 1
-            # print('----------------------------------------')
-        while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):
+            
+        while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):  # empty uttrance appear
             self.manual_index += 1
             idx += 1
-        # print(idx)
         
         context = ' '.join(ast.literal_eval(self.FA['word'][idx])).lower() + '.'
         response = ' '.join(ast.literal_eval(self.FA['word'][idx+1])).lower() + '.'
@@ -65,13 +63,13 @@ class Arch1_Dataset(Dataset):
         # print('response: ', response)
         
         start = ast.literal_eval(self.FA['start'][idx])
-        start = pad(start, self.max_length)
+        start = modules.pad(start, self.max_length)
         end = ast.literal_eval(self.FA['end'][idx])
-        end = pad(end, self.max_length)
+        end = modules.pad(end, self.max_length)
         
         T = ast.literal_eval(self.fer['T_list'][idx])
         if len(T) < self.T_padding:  # padding
-            T = pad(T, self.T_padding)
+            T = modules.pad(T, self.T_padding)
         
         tokens = self.tokenizer(context + self.tokenizer.eos_token,
                                 padding='max_length',
@@ -80,16 +78,21 @@ class Arch1_Dataset(Dataset):
                                 return_attention_mask=True,
                                 return_tensors='pt'
                                 )
-        labels = self.label_tokenizer(response + self.tokenizer.eos_token,
-                                padding='max_length',
-                                max_length=self.max_length,
-                                truncation=True,
-                                return_attention_mask=True,
-                                return_tensors='pt'
-                                )
-        
+
         waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
-        audio_feature = torch.mean(waveform, dim=1)
+        if self.forced_align:
+            audio_path = self.audio_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
+            audio_feature = modules.audio_word_align(waveform, audio_path, start, end, self.audio_padding)
+        else:
+            audio_feature = torch.mean(waveform, dim=1)
+        
+        tokens_labels = self.label_tokenizer(response + self.tokenizer.eos_token,
+                                            padding='max_length',
+                                            max_length=self.max_length,
+                                            truncation=True,
+                                            return_attention_mask=True,
+                                            return_tensors='pt'
+                                            )
         
         inputs = [torch.tensor(start).to(self.device),
                   torch.tensor(end).to(self.device), 
@@ -98,6 +101,7 @@ class Arch1_Dataset(Dataset):
                   audio_feature,
                   ]
         
-        labels = labels.to(self.device)
+        labels = [tokens_labels.to(self.device),
+                  torch.tensor(self.emotion['Emotion'][idx]).to(self.device)]
         
         return inputs, labels

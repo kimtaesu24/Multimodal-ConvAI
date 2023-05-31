@@ -2,11 +2,9 @@ import torch
 import pickle
 import datetime
 
-from .arch1_data import Arch1_Dataset
-from .arch2_data import Arch2_Dataset
+from .arch_data import Arch_Dataset
 from torch.utils.data import DataLoader
-from .architecture1 import MyArch1
-from .architecture2 import MyArch2
+from .architecture import MyArch
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
@@ -18,16 +16,20 @@ class MyTrainer:
         self.data_path = data_path
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer.pad_token = '!'
+        self.tokenizer.bos_token = '#'
 
     def train_with_hyper_param(self, param, hyper_param):
         model_name = param['model']
         save_at_every = param['save_at_every']
         debug_mode = param['debug']
+        
         epochs = hyper_param['epochs']
         learning_rate = hyper_param['learning_rate']
         decay_rate = hyper_param['decay_rate']
         batch_size = hyper_param['batch_size']
         max_length = hyper_param['max_length']
+        audio_pad_size = hyper_param['audio_pad_size']
+        
         if param['give_weight'] == True:
             give_weight = 'give_weight_T'
         else:
@@ -44,34 +46,25 @@ class MyTrainer:
             multi_task = 'multi_task_T'
         else:
             multi_task = 'multi_task_F'
+        if param['forced_align'] == True:
+            multi_task = 'forced_align_T'
+        else:
+            multi_task = 'forced_align_F'
         
-        model = None
-        train_dataloader = None
-        valid_dataloader = None
-        if model_name == 'Arch1':
-            model = MyArch1(param, hyper_param).to(self.device)
-            
-            train_dataset = Arch1_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
-            valid_dataset = Arch1_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
-            
-            train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
-            valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
-            
-        elif model_name == 'Arch2':
-            model = MyArch2(param, hyper_param).to(self.device)
-            
-            train_dataset = Arch2_Dataset(self.data_path, mode='train', max_length=max_length, device=self.device)
-            valid_dataset = Arch2_Dataset(self.data_path, mode='valid', max_length=max_length, device=self.device)
-            
-            train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
-            valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
+        model = MyArch1(param, hyper_param).to(self.device)
+        
+        train_dataset = Arch1_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
+        valid_dataset = Arch1_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
+        
+        train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
+        valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
             
         train_batch_len = len(train_dataloader)
         valid_batch_len = len(valid_dataloader)
         
         with open("/home2/s20235100/Conversational-AI/MyModel/src/model/inference_file.pickle", "rb") as file:
             inference_file = pickle.load(file)  # inference data for every end of epochs
-            outputs = model.inference(inference_file)
+            outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
 
@@ -108,7 +101,7 @@ class MyTrainer:
                         wandb.log({'train_loss':loss.item()})
                     
             # sample check
-            outputs = model.inference(inference_file)
+            outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
             
