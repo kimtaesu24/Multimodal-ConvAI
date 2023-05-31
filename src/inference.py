@@ -9,8 +9,7 @@ import soundfile as sf
 from PIL import Image
 import moviepy.editor as mp
 from transformers import AutoTokenizer, Wav2Vec2Processor, Wav2Vec2Model
-from model.architecture1 import MyArch1
-from model.architecture2 import MyArch2
+from model.architecture import MyArch
 from utils import log_param
 
 # sys.path.insert(0, '/home2/s20235100/Conversational-AI/MyModel/src/model/')
@@ -110,7 +109,15 @@ def preprocess_video(input_video, max_length):
     
     waveform = audio2feature(audio_path, desired_sampling_rate=16000)
     
-    return [image_list, audio_path, tokens, transcript, waveform]
+    inputs = [image_list, audio_path, tokens, transcript, waveform]
+    '''
+    file_path = "/home2/s20235100/Conversational-AI/MyModel/src/model/inference_file.pickle"
+    with open(file_path, "wb") as file:
+        pickle.dump(inputs, file)
+    file.close()
+    '''
+    
+    return inputs
     
 def main(param, hyper_param, input_video, checkpoint):
     print(checkpoint)
@@ -125,6 +132,10 @@ def main(param, hyper_param, input_video, checkpoint):
         modal_fusion = 'modal_fusion_T'
     else:
         modal_fusion = 'modal_fusion_F'
+    if param['forced_align'] == True:
+        forced_align = 'forced_align_T'
+    else:
+        forced_align = 'forced_align_F'
     if param['trans_encoder'] == True:
         trans_encoder = 'trans_encoder_T'
     else:
@@ -134,29 +145,15 @@ def main(param, hyper_param, input_video, checkpoint):
     else:
         multi_task = 'multi_task_F'
         
-    if param['model'] == 'Dialogpt' or param['model'] == 'Arch1':
-        weight_path = path + f"Arch1/{give_weight}/{modal_fusion}/" + weigth
-        model = MyArch1(param=param, hyper_param=hyper_param)
-    elif param['model'] == 'Arch2':
-        weight_path = path + f"Arch2/{trans_encoder}/{multi_task}/" + weigth
-        model = MyArch2(param=param, hyper_param=hyper_param)
-    # elif param['model'] == 'Arch3':
-    #     weight_path = path + f"Arch3/{trans_encoder}/{multi_task}" + weigth
-    #     model = MyArch3(param=param, hyper_param=hyper_param)
+    weight_path = path + f"{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/" + weigth
+    model = MyArch(param=param, hyper_param=hyper_param)
     
-    device = param['device']
-    model.load_state_dict(torch.load(weight_path, map_location=device))
+    model.load_state_dict(torch.load(weight_path, map_location=param['device']))
     model.eval()
     
     print("==== preprocessing ====")
     inputs = preprocess_video(input_video, hyper_param['max_length'])
-    '''
-    file_path = "/home2/s20235100/Conversational-AI/MyModel/src/model/inference_file.pickle"
-    with open(file_path, "wb") as file:
-        pickle.dump(inputs, file)
-    file.close()
-    '''
-    print("==== model inference start ====")
+
     outputs = model.inference(inputs, greedy=True)
     print(outputs)
     sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -173,8 +170,8 @@ if __name__ == '__main__':
     param['device'] = "cuda" if torch.cuda.is_available() else "cpu"
     param['fps'] = 24
     param['give_weight'] = True
-    param['forced_align'] = True
     param['modal_fusion'] = True
+    param['forced_align'] = True
     param['trans_encoder'] = True
     param['multi_task'] = True
     log_param(param)

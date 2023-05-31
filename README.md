@@ -15,10 +15,9 @@ Multimodal-ConvAI
         ├── inference.py                # implements a function for inference the model
         ├── baseline.py                 # original dialogpt running code
         └── models                      
-            ├── architecture1.py        # implements the forward function of the architecture 1
-            ├── architecture2.py        # implements the forward function of the architecture 2
-            ├── arch1_data.py           # loda dataset for dataloader
-            ├── train.py                # implements a function for training the model with hyperparameters
+            ├── architecture.py        # implements the forward function of the architecture
+            ├── arch_data.py           # loda dataset for dataloader
+            ├── train.py               # implements a function for training the model with hyperparameters
             ├── DAN
             └── Forced_Alignment
 ```

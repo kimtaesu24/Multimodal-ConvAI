@@ -2,7 +2,7 @@ import torch
 import pickle
 import datetime
 
-from .arch_data import Arch_Dataset
+from .arch_data import MyArch_Dataset
 from torch.utils.data import DataLoader
 from .architecture import MyArch
 from tqdm import tqdm
@@ -38,6 +38,10 @@ class MyTrainer:
             modal_fusion = 'modal_fusion_T'
         else:
             modal_fusion = 'modal_fusion_F'
+        if param['forced_align'] == True:
+            forced_align = 'forced_align_T'
+        else:
+            forced_align = 'forced_align_F'
         if param['trans_encoder'] == True:
             trans_encoder = 'trans_encoder_T'
         else:
@@ -46,15 +50,11 @@ class MyTrainer:
             multi_task = 'multi_task_T'
         else:
             multi_task = 'multi_task_F'
-        if param['forced_align'] == True:
-            multi_task = 'forced_align_T'
-        else:
-            multi_task = 'forced_align_F'
         
-        model = MyArch1(param, hyper_param).to(self.device)
+        model = MyArch(param, hyper_param).to(self.device)
         
-        train_dataset = Arch1_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
-        valid_dataset = Arch1_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
+        train_dataset = MyArch_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
+        valid_dataset = MyArch_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
         
         train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
         valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
@@ -119,10 +119,7 @@ class MyTrainer:
 
             # save checkpoint
             if (epoch + 1) % save_at_every == 0:
-                if model_name == 'Arch1':
-                    torch.save(model.state_dict(), f"/home2/s20235100/Conversational-AI/MyModel/pretrained_model/{model_name}/{give_weight}/{modal_fusion}/{str(epoch+1)}_epochs{str(hyper_param)}.pt")
-                elif model_name == 'Arch2':
-                    torch.save(model.state_dict(), f"/home2/s20235100/Conversational-AI/MyModel/pretrained_model/{model_name}/{trans_encoder}/{multi_task}/{str(epoch+1)}_epochs{str(hyper_param)}.pt")
+                torch.save(model.state_dict(), f"/home2/s20235100/Conversational-AI/MyModel/pretrained_model/{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/{str(epoch+1)}_epochs{str(hyper_param)}.pt")
                 pbar.write('Pretrained model has saved at Epoch: {:02} '.format(epoch+1))
 
             scheduler.step()
