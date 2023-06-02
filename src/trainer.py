@@ -6,7 +6,9 @@ from utils import set_random_seed
 from model.train import MyTrainer
 from utils import log_param
 from loguru import logger
+import warnings
 
+warnings.filterwarnings(action='ignore')
 
 def run_mymodel(device, data_path, param, hyper_param):
     trainer = MyTrainer(device=device,
@@ -22,17 +24,18 @@ def main(model='MyArch',
          data_name='MELD',
          seed=0,
          fps=24,
-         give_weight=True,
-         modal_fusion=True,
-         forced_align=True,
-         trans_encoder=True,
-         multi_task=True,
+         give_weight=False,
+         modal_fusion=False,
+         forced_align=False,
+         landmark_append=False,
+         trans_encoder=False,
+         multi_task=False,
          epochs=200,
          act='relu',
-         batch_size=32,
+         batch_size=1,
          learning_rate=5e-5,
          max_length=60,
-         audio_pad_size=50,
+         audio_pad_size=60,
          alpha=2,
          dropout=0.2,
          decay_rate=0.98,
@@ -52,8 +55,9 @@ def main(model='MyArch',
     param['seed'] = seed
     param['fps'] = fps
     param['give_weight'] = give_weight
-    param['forced_align'] = forced_align
     param['modal_fusion'] = modal_fusion
+    param['forced_align'] = forced_align
+    param['landmark_append'] = landmark_append
     param['trans_encoder'] = trans_encoder
     param['multi_task'] = multi_task
     param['save_at_every'] = save_at_every

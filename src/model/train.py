@@ -22,6 +22,7 @@ class MyTrainer:
         model_name = param['model']
         save_at_every = param['save_at_every']
         debug_mode = param['debug']
+        fps = param['fps']
         
         epochs = hyper_param['epochs']
         learning_rate = hyper_param['learning_rate']
@@ -50,11 +51,15 @@ class MyTrainer:
             multi_task = 'multi_task_T'
         else:
             multi_task = 'multi_task_F'
+        if param['landmark_append'] == True:
+            landmark_append = 'landmark_append_T'
+        else:
+            landmark_append = 'landmark_append_F'
         
         model = MyArch(param, hyper_param).to(self.device)
         
-        train_dataset = MyArch_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
-        valid_dataset = MyArch_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], audio_padding=audio_pad_size, device=self.device)
+        train_dataset = MyArch_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], LM=param['landmark_append'], audio_padding=audio_pad_size, fps=fps, device=self.device)
+        valid_dataset = MyArch_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], LM=param['landmark_append'], audio_padding=audio_pad_size, fps=fps, device=self.device)
         
         train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
         valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
@@ -67,7 +72,7 @@ class MyTrainer:
             outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
-
+        
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
         
@@ -87,7 +92,7 @@ class MyTrainer:
             for i, (inputs, labels) in enumerate(prog_bar):
                 optimizer.zero_grad()
                 
-                loss = model(inputs, labels)
+                loss, metrics = model(inputs, labels)
                 prog_bar.set_postfix({'loss': loss.item()})
 
                 loss.backward()
@@ -99,17 +104,23 @@ class MyTrainer:
                 if not debug_mode:  # code for debugging
                     if i % (100//batch_size) == 0:
                         wandb.log({'train_loss':loss.item()})
+                        wandb.log({'train_bleu-1':metrics[0]})
+                        wandb.log({'train_bleu-2':metrics[1]})
+                        wandb.log({'train_bleu-3':metrics[2]})
+                        wandb.log({'train_bleu-4':metrics[3]})
                     
             # sample check
+            
             outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
+            
             
             # validation
             with torch.no_grad():
                 model.eval()
                 for inputs, labels in tqdm(valid_dataloader, position=1, leave=False, desc='batch'):
-                    loss = model(inputs, labels)
+                    loss, metrics = model(inputs, labels)
 
                     total_valid_loss += loss.item()
                 
@@ -119,7 +130,7 @@ class MyTrainer:
 
             # save checkpoint
             if (epoch + 1) % save_at_every == 0:
-                torch.save(model.state_dict(), f"/home2/s20235100/Conversational-AI/MyModel/pretrained_model/{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/{str(epoch+1)}_epochs{str(hyper_param)}.pt")
+                torch.save(model.state_dict(), f"/home2/s20235100/Conversational-AI/MyModel/pretrained_model/{landmark_append}/{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/{str(epoch+1)}_epochs{str(hyper_param)}.pt")
                 pbar.write('Pretrained model has saved at Epoch: {:02} '.format(epoch+1))
 
             scheduler.step()
