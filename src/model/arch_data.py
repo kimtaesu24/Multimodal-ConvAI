@@ -7,14 +7,16 @@ from torch.utils.data import Dataset
 from transformers import AutoTokenizer
 
 class MyArch_Dataset(Dataset):
-    def __init__(self, data_path, device, mode='train', max_length=30, FA=True, audio_padding=50):
+    def __init__(self, data_path, device, mode='train', max_length=30, FA=True, LM=True, audio_padding=50, fps=24):
         self.data_path = data_path
         self.device = device
         self.audio_feature_path = self.data_path + 'audio_feature/'+ mode
-        self.audio_file_path = self.data_path + mode
+        self.single_file_path = self.data_path + mode
         self.max_length = max_length
         self.forced_align = FA
+        self.landmark_append = LM
         self.audio_padding = audio_padding
+        self.fps = fps
         
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer.pad_token = '!'
@@ -29,10 +31,12 @@ class MyArch_Dataset(Dataset):
             self.FA = pd.read_csv(self.data_path + 'train_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'train_fer_matched.csv')
             self.emotion = pd.read_csv(self.data_path + 'train_emotion_matched.csv')
+            # self.emotion = pd.read_csv(self.data_path + 'train_landmark.csv')
         else:
             self.FA = pd.read_csv(self.data_path + 'valid_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'valid_fer_matched.csv')
             self.emotion = pd.read_csv(self.data_path + 'valid_emotion_matched.csv')
+            # self.emotion = pd.read_csv(self.data_path + 'valid_landmark.csv')
             
         self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
         self.manual_index = 0
@@ -81,11 +85,16 @@ class MyArch_Dataset(Dataset):
 
         waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
         if self.forced_align:
-            audio_path = self.audio_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
+            audio_path = self.single_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
             audio_feature = modules.audio_word_align(waveform, audio_path, start, end, self.audio_padding)
         else:
             audio_feature = torch.mean(waveform, dim=1)
         
+        if self.landmark_append:
+            landmarks = modules.get_landmark(self.single_file_path+'/dia{0}/utt{1}/'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), start, self.fps)
+        else:
+            landmarks = torch.tensor([])
+            
         tokens_labels = self.label_tokenizer(response + self.tokenizer.eos_token,
                                             padding='max_length',
                                             max_length=self.max_length,
@@ -99,6 +108,7 @@ class MyArch_Dataset(Dataset):
                   torch.tensor(T).to(self.device), 
                   tokens.to(self.device),
                   audio_feature,
+                  landmarks.to(self.device),
                   ]
         
         labels = [tokens_labels.to(self.device),

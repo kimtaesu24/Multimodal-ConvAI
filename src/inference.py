@@ -144,8 +144,12 @@ def main(param, hyper_param, input_video, checkpoint):
         multi_task = 'multi_task_T'
     else:
         multi_task = 'multi_task_F'
-        
-    weight_path = path + f"{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/" + weigth
+    if param['landmark_append'] == True:
+        landmark_append = 'landmark_append_T'
+    else:
+        landmark_append = 'landmark_append_F'
+                
+    weight_path = path + f"{landmark_append}/{give_weight}/{modal_fusion}/{forced_align}/{trans_encoder}/{multi_task}/" + weigth
     model = MyArch(param=param, hyper_param=hyper_param)
     
     model.load_state_dict(torch.load(weight_path, map_location=param['device']))
@@ -171,9 +175,10 @@ if __name__ == '__main__':
     param['fps'] = 24
     param['give_weight'] = True
     param['modal_fusion'] = True
-    param['forced_align'] = True
-    param['trans_encoder'] = True
-    param['multi_task'] = True
+    param['forced_align'] = False
+    param['trans_encoder'] = False
+    param['multi_task'] = False
+    param['landmark_append'] = False
     log_param(param)
 
     hyper_param = dict()

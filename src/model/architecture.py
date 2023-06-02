@@ -21,6 +21,7 @@ class MyArch(torch.nn.Module):
         self.multi_task = param['multi_task']
         self.trans_encoder = param['trans_encoder']
         self.forced_align = param['forced_align']
+        self.landmark_append = param['landmark_append']
         
         self.fps = param['fps']
         self.device = param['device']
@@ -48,33 +49,45 @@ class MyArch(torch.nn.Module):
                 'anger':6}
         self.reverse_emotion_dic = {v:k for k,v in self.emotion_dic.items()}
         self.audio_feature_dimension = 768
+        self.landmark_dimension = 196
         self.word_dimension = self.gpt_model.config.hidden_size  # 1280
         self.num_emotion = len(self.reverse_emotion_dic)  # 7
         
-        self.encoder_layer = nn.TransformerEncoderLayer(d_model=self.word_dimension, nhead=8, batch_first=True)
-        self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=6)
+        if self.trans_encoder:
+            self.encoder_layer = nn.TransformerEncoderLayer(d_model=self.word_dimension, nhead=8, batch_first=True)
+            self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=6)
         
         if self.forced_align:
             self.projection_layer = nn.Linear(self.audio_feature_dimension * 2, self.word_dimension, bias=False)
-            self.MMfusion = nn.Linear((self.audio_padding//2 + 1) * self.word_dimension, self.word_dimension, bias=True)
+            if self.landmark_append:
+                self.MMfusion = nn.Linear((self.audio_padding//2 + 1) * self.word_dimension + self.landmark_dimension, self.word_dimension, bias=True)
+            else:
+                self.MMfusion = nn.Linear((self.audio_padding//2 + 1) * self.word_dimension, self.word_dimension, bias=True)
         else:
             self.projection_layer = nn.Linear(self.audio_feature_dimension, self.audio_feature_dimension, bias=False)
-            self.MMfusion = nn.Linear(self.word_dimension + self.audio_feature_dimension, self.word_dimension, bias=True)
+            if self.landmark_append:
+                self.MMfusion = nn.Linear(self.word_dimension + self.audio_feature_dimension + self.landmark_dimension, self.word_dimension, bias=True)
+            else:
+                self.MMfusion = nn.Linear(self.word_dimension + self.audio_feature_dimension, self.word_dimension, bias=True)
+        
         self.projection_layer.weight = torch.nn.init.xavier_uniform_(self.projection_layer.weight)
         self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         
-        self.emotion_analysis = nn.Linear(self.word_dimension, self.num_emotion, bias=True)
-        self.emotion_analysis.weight = torch.nn.init.xavier_uniform_(self.emotion_analysis.weight)
+        if self.multi_task:
+            self.emotion_analysis = nn.Linear(self.word_dimension, self.num_emotion, bias=True)
+            self.emotion_analysis.weight = torch.nn.init.xavier_uniform_(self.emotion_analysis.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
         self.loss_function = nn.CrossEntropyLoss(ignore_index=self.tokenizer.pad_token_id)
 
 
     def forward(self, inputs, labels):
-        start = inputs[0]   # [batch, start_len]
-        end = inputs[1]     # [batch, end_len]
+        start = inputs[0]   # [batch, max_length]
+        end = inputs[1]     # [batch, max_length]
         T = inputs[2]       # [batch, T_len]
         tokens = inputs[3]
         audio_feature = inputs[4]   # [batch, 1, feature_dim]
+        landmarks = inputs[5]  # [batch, max_length, landmark_dim]
+        
         tokens_labels = labels[0]
         emotion_label = labels[1]
         
@@ -96,6 +109,7 @@ class MyArch(torch.nn.Module):
             audio_feature = audio_feature.view(audio_feature.shape[0], audio_feature.shape[1], audio_feature.shape[2]//2, -1)  # [batch, max_length, audio_pad_len/2, feature_dim*2]
         else:
             audio_feature = torch.squeeze(audio_feature, dim=1)
+        audio_feature = torch.squeeze(audio_feature, dim=1)
         audio_feature = self.projection_layer(audio_feature.to(self.device))
         
         
@@ -106,9 +120,13 @@ class MyArch(torch.nn.Module):
         emotion_analysis_loss = 0.
         if self.modal_fusion:
             if self.forced_align:
-                x = modules.forced_alignment_multimodal_concat(inputs_embeds, audio_feature)
+                x = modules.forced_alignment_multimodal_concat(inputs_embeds, audio_feature)  # [batch, max_length, -1]
+                if self.landmark_append:
+                    x = torch.cat((x, landmarks), dim=2)
             else:
-                x = modules.multimodal_concat(inputs_embeds, audio_feature)
+                x = modules.multimodal_concat(inputs_embeds, audio_feature)  # [batch, max_length, audio_feature_dim + word_dimension]
+                if self.landmark_append:
+                    x = torch.cat((x, landmarks), dim=2)
             inputs_embeds = self.act(self.MMfusion(x))
             
             if self.trans_encoder:
@@ -123,11 +141,13 @@ class MyArch(torch.nn.Module):
                 if self.multi_task:
                     emotion_logits = self.emotion_analysis(emotions)
                     emotion_analysis_loss = self.loss_function(emotion_logits.contiguous().view(-1,self.num_emotion), emotion_label.contiguous().view(-1))
+                    print(self.reverse_emotion_dic.get(int(torch.argmax(emotion_logits))))
         
         
         # ==== step 4. Generate next sentence ====
         concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length*2, word_dimension]
         concat_mask = torch.cat([tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  # [batch, sentence_length*2]
+        
         
         outputs = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
@@ -136,7 +156,18 @@ class MyArch(torch.nn.Module):
 
         p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), tokens_labels['input_ids'][:, :].contiguous().view(-1))
         
-        return p_loss + emotion_analysis_loss
+        output = self.gpt_model.generate(max_length=100,
+                                pad_token_id=self.tokenizer.pad_token_id,
+                                inputs_embeds=inputs_embeds,
+                                attention_mask=tokens['attention_mask'],
+                                do_sample=True,
+                                top_k=50,
+                                top_p=0.90,
+                                )
+        
+        bleu = self.get_bleu_score(output, labels[0])
+        
+        return p_loss + emotion_analysis_loss, bleu
         
 
     def inference(self, inputs, greedy=True):
@@ -145,7 +176,8 @@ class MyArch(torch.nn.Module):
         tokens = inputs[2].to(self.device)
         transcript= inputs[3]
         waveform = inputs[4].to(self.device)
-        
+        # landmarks = inputs[5]
+        landmarks=0
         
         # ==== step 0. preprocess ====
         step0 = time.time()
@@ -188,8 +220,12 @@ class MyArch(torch.nn.Module):
         if self.modal_fusion:
             if self.forced_align:
                 x = modules.forced_alignment_multimodal_concat(inputs_embeds, audio_feature)
+                if self.landmark_append:
+                    x = torch.cat((x, landmarks), dim=2)
             else:
                 x = modules.multimodal_concat(inputs_embeds, audio_feature)
+                if self.landmark_append:
+                    x = torch.cat((x, landmarks), dim=2)
             inputs_embeds = self.act(self.MMfusion(x))
             if self.trans_encoder:
                 bos = self.embedding_layer.weight.data[self.tokenizer.bos_token_id]  # bos_token
@@ -230,3 +266,7 @@ class MyArch(torch.nn.Module):
         
         return output
     
+
+    def get_bleu_score(self, output, ref):
+        outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
+        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)

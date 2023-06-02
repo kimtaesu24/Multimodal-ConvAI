@@ -1,5 +1,13 @@
 import torch
 import wave
+import cv2
+import dlib
+import numpy as np
+# from spiga.inference.config import ModelConfig
+# from spiga.inference.framework import SPIGAFramework
+# detector = dlib.get_frontal_face_detector()
+# dataset = 'wflw'
+# processor = SPIGAFramework(ModelConfig(dataset))
 
 def weighted_word(T, start, end, tokens, fps=24, alpha=2):
     '''
@@ -35,8 +43,8 @@ def multimodal_concat(inputs_embeds, audio_feature):
     Used: model.forward(), model.inference()
     '''
     audio_feature = torch.unsqueeze(audio_feature, dim=1)
-    audio_feature = audio_feature.repeat(1, len(inputs_embeds[0]),1)  # [batch, feature_dim] -> [batch, padding_size, feature_dim]
-    x = torch.cat((inputs_embeds, audio_feature), dim=2)
+    audio_feature = audio_feature.repeat(1, len(inputs_embeds[0]),1)  # [batch, audio_feature_dim] -> [batch, max_length, audio_feature_dim]
+    x = torch.cat((inputs_embeds, audio_feature), dim=2)  # [batch, max_length, audio_feature_dim + word_dimension]
     return x
 
 def forced_alignment_multimodal_concat(inputs_embeds, audio_feature):
@@ -124,8 +132,8 @@ def audio_word_align(waveform, audio_path, start, end, audio_padding=50):
     duration = get_wav_duration(audio_path)
     
     a = (waveform.shape[0] / duration)
-    waveform_start = torch.tensor(start) * a
-    waveform_end = torch.tensor(end) * a
+    waveform_start = torch.tensor(start).clone() * a
+    waveform_end = torch.tensor(end).clone() * a
     
     audio_feature = []
     for i, (s, e) in enumerate(zip(waveform_start, waveform_end)):
@@ -136,3 +144,39 @@ def audio_word_align(waveform, audio_path, start, end, audio_padding=50):
             word_waveform = audio_pad(word_waveform, audio_padding)
         audio_feature.append(word_waveform)
     return torch.stack(audio_feature, dim=0)  # list to torch.tensor
+
+def img_to_landmark(img_path, detector, processor):
+    image = cv2.imread(img_path)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    try:
+        rects = detector(gray,1)
+        top_left = rects[0].tl_corner()
+        x0 = top_left.x
+        y0 = top_left.y
+        w = rects[0].width()
+        h = rects[0].height()
+        bbox = [x0*1.0, y0*1.0, w, h]
+        features = processor.inference(image, [bbox])
+        landmarks = np.array(features['landmarks'][0])
+        # headpose = np.array(features['headpose'][0])
+
+        diag = (w**2 + h**2)**0.5
+        landmarks[:,0:1] = (landmarks[:,0:1] - x0) / diag 
+        landmarks[:,1:2] = (landmarks[:,1:2] - y0) / diag
+        
+        return landmarks.flatten()
+    except:
+        return [0 for i in range(196)]
+
+def get_landmark(dir_path, start, fps):
+    # landmark_list = []
+    # for frame in start:
+    #     if frame == 0:
+    #         landmark_list.append([0 for i in range(196)])
+    #         continue
+    #     target = int(frame*fps+1)
+    #     target = '{0:06d}'.format(target)
+    #     landmark_list.append(img_to_landmark(dir_path+target+'.jpg', detector, processor))
+    # # print(landmark_list)
+    # return torch.tensor(np.array(landmark_list), dtype=torch.float32)
+    return torch.tensor([])
