@@ -31,12 +31,12 @@ class MyArch_Dataset(Dataset):
             self.FA = pd.read_csv(self.data_path + 'train_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'train_fer_matched.csv')
             self.emotion = pd.read_csv(self.data_path + 'train_emotion_matched.csv')
-            # self.emotion = pd.read_csv(self.data_path + 'train_landmark.csv')
+            # self.landmark = pd.read_csv(self.data_path + 'train_lm_matched.csv')
         else:
             self.FA = pd.read_csv(self.data_path + 'valid_FA_matched.csv')
             self.fer = pd.read_csv(self.data_path + 'valid_fer_matched.csv')
             self.emotion = pd.read_csv(self.data_path + 'valid_emotion_matched.csv')
-            # self.emotion = pd.read_csv(self.data_path + 'valid_landmark.csv')
+            # self.landmark = pd.read_csv(self.data_path + 'valid_lm_matched.csv')
             
         self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
         self.manual_index = 0
@@ -91,7 +91,8 @@ class MyArch_Dataset(Dataset):
             audio_feature = torch.mean(waveform, dim=1)
         
         if self.landmark_append:
-            landmarks = modules.get_landmark(self.single_file_path+'/dia{0}/utt{1}/'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), start, self.fps)
+            # landmarks = modules.get_landmark(self.single_file_path+'/dia{0}/utt{1}/'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), start, self.fps)
+            landmarks = ast.literal_eval(self.landmark['landmark_list'][idx])[0]
         else:
             landmarks = torch.tensor([])
             

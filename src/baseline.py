@@ -67,14 +67,14 @@ def preprocess_video(input_video, max_length):
     
 def main(max_length, input_video):
     input_ids = preprocess_video(input_video, max_length)
-    # print(input_ids)
     
     inputs_embeds = model.transformer.wte(input_ids)
-    # print(inputs_embeds)
-    # print(model.generation_config)
     
+    # outputs = model(inputs_embeds=inputs_embeds)
+    # print(outputs.logits)
+    # print(outputs.logits.shape)
     outputs = model.generate(max_length=1000, pad_token_id=tokenizer.eos_token_id, inputs_embeds=inputs_embeds)
-    # print(outputs)
+    print(outputs)
     print("\ngenerate + inputs_embeds:", tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 if __name__ == '__main__':

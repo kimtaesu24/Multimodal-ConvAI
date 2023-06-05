@@ -7,6 +7,8 @@ import torch.nn.functional as F
 import time
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from nltk.translate.bleu_score import sentence_bleu
+from statistics import mean 
 from . import modules
 
 class MyArch(torch.nn.Module):
@@ -165,9 +167,19 @@ class MyArch(torch.nn.Module):
                                 top_p=0.90,
                                 )
         
-        bleu = self.get_bleu_score(output, labels[0])
+        bleu_1 = []
+        bleu_2 = []
+        bleu_3 = []
+        bleu_4 = []
+        for o_sentence, label_sentence in zip(output, labels[0]['input_ids']):
+            bleu = self.get_bleu_score(o_sentence, label_sentence)
+            bleu_1.append(bleu[0])
+            bleu_2.append(bleu[1])
+            bleu_3.append(bleu[2])
+            bleu_4.append(bleu[3])
+        bleus = [mean(bleu_1),mean(bleu_2),mean(bleu_3),mean(bleu_4)]
         
-        return p_loss + emotion_analysis_loss, bleu
+        return p_loss + emotion_analysis_loss, bleus
         
 
     def inference(self, inputs, greedy=True):
@@ -266,7 +278,15 @@ class MyArch(torch.nn.Module):
         
         return output
     
-
     def get_bleu_score(self, output, ref):
         outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
-        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)
+        ref_sentence = self.tokenizer.decode(ref.tolist()[0], skip_special_tokens=True)
+        outputs_values = outputs_sentence.replace('!','').replace('.','').split()
+        ref_values = [ref_sentence.replace('!','').replace('.','').split()]
+        
+        bleu_1 = sentence_bleu(ref_values, outputs_values, weights=(1, 0, 0, 0))
+        bleu_2 = sentence_bleu(ref_values, outputs_values, weights=(0.5, 0.5, 0, 0))
+        bleu_3 = sentence_bleu(ref_values, outputs_values, weights=(1/3, 1/3, 1/3, 0))
+        bleu_4 = sentence_bleu(ref_values, outputs_values, weights=(0.25, 0.25, 0.25, 0.25))
+        
+        return [bleu_1, bleu_2, bleu_3, bleu_4]

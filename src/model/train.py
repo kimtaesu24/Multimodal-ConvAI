@@ -66,13 +66,13 @@ class MyTrainer:
             
         train_batch_len = len(train_dataloader)
         valid_batch_len = len(valid_dataloader)
-        
+        '''
         with open("/home2/s20235100/Conversational-AI/MyModel/src/model/inference_file.pickle", "rb") as file:
             inference_file = pickle.load(file)  # inference data for every end of epochs
             outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
-        
+        '''
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
         
@@ -84,7 +84,16 @@ class MyTrainer:
         pbar = tqdm(range(epochs), position=0, leave=False, desc='epoch')
         for epoch in pbar:
             total_train_loss=0
+            total_train_bleu_1=0
+            total_train_bleu_2=0
+            total_train_bleu_3=0
+            total_train_bleu_4=0
+            
             total_valid_loss=0
+            total_valid_bleu_1=0
+            total_valid_bleu_2=0
+            total_valid_bleu_3=0
+            total_valid_bleu_4=0
             
             # training
             model.train()
@@ -100,6 +109,11 @@ class MyTrainer:
 
                 # log
                 total_train_loss += loss.item()
+                total_train_bleu_1 += metrics[0]
+                total_train_bleu_2 += metrics[1]
+                total_train_bleu_3 += metrics[2]
+                total_train_bleu_4 += metrics[3]
+
                 
                 if not debug_mode:  # code for debugging
                     if i % (100//batch_size) == 0:
@@ -110,11 +124,11 @@ class MyTrainer:
                         wandb.log({'train_bleu-4':metrics[3]})
                     
             # sample check
-            
+            '''
             outputs = model.inference(inference_file, greedy=True)
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
-            
+            '''
             
             # validation
             with torch.no_grad():
@@ -123,10 +137,24 @@ class MyTrainer:
                     loss, metrics = model(inputs, labels)
 
                     total_valid_loss += loss.item()
+                    
+                    total_valid_bleu_1 += metrics[0]
+                    total_valid_bleu_2 += metrics[1]
+                    total_valid_bleu_3 += metrics[2]
+                    total_valid_bleu_4 += metrics[3]
                 
             if not debug_mode:  # code for debugging
                 wandb.log({'train_loss_epoch': total_train_loss/train_batch_len})
+                wandb.log({'train_bleu-1_epoch': total_train_bleu_1/valid_batch_len})
+                wandb.log({'train_bleu-2_epoch': total_train_bleu_2/valid_batch_len})
+                wandb.log({'train_bleu-3_epoch': total_train_bleu_3/valid_batch_len})
+                wandb.log({'train_bleu-4_epoch': total_train_bleu_4/valid_batch_len})
+                
                 wandb.log({'valid_loss_epoch': total_valid_loss/valid_batch_len})
+                wandb.log({'valid_bleu-1_epoch': total_valid_bleu_1/valid_batch_len})
+                wandb.log({'valid_bleu-2_epoch': total_valid_bleu_2/valid_batch_len})
+                wandb.log({'valid_bleu-3_epoch': total_valid_bleu_3/valid_batch_len})
+                wandb.log({'valid_bleu-4_epoch': total_valid_bleu_4/valid_batch_len})
 
             # save checkpoint
             if (epoch + 1) % save_at_every == 0:

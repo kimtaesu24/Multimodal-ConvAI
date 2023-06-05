@@ -1,0 +1,23 @@
+{
+    "model": "MyArch",
+    "data_name":"MELD",
+    "seed": 0,
+    "fps": 24,
+    "give_weight": false,
+    "modal_fusion": true,
+    "forced_align": true,
+    "landmark_append": false,
+    "trans_encoder": true,
+    "multi_task": true,
+    "epochs": 200,
+    "act": "relu",
+    "batch_size": 1,
+    "learning_rate": 5e-5,
+    "max_length": 60,
+    "audio_pad_size": 50,
+    "alpha": 2,
+    "dropout": 0.2,
+    "decay_rate": 0.98,
+    "save_at_every": 20,
+    "debug": true
+}
