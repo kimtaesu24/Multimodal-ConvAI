@@ -18,14 +18,14 @@ class MyArch_Dataset(Dataset):
         self.audio_padding = audio_padding
         self.fps = fps
         
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = '!'
-        self.tokenizer.bos_token = '#'
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
+        # self.tokenizer.pad_token = '!'
+        # self.tokenizer.bos_token = '#'
         self.tokenizer.padding_side = 'left'
         
-        self.label_tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.label_tokenizer.pad_token = '!'
-        self.tokenizer.bos_token = '#'
+        self.label_tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
+        # self.label_tokenizer.pad_token = '!'
+        # self.label_tokenizer.bos_token = '#'
         
         if mode == 'train':
             self.FA = pd.read_csv(self.data_path + 'train_FA_matched.csv')
@@ -96,7 +96,7 @@ class MyArch_Dataset(Dataset):
         else:
             landmarks = torch.tensor([])
             
-        tokens_labels = self.label_tokenizer(response + self.tokenizer.eos_token,
+        tokens_labels = self.label_tokenizer(response + self.label_tokenizer.eos_token,
                                             padding='max_length',
                                             max_length=self.max_length,
                                             truncation=True,

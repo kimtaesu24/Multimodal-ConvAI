@@ -21,3 +21,11 @@ Multimodal-ConvAI
             ├── DAN
             └── Forced_Alignment
 ```
+
+## How To Run
+
+You can simply check if the model works correctly with the following command:
+```
+PYTHONPATH=src python3 run.py --arch_name $ARCHITECTURE
+```
+The above command will start learning the model on the `$ARCHITECTURE` with the specified parameters saved in `param.json`.

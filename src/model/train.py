@@ -14,9 +14,9 @@ class MyTrainer:
     def __init__(self, device, data_path):
         self.device = device
         self.data_path = data_path
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = '!'
-        self.tokenizer.bos_token = '#'
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
+        # self.tokenizer.pad_token = '!'
+        # self.tokenizer.bos_token = '#'
 
     def train_with_hyper_param(self, param, hyper_param):
         model_name = param['model']
@@ -88,12 +88,20 @@ class MyTrainer:
             total_train_bleu_2=0
             total_train_bleu_3=0
             total_train_bleu_4=0
+            total_train_meteor=0
+            total_train_rouge=0
+            total_train_cider=0
+            total_train_spice=0
             
             total_valid_loss=0
             total_valid_bleu_1=0
             total_valid_bleu_2=0
             total_valid_bleu_3=0
             total_valid_bleu_4=0
+            total_valid_meteor=0
+            total_valid_rouge=0
+            total_valid_cider=0
+            total_valid_spice=0
             
             # training
             model.train()
@@ -101,7 +109,7 @@ class MyTrainer:
             for i, (inputs, labels) in enumerate(prog_bar):
                 optimizer.zero_grad()
                 
-                loss, metrics = model(inputs, labels)
+                loss, eval_result = model(inputs, labels)
                 prog_bar.set_postfix({'loss': loss.item()})
 
                 loss.backward()
@@ -109,19 +117,28 @@ class MyTrainer:
 
                 # log
                 total_train_loss += loss.item()
-                total_train_bleu_1 += metrics[0]
-                total_train_bleu_2 += metrics[1]
-                total_train_bleu_3 += metrics[2]
-                total_train_bleu_4 += metrics[3]
-
+                total_train_bleu_1 += eval_result['Bleu_1']
+                total_train_bleu_2 += eval_result['Bleu_2']
+                total_train_bleu_3 += eval_result['Bleu_3']
+                total_train_bleu_4 += eval_result['Bleu_4']
+                
+                total_train_meteor += eval_result['METEOR']
+                total_train_rouge += eval_result['ROUGE_L']
+                total_train_cider += eval_result['CIDEr']
+                total_train_spice += eval_result['SPICE']
                 
                 if not debug_mode:  # code for debugging
                     if i % (100//batch_size) == 0:
                         wandb.log({'train_loss':loss.item()})
-                        wandb.log({'train_bleu-1':metrics[0]})
-                        wandb.log({'train_bleu-2':metrics[1]})
-                        wandb.log({'train_bleu-3':metrics[2]})
-                        wandb.log({'train_bleu-4':metrics[3]})
+                        wandb.log({'train_Bleu_1':eval_result['Bleu_1']})
+                        wandb.log({'train_Bleu_2':eval_result['Bleu_2']})
+                        wandb.log({'train_Bleu_3':eval_result['Bleu_3']})
+                        wandb.log({'train_Bleu_4':eval_result['Bleu_4']})
+                        
+                        wandb.log({'train_METEOR':eval_result['METEOR']})
+                        wandb.log({'train_ROUGE_L':eval_result['ROUGE_L']})
+                        wandb.log({'train_CIDEr':eval_result['CIDEr']})
+                        wandb.log({'train_SPICE':eval_result['SPICE']})
                     
             # sample check
             '''
@@ -137,24 +154,36 @@ class MyTrainer:
                     loss, metrics = model(inputs, labels)
 
                     total_valid_loss += loss.item()
+                    total_valid_bleu_1 += eval_result['Bleu_1']
+                    total_valid_bleu_2 += eval_result['Bleu_2']
+                    total_valid_bleu_3 += eval_result['Bleu_3']
+                    total_valid_bleu_4 += eval_result['Bleu_4']
                     
-                    total_valid_bleu_1 += metrics[0]
-                    total_valid_bleu_2 += metrics[1]
-                    total_valid_bleu_3 += metrics[2]
-                    total_valid_bleu_4 += metrics[3]
+                    total_valid_meteor += eval_result['METEOR']
+                    total_valid_rouge += eval_result['ROUGE_L']
+                    total_valid_cider += eval_result['CIDEr']
+                    total_valid_spice += eval_result['SPICE']
                 
             if not debug_mode:  # code for debugging
-                wandb.log({'train_loss_epoch': total_train_loss/train_batch_len})
-                wandb.log({'train_bleu-1_epoch': total_train_bleu_1/valid_batch_len})
-                wandb.log({'train_bleu-2_epoch': total_train_bleu_2/valid_batch_len})
-                wandb.log({'train_bleu-3_epoch': total_train_bleu_3/valid_batch_len})
-                wandb.log({'train_bleu-4_epoch': total_train_bleu_4/valid_batch_len})
+                wandb.log({'train_loss (epoch)': total_train_loss/train_batch_len})
+                wandb.log({'train_Bleu-1 (epoch)': total_train_bleu_1/train_batch_len})
+                wandb.log({'train_Bleu-2 (epoch)': total_train_bleu_2/train_batch_len})
+                wandb.log({'train_Bleu-3 (epoch)': total_train_bleu_3/train_batch_len})
+                wandb.log({'train_Bleu-4 (epoch)': total_train_bleu_4/train_batch_len})
+                wandb.log({'train_METEOR (epoch)': total_train_meteor/train_batch_len})
+                wandb.log({'train_ROUGE_L (epoch)': total_train_rouge/train_batch_len})
+                wandb.log({'train_CIDEr (epoch)': total_train_cider/train_batch_len})
+                wandb.log({'train_SPICE (epoch)': total_train_spice/train_batch_len})
                 
-                wandb.log({'valid_loss_epoch': total_valid_loss/valid_batch_len})
-                wandb.log({'valid_bleu-1_epoch': total_valid_bleu_1/valid_batch_len})
-                wandb.log({'valid_bleu-2_epoch': total_valid_bleu_2/valid_batch_len})
-                wandb.log({'valid_bleu-3_epoch': total_valid_bleu_3/valid_batch_len})
-                wandb.log({'valid_bleu-4_epoch': total_valid_bleu_4/valid_batch_len})
+                wandb.log({'valid_loss (epoch)': total_valid_loss/valid_batch_len})
+                wandb.log({'valid_Bleu-1 (epoch)': total_valid_bleu_1/valid_batch_len})
+                wandb.log({'valid_Bleu-2 (epoch)': total_valid_bleu_2/valid_batch_len})
+                wandb.log({'valid_Bleu-3 (epoch)': total_valid_bleu_3/valid_batch_len})
+                wandb.log({'valid_bleu-4 (epoch)': total_valid_bleu_4/valid_batch_len})
+                wandb.log({'valid_METEOR (epoch)': total_valid_meteor/valid_batch_len})
+                wandb.log({'valid_ROUGE_L (epoch)': total_valid_rouge/valid_batch_len})
+                wandb.log({'valid_CIDEr (epoch)': total_valid_cider/valid_batch_len})
+                wandb.log({'valid_SPICE (epoch)': total_valid_spice/valid_batch_len})
 
             # save checkpoint
             if (epoch + 1) % save_at_every == 0:

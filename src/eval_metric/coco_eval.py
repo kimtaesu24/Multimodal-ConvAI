@@ -1,5 +1,5 @@
-from pycocoevalcap.eval import COCOEvalCap
-from pycocotools.coco import COCO
+from eval_metric.pycocoevalcap.eval import COCOEvalCap
+from eval_metric.pycocotools.coco import COCO
 
 
 def _coco_evaluation(predicts, answers):
@@ -23,12 +23,12 @@ def _coco_evaluation(predicts, answers):
 
 
 def calculate_eval_matric(output='Test word', ref='Testing word') -> dict:
-    ref = [
-        ref.replace('!','').replace('.','')
-        ]
-    output = [ 
-            output.replace('!','').replace('.','')
-            ]
+    # ref = [
+    #     ref.replace('!','').replace('.','')
+    #     ]
+    # output = [ 
+    #         output.replace('!','').replace('.','')
+    #         ]
     
     eval_results = _coco_evaluation(output, ref)
     print(eval_results) #### <- 점수 확인

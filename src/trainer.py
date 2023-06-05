@@ -7,6 +7,8 @@ from model.train import MyTrainer
 from utils import log_param
 from loguru import logger
 import warnings
+# import os
+# os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 warnings.filterwarnings(action='ignore')
 

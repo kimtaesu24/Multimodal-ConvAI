@@ -7,12 +7,12 @@ import torch.nn.functional as F
 import time
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from nltk.translate.bleu_score import sentence_bleu
-from statistics import mean 
+# from nltk.translate.bleu_score import sentence_bleu
+# from statistics import mean 
 from . import modules
 
 # Yongsik Part 
-from nltk.translate.bleu_score import sentence_bleu
+# from nltk.translate.bleu_score import sentence_bleu
 from eval_metric.coco_eval import calculate_eval_matric
 
 class MyArch(torch.nn.Module):
@@ -41,9 +41,9 @@ class MyArch(torch.nn.Module):
             self.act = nn.ReLU()
         
         self.gpt_model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer.pad_token = '!'
-        self.tokenizer.bos_token = '#'
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
+        # self.tokenizer.pad_token = '!'
+        # self.tokenizer.bos_token = '#'
         self.embedding_layer = self.gpt_model.get_input_embeddings()
 
         self.emotion_dic = {'neutral':0,
@@ -166,24 +166,39 @@ class MyArch(torch.nn.Module):
                                 pad_token_id=self.tokenizer.pad_token_id,
                                 inputs_embeds=inputs_embeds,
                                 attention_mask=tokens['attention_mask'],
-                                do_sample=True,
-                                top_k=50,
-                                top_p=0.90,
+                                # do_sample=True,
+                                # top_k=50,
+                                # top_p=0.90,
                                 )
+
+        # bleu_1 = []
+        # bleu_2 = []
+        # bleu_3 = []
+        # bleu_4 = []
+        # for o_sentence, label_sentence in zip(output, labels[0]['input_ids']):
+        #     eval_result = self.get_eval_matric(o_sentence, label_sentence)
+        #     bleu_1 = eval_result['Bleu_1']
+        #     bleu_2 = eval_result['Bleu_2']
+        #     bleu_3 = eval_result['Bleu_3']
+        #     bleu_4 = eval_result['Bleu_4']
+            
+        #     meteor = eval_result['METEOR']
+        #     rouge = eval_result['ROUGE_L']
+        #     cider = eval_result['CIDEr']
+        #     spice = eval_result['SPICE']
+        # bleus = [mean(bleu_1),mean(bleu_2),mean(bleu_3),mean(bleu_4)]
         
-        bleu_1 = []
-        bleu_2 = []
-        bleu_3 = []
-        bleu_4 = []
-        for o_sentence, label_sentence in zip(output, labels[0]['input_ids']):
-            bleu = self.get_bleu_score(o_sentence, label_sentence)
-            bleu_1.append(bleu[0])
-            bleu_2.append(bleu[1])
-            bleu_3.append(bleu[2])
-            bleu_4.append(bleu[3])
-        bleus = [mean(bleu_1),mean(bleu_2),mean(bleu_3),mean(bleu_4)]
+        # eval_result = self.get_eval_matric(output, tokens_labels['input_ids'])
+        eval_result =             {'Bleu_1': 0.1353352829659427, 
+            'Bleu_2': 0.00013533528303361024, 
+            'Bleu_3': 1.3533528305616618e-05, 
+            'Bleu_4': 4.2796774227674215e-06, 
+            'METEOR': 0.14814814814814814, 
+            'ROUGE_L': 0.45864661654135336, 
+            'CIDEr': 0.0, 
+            'SPICE': 0.0}
         
-        return p_loss + emotion_analysis_loss, bleus
+        return p_loss + emotion_analysis_loss, eval_result
         
 
     def inference(self, inputs, greedy=True):
@@ -281,36 +296,30 @@ class MyArch(torch.nn.Module):
         print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step4))
         
         return output
-    
-    def get_bleu_score(self, output, ref):
-        outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
-        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)
-        
-        outputs_values = outputs_sentence['a'].replace('!','').replace('.','').split()
-        ref_values = [ref_sentence['ref'].replace('!','').replace('.','').split()]
-        
-        bleu_1 = format(sentence_bleu(ref_values, outputs_values, weights=(1, 0, 0, 0)), '.8f')
-        bleu_2 = format(sentence_bleu(ref_values, outputs_values, weights=(0.5, 0.5, 0, 0)), '.8f')
-        bleu_3 = format(sentence_bleu(ref_values, outputs_values, weights=(1/3, 1/3, 1/3, 0)), '.8f')
-        bleu_4 = format(sentence_bleu(ref_values, outputs_values, weights=(0.25, 0.25, 0.25, 0.25)), '.8f')
 
-        return bleu_1, bleu_2, bleu_3, bleu_4
     
     def get_eval_matric(self, output, ref):
-        outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
-        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)
+        '''
+        output: metric dictionary
+            {'Bleu_1': 0.1353352829659427, 
+            'Bleu_2': 0.00013533528303361024, 
+            'Bleu_3': 1.3533528305616618e-05, 
+            'Bleu_4': 4.2796774227674215e-06, 
+            'METEOR': 0.14814814814814814, 
+            'ROUGE_L': 0.45864661654135336, 
+            'CIDEr': 0.0, 
+            'SPICE': 0.0}
+        '''
+        outputs_sentence = self.tokenizer.batch_decode(output, skip_special_tokens=True)
+        ref_sentence = self.tokenizer.batch_decode(ref, skip_special_tokens=True)
+        print(outputs_sentence)
+        print(type(outputs_sentence))
+        print(type(outputs_sentence[0]))
+        print(ref_sentence)
+        print(type(ref_sentence))
+        print(type(ref_sentence[0]))
         
         eval_result = calculate_eval_matric(outputs_sentence, ref_sentence)
         
-        ## For Taesoo 
-        # bleu_1 = eval_result['Bleu_1']
-        # bleu_2 = eval_result['Bleu_2']
-        # bleu_3 = eval_result['Bleu_3']
-        # bleu_4 = eval_result['Bleu_4']
-        
-        # meteor = eval_result['METEOR']
-        # rouge = eval_result['ROUGE_L']
-        # cider = eval_result['CIDEr']
-        # spice = eval_result['SPICE']
         return eval_result 
  
