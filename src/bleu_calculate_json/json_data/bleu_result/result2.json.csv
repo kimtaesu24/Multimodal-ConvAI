@@ -1,0 +1,965 @@
+,ref,ans,bleu-1,bleu-2,bleu-3,bleu-4
+0,no wait emily no wait stop emily please,you're a genius,0.0,0.0,0.0,0.0
+1,goodbye muscles,aww man now we won't be bank buddies,0.0,0.0,0.0,0.0
+2,yeah because i was,now there's two reasons,0.0,0.0,0.0,0.0
+3,no,hey,0.0,0.0,0.0,0.0
+4,hey,hey,1.0,0.0,0.0,0.0
+5,they say he's only got half a tank left,ohh you guys remember that cute client i told you about i bit him,0.0,0.0,0.0,0.0
+6,that wig all in disarray and boobs flung over the night stand y'know,where,0.0,0.0,0.0,0.0
+7,oh and keep in mind now i was carrying triplets so in y'know medical terms i wasi was thrice as randy,on the touchy,0.0,0.0,0.0,0.0
+8,this doesn't mean anything does it,and,0.0,0.0,0.0,0.0
+9,can they handle the stick,no i know,0.0,0.0,0.0,0.0
+10,i can't believe it can i tell you something i'm a little mad at him now,ii'm sorry but the moment i touch him i just wanna throw out my old oath and take a new dirty one,0.18181818,0.0,0.0,0.0
+11,wait wait did you say 'gstephanopoulos',well next time your massaging him you should try and distract yourself,0.08333333,0.0,0.0,0.0
+12,well ah y'know,yeah yeah yeah likelike when i'm doing something exciting and i don't wanna get,0.0,0.0,0.0,0.0
+13,oh hey how are you guys doing,thank you joey,0.08786571,0.0,0.0,0.0
+14,dude you didn't say,nono thank you,0.23884377,0.0,0.0,0.0
+15,here you go,well well well joey tribbiani so you came back huh they,0.09090909,0.0,0.0,0.0
+16,oh well thank you in advance,what are you talkin' about i never left you you've always been my agent,0.07142857,0.0,0.0,0.0
+17,yeah but i thought that was because i put the whole thing on my hand and made it walk across the table,really,0.0,0.0,0.0,0.0
+18,wait but there's no money well this is terrible you guys are gonna have to get married in like a rec center,yeah,0.0,0.0,0.0,0.0
+19,um but that's okay see we have an understanding um see we each have this list of five famous people so i'm allowed to sleep with you,oh well no harm no foul,0.0,0.0,0.0,0.0
+20,if only he were a woman,yeah,0.0,0.0,0.0,0.0
+21,are you afraid you're gonna run out,tonight youyou didn't say it was going to be at nighttime,0.0,0.0,0.0,0.0
+22,yeah i don't think so joe,yeah we werewe were just looking around,0.14285714,0.0,0.0,0.0
+23,oh my god they told us that was for the mascot,ohoh you'reyou're fellow scholars,0.0,0.0,0.0,0.0
+24,and most importantly i youyou will have to catch us first,what exactly were you looking for hmm,0.0,0.0,0.0,0.0
+25,all right all right if you insist on doing this at least let me help you,perhaps perhaps dr chester stock's musings on the smiledon californicus,0.05488116,0.0,0.0,0.0
+26,i'm hoping that when bob doesn't show up she will seek comfort in the open arms of the wry stranger at the next table,uhh,0.0,0.0,0.0,0.0
+27,okay sweetie you can do it just open up and put it in your mouth,ah ahget out of here uh meeting someone oror are you just here to brush up on marion's views on evolution,0.14285714,0.0,0.0,0.0
+28,although i have a hint of morning sickness and i'm wearing underwear that goes up to aboutthere,uh actually i find marion's views far too progressionist,0.04567914,0.0,0.0,0.0
+29,the bottom line is smoking is cool and you know it,i find marion's views far too progressionist,0.0,0.0,0.0,0.0
+30,disneyland 'it's a small world after all',i'm sorry who are you,0.0,0.0,0.0,0.0
+31,wow you guys really don't know anything,i'm a professor here uh rossgeller,0.0,0.0,0.0,0.0
+32,yeah no i'll get one of the other girls to do it,ross geller why do i know that name it's uhwait did you write this,0.07142857,0.0,0.0,0.0
+33,is that all,yes you're the person who checked out my book,0.0,0.0,0.0,0.0
+34,that and arrogance,y'know you look nothing like i would've thought you'reyou're so young,0.0,0.0,0.0,0.0
+35,oh yeah well i just started wearing bras again,well i uh i skipped forth grade,0.2147078,0.16398579,0.0,0.0
+36,oo you should have one of us do it,what,0.0,0.0,0.0,0.0
+37,he does,i was doing great with julie before i found out about you,0.0,0.0,0.0,0.0
+38,okay what else,hey i was doin' great before i found out about you you think it's easy for me to see you with julie,0.0,0.0,0.0,0.0
+39,okay blablablabla who is it,the point is i,0.1947002,0.0,0.0,0.0
+40,ahh gepeto dollars are you insane,i don't need this right now ok,0.0,0.0,0.0,0.0
+41,you're you're really you're so good,it it's too late i'm with somebody else i'm happy,0.0,0.0,0.0,0.0
+42,oh that's fine go with your instincts go with your instincts,this ship has sailed,0.0,0.0,0.0,0.0
+43,thank you,alright fine you go ahead and you do that alright ross,0.09090909,0.0,0.0,0.0
+44,yes i'vei've never seen a roll like this in my life,fine,0.0,0.0,0.0,0.0
+45,if i can't have it you can't have it,cause i don't need your stupid ship,0.1073539,0.0,0.0,0.0
+46,i'm already fed up with this story,good,0.0,0.0,0.0,0.0
+47,ezels,good,0.0,0.0,0.0,0.0
+48,ah susan will be so pleased,y'know monica and chandler are married ross and rachel are having a baby maybe you and i should do something,0.0,0.0,0.0,0.0
+49,was it,all in good time my love,0.0,0.0,0.0,0.0
+50,i mean your dad tells me that you get a couple of days off school and you you ah don't have to sell those cookies anymore,all in good time,0.0,0.0,0.0,0.0
+51,so ross what your problem,oh shoot,0.0,0.0,0.0,0.0
+52,excuse me doug hey there sports fan,i left my guitar in their apartment,0.0,0.0,0.0,0.0
+53,rdtor,well you can let me in later,0.0,0.0,0.0,0.0
+54,all right julie,i don't have a key they took mine to give to you,0.0,0.0,0.0,0.0
+55,don't go anywhere i'll be right back,oh we did but my mom got us the greatest gift of all,0.0,0.0,0.0,0.0
+56,i don't know,a,0.0,0.0,0.0,0.0
+57,they've only been going out for a few weeks and phoebe is completely hung up on mike,no she's going to live with us for eight weeks,0.14897559,0.0,0.0,0.0
+58,okay i admit it,uh what,0.0,0.0,0.0,0.0
+59,it's not kicking right now although we would love to see you do that again,yes she's gonna help us take care of the baby woohoo,0.0,0.0,0.0,0.0
+60,joey i am scared to death about this,whatyou're not serious,0.0,0.0,0.0,0.0
+61,sorry i justcan't sleep,i mean she's a very nice woman but there is no way we can take eight weeks of her,0.05263158,0.0,0.0,0.0
+62,and y'know and um i,she'll drive us totally crazy,0.0,0.0,0.0,0.0
+63,okay that's great no i'm oh,hi ross,0.0,0.0,0.0,0.0
+64,hi all right let's go shoppin',hi roomie,0.06766764,0.0,0.0,0.0
+65,hey joey so did you hear about the new guy,i don't know,0.0,0.0,0.0,0.0
+66,i want you to know it wasn't me who turned you in,it's not like it's porn,0.0,0.0,0.0,0.0
+67,it's so hard,this is a serious legitimate movie,0.0,0.0,0.0,0.0
+68,god he's good,and the nudity is really important to the story,0.0,0.0,0.0,0.0
+69,okayyyyy open up,that's what you say about porn,0.0,0.0,0.0,0.0
+70,because then i don't have to,you're right maybe i shouldn't even go on the call back,0.09090909,0.0,0.0,0.0
+71,no god no that is no place for a woman those guys will grab anything,no no you should a lot of major actors do nude scenes i mean the chance to star in a movie come on,0.13043478,0.0,0.0,0.0
+72,really helped speed the process along,well that's true,0.0,0.0,0.0,0.0
+73,what's my little chef got for me tonight,and i am only naked in one scene,0.0,0.0,0.0,0.0
+74,you're doin' this,plus it sounds really great,0.0,0.0,0.0,0.0
+75,don't say it,my character's catholic and he falls in love with this jewish girl,0.0,0.0,0.0,0.0
+76,what,who run away together and they get caught in this big rainstorm,0.0,0.0,0.0,0.0
+77,why do you have the answers written on there,so we go into this barn and undress each other and hold each other,0.0,0.0,0.0,0.0
+78,but i'll still always come back like this,it's really sweet andand tender,0.0,0.0,0.0,0.0
+79,tasty i'm really starting to feel like you guys have a history it'sit's nice,nothing monica and i had a stupid fight,0.05904582,0.0,0.0,0.0
+80,who are you,but you're still moving in together right because my ad came out today,0.0,0.0,0.0,0.0
+81,no you have been screwing us all day,wanted female roommate nonsmoker nonugly nice,0.0,0.0,0.0,0.0
+82,really,yeah,0.0,0.0,0.0,0.0
+83,and your horoscope says on the fifth a special someone is going to give you a gift,i just figured y'know after living with you it'd be an interesting change of pace to have a female roommate y'know,0.14285714,0.0,0.0,0.0
+84,what,someone i can learn from someonesomeone who's different than me,0.0,0.0,0.0,0.0
+85,you're you're really you're so good,and what's more different than me a guy who's,0.0,0.0,0.0,0.0
+86,what,this witness won't return my calls so we're gonna see if we can surprise him coming home,0.0,0.0,0.0,0.0
+87,wait uh listen,sursurprise him we're not we're not gonna make anybody mad are we,0.0,0.0,0.0,0.0
+88,hey it is unreasonable to expect a child to wait for a,come on man listen so uh are you gonna squeeze the perps shoes a little bit before he lawyers up,0.05,0.0,0.0,0.0
+89,oh yeah joshua give me a call sometime guys like you never go out of stylewhat did you throw away,it's a witness not a perp and no one talks like that,0.08556952,0.0,0.0,0.0
+90,open your drapes open your drapes,hey i'm more cop than you two,0.0,0.0,0.0,0.0
+91,i,how do you figure that,0.0,0.0,0.0,0.0
+92,okay you're fine,hello i'm in the front seat okay i'm gary's partner,0.1,0.0,0.0,0.0
+93,nothing um it's just um it's roger,here you go thank you,0.0,0.0,0.0,0.0
+94,umm i think he's still out what's wrong,rachel karen green where's the other earring,0.0,0.0,0.0,0.0
+95,thank god,okay okay okay look just don't freak out but i kinda lost it,0.0,0.0,0.0,0.0
+96,i'm fine,i know it's in the apartment but i,0.0,0.0,0.0,0.0
+97,that i did that i did,well what am i going to tell monica she wants to wear them tonight,0.07142857,0.0,0.0,0.0
+98,you can spill in the sink,tell her to wear her own earrings,0.0,0.0,0.0,0.0
+99,shut the book,these,0.0,0.0,0.0,0.0
+100,here we go,nooo nooooo you lent me monica's earrings i'm not allowed to borrow her stuff,0.0,0.0,0.0,0.0
+101,i'm not always that bad,why not,0.11156508,0.0,0.0,0.0
+102,well the moment's over,because i lose her stuff,0.0,0.0,0.0,0.0
+103,do you always have to bring him here,yeah,0.0,0.0,0.0,0.0
+104,okay one thing at a time,what's going on,0.0,0.0,0.0,0.0
+105,welldid you know he was gonna ask me,chandler's gone again,0.0,0.0,0.0,0.0
+106,look you and i went to different high schools,oh my god why would you play hide and seek with someone you know is a flight risk,0.11111111,0.0,0.0,0.0
+107,okay,i already had a baby leave me alone,0.0,0.0,0.0,0.0
+108,wow if only more people knew,okay okay come on you can do it you can do it,0.0,0.0,0.0,0.0
+109,so anyway um his head is like flopping down broadway right and i'm just thinking how inappropriate this is,yeah,0.0,0.0,0.0,0.0
+110,listen you know how uh when you're wearing pants and you lean forward i check out your underwear,little leslie is here,0.0,0.0,0.0,0.0
+111,is,we got another one,0.0,0.0,0.0,0.0
+112,oh god okay alright alright okay ross please don't hate me,oh my god i can't believe i have twotwo children,0.18096748,0.0,0.0,0.0
+113,oh i am,how scary is that,0.0,0.0,0.0,0.0
+114,yeah iiii'm funny ben but i'm not stupid okay,come on little chandler it's time to be born come on little chandler come on,0.0,0.0,0.0,0.0
+115,yeah i'm just i'm just in town for a conference umm,all right he's coming he's coming,0.0,0.0,0.0,0.0
+116,whoa jam i love jam hey how come we never have jam at our place,hey where's his thing,0.01598197,0.0,0.0,0.0
+117,then you two can can sneak into the cockpit and things will start to heat up and then a stewardess comes in i've been watching too much porn,chandler's a girl,8.012e-05,0.0,0.0,0.0
+118,i'll take a card,oh god kindergarten flashback,0.0,0.0,0.0,0.0
+119,i'm not great but i'm a little more than a pretty blond girl with an ass that won't quit,they musta read the sonogram wrong,0.0,0.0,0.0,0.0
+120,the celtics,cause they 'cause they thought it was a boy but chandler's a girl,0.0,0.0,0.0,0.0
+121,you need me to go down there with you and hold your hand,chandler's a girl,0.0,0.0,0.0,0.0
+122,i am not high maintenance,okay keep saying it,0.0,0.0,0.0,0.0
+123,okay,am i too late,0.0,0.0,0.0,0.0
+124,yeah oh my god,nono ah everything's okay everybody's healthy there's fingers and toes,0.0,0.0,0.0,0.0
+125,yes that would have made more sense,we have our babies,0.11809164,0.0,0.0,0.0
+126,i'm sorry,yeah,0.0,0.0,0.0,0.0
+127,you guys got anything to eat i just went down to johnos for some chicken and it was closed,oh we have our babies,0.0,0.0,0.0,0.0
+128,i bet ya ya i could fit in there,hey bobby,0.0,0.0,0.0,0.0
+129,seriously dude years ago,it's bob actually hey you work up here can you tell me where this chandler,0.0,0.0,0.0,0.0
+130,the sun is out,uhh yeah yeah it's right right down there right there yeah can i ask you why,0.0,0.0,0.0,0.0
+131,well umm my mom's friend phoebe is actually my birth mom,i want to talk to that bastard see what his problem is,0.08333333,0.0,0.0,0.0
+132,you mean they're lovers,okay bob listen uhh i'm the reason you didn't get the job up here,0.07142857,0.0,0.0,0.0
+133,phoebe what ummwhat,toby don't,0.0,0.0,0.0,0.0
+134,chandler you call me when this goes in the pooper,bob,0.0,0.0,0.0,0.0
+135,okay let's do it again,toby i'm not gonna let you cover for him anything you say right now will just get me more upset with chandler,0.0,0.0,0.0,0.0
+136,oh don't listen to him he's just some guy who really wants the apartment but i don't think he's gonna get it,i know i found it on the street,0.06516523,0.0,0.0,0.0
+137,nono he's he's very docile,are you seriousreally it's in such good condition,0.0,0.0,0.0,0.0
+138,umm i think he's still out what's wrong,yeah,0.0,0.0,0.0,0.0
+139,how much do you think i can get for my kidney,wow whoawhoa what's under the covers,0.0,0.0,0.0,0.0
+140,oh i uh i went to aruba,i don't know,0.08786571,0.0,0.0,0.0
+141,and here we have the last of paulo's grappa,it's stillit's got a tail get it out of here get it out of here,0.13333333,0.0,0.0,0.0
+142,i think i need a drink,ooh ah okay,0.0,0.0,0.0,0.0
+143,bad things happen to me anyway,we talked through most of the night and we realized that the reason we were so angry at each other was because there are still feelings there so,0.0,0.0,0.0,0.0
+144,and then you said why do they call it a check,oh just say it kyle,0.06023884,0.0,0.0,0.0
+145,oh well give it time,we're gonna give it another try,0.33333333,0.25819889,0.0,0.0
+146,stupid closet full of bugs,what about her whining and her constant need for attention,0.0,0.0,0.0,0.0
+147,i'm sorry i think that you just misunderstood her,i'm gonna work on that,0.17973159,0.0,0.0,0.0
+148,that is the rule,oh right because you're so capable of change,0.0,0.0,0.0,0.0
+149,coffee sounds great wait so so you live in montreal,y'know he hums when he pees,0.0,0.0,0.0,0.0
+150,not,i do know,0.0,0.0,0.0,0.0
+151,don't yell at me okay this is the most i've seen you all week,it makes him miss the bowl but whatever,0.05904582,0.0,0.0,0.0
+152,you don't seem to understand see i was dr drake remoray,we're so sorry,0.0,0.0,0.0,0.0
+153,wow you guys really don't know anything,that's all right wewe don't need you in fact hey i'm over it already,0.14285714,0.0,0.0,0.0
+154,and then after that i'm gonna get so drunk i'm gonna wanna call janice,yeah and y'know what i don't give a tiny rat's ass,0.06920913,0.0,0.0,0.0
+155,i'm afraid i can't let you do that joe,yeah we're gonna go,0.0,0.0,0.0,0.0
+156,whatEngels,i'm sorry ugh pheebs you were you were right about her y'know she,0.0,0.0,0.0,0.0
+157,god and now i just can't stop picturing with her i can't it doesn't matter what you say or what you do ross,oh y'know he hums while he does other stuff to,0.0,0.0,0.0,0.0
+158,ooh looklooklooklooklooklooklook i got monica naked,yeah we're better off without them,0.0,0.0,0.0,0.0
+159,and as my wife i think you should grant me this favor,and y'know even if they break up again you'd better not let him in your sad men's club,0.05555556,0.0,0.0,0.0
+160,no rachel doesn't want me to,divorced men's club,0.0,0.0,0.0,0.0
+161,i have a question about this scene,maybe because you've got the keys,0.0,0.0,0.0,0.0
+162,okay,this is totally your fault,0.0,0.0,0.0,0.0
+163,yeah no i'm fairly intuitive and psychic it's a substantial gift,my fault you threatened the judge,0.0,0.0,0.0,0.0
+164,yeah i don't think so joe,well you ripped the paper out of the court reporter's machine,0.0,0.0,0.0,0.0
+165,oh my god,yeah,0.0,0.0,0.0,0.0
+166,that's it,have you seen chandler,0.0,0.0,0.0,0.0
+167,what,no why,0.0,0.0,0.0,0.0
+168,it's just 'cause i couldn't be there,the woman from the museum called and said that there was a cancellation and that we could move up our wedding and chandler heard,0.04166667,0.0,0.0,0.0
+169,can i help you,i know,0.18393972,0.0,0.0,0.0
+170,you're welcome,how bad is this,0.0,0.0,0.0,0.0
+171,well fine,well for the regular guy it's bad but chandler oh dear god,0.08333333,0.0,0.0,0.0
+172,actually i do have one small complaint,i know i know and he totally freaked out and i can't find him anywhere,0.06666667,0.0,0.0,0.0
+173,why won't i be married when i'm,what are you gonna do,0.0,0.0,0.0,0.0
+174,you owe me bucks,well i'm never gonna listen to you again that's for sure,0.09090909,0.0,0.0,0.0
+175,and you can see me,y'know harm can it do if you go and put your name down,0.23076923,0.0,0.0,0.0
+176,hmm,rachel said that,0.0,0.0,0.0,0.0
+177,whatwhat,well rachel's not here,0.0,0.0,0.0,0.0
+178,with a chickchick here and a chickchick there,damnit damnit damnit damnit,0.0,0.0,0.0,0.0
+179,thank you,this is all your fault,0.0,0.0,0.0,0.0
+180,okay umm i'm gonna get my sweater,this is supposed to be like the greatest day of my life y'know,0.07692308,0.0,0.0,0.0
+181,and thethe calming sounds of the babbling brook,my son is being born and i should be in there you know instead of stuck in a closet with you,0.0952381,0.0,0.0,0.0
+182,but what about phoebe,the woman i love is having a baby today i've been waiting for this just as much as you have,0.0,0.0,0.0,0.0
+183,like the guy on the other side of you was smelly von brownshirt,no no no believe me,0.0,0.0,0.0,0.0
+184,it's uh it's a song,no one has been waiting for this as much as i have ok,0.0,0.0,0.0,0.0
+185,yeah well you never have the time i mean i don't feel like i even have a girlfriend anymore rachel,and you know what the funny thing is,0.05578254,0.0,0.0,0.0
+186,how can i help you,when this day is over you get to go home with the baby ok,0.07142857,0.0,0.0,0.0
+187,ii keep hearing all these rumors that i might get fired,where does that leave me,0.06023884,0.0,0.0,0.0
+188,no,you get to be the baby's father,0.0,0.0,0.0,0.0
+189,and instead my parents got me this little plastic chicken that you hop around on,everyone knows who you are,0.02706706,0.0,0.0,0.0
+190,aww look at the little thing,who am i,0.0,0.0,0.0,0.0
+191,yeah but after you said it was okay i figured why not,there's mother's day there's father's day there's no lesbian lover day,0.0,0.0,0.0,0.0
+192,a four and a nine,every day is lesbian lover day,0.0,0.0,0.0,0.0
+193,does that mean the same thing in england as it does in america,this is so great,0.0,0.0,0.0,0.0
+194,well i brought the next best thing,you wanna explain that,0.0,0.0,0.0,0.0
+195,just so you know we're not seeing him tomorrow,i mean well 'cause when i was growing up you know my dad left and my mother died and my stepfather went to jail so i barely had enough pieces of parents to make one whole one,0.08108108,0.0474579,0.0,0.0
+196,and then and then you turn to me and say nah let's just hang out at your place well that was a nice move dumb ass,and here's this little baby who has like three whole parents who care about it so much that they're fighting over who gets to love it the most,0.10714286,0.0,0.0,0.0
+197,you mean they're lovers,and it's not even born yet,0.0,0.0,0.0,0.0
+198,i guess you wouldn't believe me if i said i was kurt douglas huh,it's just it's just the luckiest baby in the whole world,0.0,0.0,0.0,0.0
+199,thanks but i want to remove it pheebs i don't want to make it savory,i'm sorry you were fighting,0.0,0.0,0.0,0.0
+200,no no thatthat that's all right umm i'm just glad you called,hi how are you doing kelly,0.06131324,0.0,0.0,0.0
+201,she's in labor you like that you sick son of a bitch,i'm doing just fine god tiffany you smell so great,0.08187308,0.0,0.0,0.0
+202,that i was not expecting,it's my new perfume why don't you come closer where you can,0.0,0.0,0.0,0.0
+203,because i'm monica geller it was my credit card you were using,oh y'know joey you are sick,0.06131324,0.0,0.0,0.0
+204,hi this is heldi from the morgan chase museum i'm calling for monica geller,this is disgusting,0.01704102,0.01475796,0.0,0.0
+205,nothing,i'm not reading this,0.0,0.0,0.0,0.0
+206,maybe it wasn't bob maybe it was a mouse,what waitwaitwait the handsome man was about to enter,0.11111111,0.0,0.0,0.0
+207,i can't believe we have to stop seeing each other,i mean he's got the monocle he's got the top hat,0.09090909,0.0,0.0,0.0
+208,yes shame about you man,you know he's gay,0.1947002,0.0,0.0,0.0
+209,nooo i had a story all worked out but then chandler sold me out,i just wanna clarify this are you outing mr peanut,0.067032,0.0,0.0,0.0
+210,i think i can take care of myself i'll talk to you later,danielle hi uh everybody this is danielle danielle everybody,0.0,0.0,0.0,0.0
+211,and thethe calming sounds of the babbling brook,hi hi,0.0,0.0,0.0,0.0
+212,hi,what are you doing here,0.0,0.0,0.0,0.0
+213,well it's a pretty big commitment i mean what if one of us wants to move out,what,1.1e-07,0.0,0.0,0.0
+214,i'm sending back all this stuff that chandler bought out of guilt,what is it,0.0,0.0,0.0,0.0
+215,well she's out of town so there's gotta be something in her house that tells me where my father is,that she left you,0.00457891,0.0,0.0,0.0
+216,yeah they're not so bad,that she likes women,0.0,0.0,0.0,0.0
+217,that's that's great,that she left you for another woman that likes women,0.0,0.0,0.0,0.0
+218,ehh,little louder okay i think there's a man on the twelfth floor in a coma that didn't quite hear you,0.0,0.0,0.0,0.0
+219,you told me,then what,0.0,0.0,0.0,0.0
+220,ow ow,my first time with carol was,0.0,0.0,0.0,0.0
+221,we don't care about where we stay,what,0.0,0.0,0.0,0.0
+222,the was a beautiful woman,it was my,0.17113904,0.0,0.0,0.0
+223,oh now daddy stay calm please,with carol oh,0.12262648,0.0,0.0,0.0
+224,these got left for ya,so in your whole life you've only been with oneoh,0.0,0.0,0.0,0.0
+225,yes,whoah boy hockey was a big mistake there was a whole bunch of stuff we could've done tonight,0.0,0.0,0.0,0.0
+226,hi,oh it's already closed chris gave me the keys to lock upwhat is wrong,0.0,0.0,0.0,0.0
+227,it's so annoying,my marriage i think my marriage is um is kinda over,0.0,0.0,0.0,0.0
+228,so if i said yes he would know i had nothing better to do than wait around for an invitation to his stupid party,oh no why,0.0,0.0,0.0,0.0
+229,all right i'll see you in the morning,cause carol's a lesbian and and i'm not one and apparently it's not a mix and match situation,0.0,0.0,0.0,0.0
+230,okay i know hold on hey ross,oh my god i don't believe it oh you poor bunny,0.09090909,0.0,0.0,0.0
+231,all i had to do was pay and wait in line for three hours,i'm an idiot,0.0,0.0,0.0,0.0
+232,thanks,i mean shoulda seen it i mean carol and i'd be out and she'd she'd see some beautiful woman and and she'd be ross y'know look at her and i'd think god my wife is cool,0.0,0.0,0.0,0.0
+233,what's the other one,aw hey do you think that susan person is her lover,0.0,0.0,0.0,0.0
+234,we're never gonna find anybody,well now i do,0.0,0.0,0.0,0.0
+235,oh yeah,i'm sorry,0.0,0.0,0.0,0.0
+236,what are you doing,seven years,0.0,0.0,0.0,0.0
+237,and kristin kristindoes something that funnily enough wasn't even her major,i mean we've been together seven years she's the only woman who's ever loved me and the only woman i'vei've ever,0.04761905,0.0,0.0,0.0
+238,y'know when i'm with her i am so much more than that,aw god ross oh,0.0,0.0,0.0,0.0
+239,yeah,but you've got one more apology to make all right you've got to apologize to maryangela,0.0,0.0,0.0,0.0
+240,no no no no,okay absolutely,0.0,0.0,0.0,0.0
+241,secret married people aren't supposed to have secrets between one another we have too much love and respect for one another,all right,0.0,0.0,0.0,0.0
+242,y'know those are a delicacy in india,you've got it,0.0,0.0,0.0,0.0
+243,no,cookie now you can punch him,0.0,0.0,0.0,0.0
+244,nah notnot special enough,what,0.0,0.0,0.0,0.0
+245,relax you're only at nine centimeters and the baby's at zero station,what i didn't say anything,0.0,0.0,0.0,0.0
+246,really,yeah but this isn't the face of a person who trusts a person,0.0,0.0,0.0,0.0
+247,you mean theokay by siadic you mean the towel covered portion,ok this is the face of a person who you know doesn't trust a person,0.13333333,0.0,0.0,0.0
+248,oh,i'm sorry i'm sorry phoebe it's just a little shorter than what we had discussed,0.0,0.0,0.0,0.0
+249,well i'm off to bed,would you relax i know what i am doing this is how he wears it,0.0,0.0,0.0,0.0
+250,hey do you thinkwould it be too weird if i invited carol over to join us,what,0.0,0.0,0.0,0.0
+251,this is a garden view room and we paid for an ocean view room,jody,0.0,0.0,0.0,0.0
+252,whoa that,you were with julie,0.0,0.0,0.0,0.0
+253,what do you think,look when it started i was just trying to be nice to her because she was my brother's girlfriend,0.0,0.0,0.0,0.0
+254,you mean theokay by siadic you mean the towel covered portion,and then one thing led to another and before i knew it we wereshopping,0.0,0.0,0.0,0.0
+255,ooh,oh oh my god,0.0,0.0,0.0,0.0
+256,what,honey wait we only did it once it didn't mean anything to me,0.0,0.0,0.0,0.0
+257,oh my god i'm your,yeah right sure,0.0,0.0,0.0,0.0
+258,that let's talk about that,really rachel i was thinking of you the whole time,0.0,0.0,0.0,0.0
+259,toby oh for god's sake i don't know what she's talking about,look i'm sorry all right,0.0,0.0,0.0,0.0
+260,wow you guys really don't know anything,i never meant for you to find out,0.125,0.0,0.0,0.0
+261,y'know what actually okay okay okay what's so funny over here,oh please you wanted to get caught,0.0,0.0,0.0,0.0
+262,stop it,that is not true,0.0,0.0,0.0,0.0
+263,why am i not surprised,oh so you just sort of happened to leave it in here,0.0,0.0,0.0,0.0
+264,oh that's all right i'm coming back later with your father,did it ever occur to you that i might just be that stupid,0.0,0.0,0.0,0.0
+265,and i'm very sorry but i don't know where your father is and that's the truth,ok monica i just have to know one thing did you go with her to,0.12473426,0.0,0.0,0.0
+266,i mean naked game strip poker we should totally play strip poker,i can't say,0.01659569,0.0,0.0,0.0
+267,i'm just gonna go flush myself down the toilet now,why,0.0,0.0,0.0,0.0
+268,nothing,why not,0.0,0.0,0.0,0.0
+269,well that's because uhi stayed in my room yeah you don't want to look in my hamper,i can't say because he's famous,0.02664662,0.0,0.0,0.0
+270,why,oh my god who is it,0.0,0.0,0.0,0.0
+271,i know i know but can we please try it again huh i mean you were,phoebe come on you have to tell us,0.04598493,0.0,0.0,0.0
+272,um absolutely uh how 'bout tomorrow afternoon do you know uh central perk in the village say fiveish,okay okay it's james brolin james brolin is the father of my baby,0.05236249,0.0,0.0,0.0
+273,i'll be fun,as in barbara streisand's husband james brolin,0.0,0.0,0.0,0.0
+274,yeah that's the same,what well he never said that to me,0.0,0.0,0.0,0.0
+275,yeah,oh this life oh okay no chandler's is worse,0.0,0.0,0.0,0.0
+276,what am i going to do,man it must be so cool remembering stuff like that i don't have any past life memories,0.05882353,0.0,0.0,0.0
+277,that's a good idea dear janice have a hubbabubba birthday' i would like to get her something serious,of course you don't sweetie you're brand new,0.0,0.0,0.0,0.0
+278,phoebe,i know monica's worst thanksgiving,0.0,0.0,0.0,0.0
+279,wow my brother never even told me when he lost his virginity,oh let's not tell this story,0.0,0.0,0.0,0.0
+280,no no i'm serious we should tell each other,oh come on,0.0,0.0,0.0,0.0
+281,what are you doing,oh no i know i know it's the one where joey got monica's turkey stuck on his head,0.0,0.0,0.0,0.0
+282,yeah what's up with that girl monica,what joey got a turkey stuck on his head,0.0,0.0,0.0,0.0
+283,all right i can't sit here anymore i have to walk places,hey it's not like it sounds,0.0,0.0,0.0,0.0
+284,yeah,it's,0.0,0.0,0.0,0.0
+285,oh some idiot customer put a suggestion in the suggestion box,who was that,0.0,0.0,0.0,0.0
+286,because because ititit's it'd be like you having this guitar andand never playing it okay this guitar,wendy bailed i have no waitress,0.0,0.0,0.0,0.0
+287,dude what am i gonna,oh that's too bad bye bye,0.0,0.0,0.0,0.0
+288,lint,ten dollars an hour,0.0,0.0,0.0,0.0
+289,it's just 'cause i couldn't be there,no,0.0,0.0,0.0,0.0
+290,how's the maniac,twelve dollars an hour,0.0,0.0,0.0,0.0
+291,yeah actually that's my roommate's,mon i wish i could but i've made plans to walk around,0.0,0.0,0.0,0.0
+292,i do i do i do i do ugh like i can really chase you i'm carrying a litter,you know rachel when you ran out of your wedding i was there for you,0.10212378,0.0,0.0,0.0
+293,no you don't,i put a roof over your head and if that means nothing to you twenty dollars an hour,0.05555556,0.0,0.0,0.0
+294,that's it,done,0.0,0.0,0.0,0.0
+295,no no you're not a loser,you've got to get out of here save yourself,0.0,0.0,0.0,0.0
+296,yeah well he's not gonna get this one,no i won't leave you,0.0,0.0,0.0,0.0
+297,i can get out joey i have too but then i lose my nerve and i always finish with go to the bathroom,don't worry about me i'm a robot i'm just a machine,0.0,0.0,0.0,0.0
+298,who,no you're not not to me,0.0,0.0,0.0,0.0
+299,because then you don't have to,oh my god,0.0,0.0,0.0,0.0
+300,i'm like those women that you see with shiny guys named chad,what,0.0,0.0,0.0,0.0
+301,i mean naked game strip poker we should totally play strip poker,i am,0.00336897,0.0,0.0,0.0
+302,i think you're better than you think you are,yeah you're great okay let's take it from,0.11031211,0.0,0.0,0.0
+303,lose the robe,no i mean i was really acting my ass off,0.0,0.0,0.0,0.0
+304,there is going to be a wedding you are going to throw the bouquet and,yeah i thought i was pretty good too,0.0,0.0,0.0,0.0
+305,well either that or uh,oh yeah you're solid yeah you're just no me,0.0,0.0,0.0,0.0
+306,oh well i guess i had that one coming,y'know what i think that's enough for now yeah i don't want to be over rehearsed,0.125,0.0,0.0,0.0
+307,you mean they're lovers,fine,0.0,0.0,0.0,0.0
+308,what all righthey don't look at me you're the one who wanted to come up and look for some stupid,i'll do it without you,0.0,0.0,0.0,0.0
+309,chandler please,i don't need you or anybody else,0.0,0.0,0.0,0.0
+310,fine okay enjoy your concert,i'm gonna make it on my own,0.0,0.0,0.0,0.0
+311,that's two now,you'll see,0.0,0.0,0.0,0.0
+312,in love with you,you'll,0.0,0.0,0.0,0.0
+313,what,i didn't know ross and you were so close,0.0,0.0,0.0,0.0
+314,yeah i know it's my birthday we all should be here,we weren't but we had one class together he was such a great guy and he talked so passionately about science i always remembered him,0.08,0.0,0.0,0.0
+315,we're actually at the end of one of our research cycles so we're not looking for applicants right now,i'm sure that would mean a lot to him,0.0,0.0,0.0,0.0
+316,nothing nothing,and if heaven has a door i'm sure he's pressing his ear up against it and listening intently,0.0,0.0,0.0,0.0
+317,now do you have any idea what you just said,i thought so many times about calling him and asking him out i guess i really missed my chance,0.0,0.0,0.0,0.0
+318,sirony,but you didn't,0.0,0.0,0.0,0.0
+319,i guess you wouldn't believe me if i said i was kurt douglas huh,i'm still alive,0.0,0.0,0.0,0.0
+320,yes i'm very glad you're here,kori i know this is a big surprise for you,0.0,0.0,0.0,0.0
+321,whew it's hot with all of this stuff on,it's a long story but the things you just said really made my day,0.07142857,0.0,0.0,0.0
+322,i'know it's really lame but i got these tickets from my boss andoh no no no no my god,i mean the fact that you are here means more to me than if this room were filled with people,0.05,0.0,0.0,0.0
+323,well you see thethe thing is wewe only got we kinda have one shot to make it right,you sick freak who does that i can't believe i had a crush on you,0.05458205,0.0,0.0,0.0
+324,soso that'sthat's what i'm doing now,did you hear that kori weston had a crush on me,0.0,0.0,0.0,0.0
+325,joey if i go first i wanna be looking for my keys,okay,0.0,0.0,0.0,0.0
+326,no thank you you have given me so much i mean if it wasn't for you i would never have gotten to sing,so eight days late huh,0.00546474,0.0,0.0,0.0
+327,that's all for today,yeah,0.0,0.0,0.0,0.0
+328,things that move me the the shadow of a tree a child laughing or this lip,you must be a little uncomfortable,0.03147927,0.0,0.0,0.0
+329,well kinda old like,eh just a tad,0.0,0.0,0.0,0.0
+330,how did youknow,you're about percent effaced so you're on your way,0.0,0.0,0.0,0.0
+331,yeah i mean i was gonna be homeless,it still could last a little while longer,0.0,0.0,0.0,0.0
+332,really,if you're anxious there are a few ways to help things along,0.0,0.0,0.0,0.0
+333,don't you talk to my husband like that you stupid bastard,do them,0.0,0.0,0.0,0.0
+334,now get out of here you,actually they're things you can do just some home remedies but in my experience i've found that some of them are quite effective,0.08695652,0.0,0.0,0.0
+335,that's why you broke up with me,well we are ready to try anything,0.0,0.0,0.0,0.0
+336,oh uh can it wait a second joey i have to tell my parents something no it can't okay,okay there's an herbal tea you can drink,0.0632099,0.0,0.0,0.0
+337,no legchewing for us sir,okay,0.0,0.0,0.0,0.0
+338,i think it's the most beautiful table i've ever seen,oh she misunderstood she thought she was moving to tulsa,0.0,0.0,0.0,0.0
+339,die hard,ok ok here we go,0.0,0.0,0.0,0.0
+340,can you just pick one so i can watchhave a perfect magical weekend together with you,ok where am i talking to here,0.03949329,0.0,0.0,0.0
+341,you need to give him money,i mean uh well there is one way that seems to offer a certain acoustical advantage but,0.05882353,0.0,0.0,0.0
+342,okay i'll be up in pages front and back very exciting,just aim for the bump,0.0,0.0,0.0,0.0
+343,unless you wanna practice the foxtrot again oror the tango,ok ok ok ok here goes,0.0,0.0,0.0,0.0
+344,um that's ok ok all right now we need the semen of a righteous man,you know i you know can't do this,0.0,0.0,0.0,0.0
+345,yeah i know it's my birthday we all should be here,uh this is too weird,0.0,0.0,0.0,0.0
+346,yeah,i feel stupid,0.0,0.0,0.0,0.0
+347,okay,so don't do it it's fine you don't have to do it just because susan does it,0.0,0.0,0.0,0.0
+348,but i told you i didn't have the time,hello baby hello hello,0.0,0.0,0.0,0.0
+349,all right i can't sit here anymore i have to walk places,okay i do,0.01659569,0.0,0.0,0.0
+350,okay,okay,1.0,0.0,0.0,0.0
+351,nononono,i really do,0.0,0.0,0.0,0.0
+352,yeah and until then you are going to sing to me because the radio's broken and you are selfish but have a nice voice,okay i'm gonna get your coat and then i'lli'll put you in a cab,0.13986905,0.0,0.0,0.0
+353,but there are no boles she's smooth,okay oh wait waitwait you're not gonna come with me,0.0,0.0,0.0,0.0
+354,now i say we shed thesethese coats that separate us and we get to know the people underneath,of course i am i just have to make a call,0.09622061,0.0,0.0,0.0
+355,and i always figured when the right one comes along i'd be able to be a standup guy and go the distance y'know,okay,0.0,0.0,0.0,0.0
+356,so as long as it's hot onstage you got nothing to worry about,okay,0.0,0.0,0.0,0.0
+357,nononono,thank you oww god,0.0,0.0,0.0,0.0
+358,then we went to this bar and he hooked us up with all these women,what i wh what's wrong,0.0,0.0,0.0,0.0
+359,really cause i could kinda use the money,i'm sorry i just can't go to the hospital lookin' like this,0.16666667,0.0,0.0,0.0
+360,and the chefs eat with the other chefs right,run run you crazy rich freak,0.0,0.0,0.0,0.0
+361,mia hamm,oh i can't watch this,0.0,0.0,0.0,0.0
+362,yeah come on eat whatever you want dr roger got beeped again,check it out he's winning pete's winning,0.0,0.0,0.0,0.0
+363,do you realize i have a classroom full of students,really,0.0,0.0,0.0,0.0
+364,well y'know we would umm repeat everything the other said or uh we'd jump out of closets to scare each other or switch the sugar for the salt so they'd put salt on their cereal,nooo,0.0,0.0,0.0,0.0
+365,hello jennifer,uhoh bruiser has becker on the canvas and is going for his favourite area,0.0,0.0,0.0,0.0
+366,and just to be on the safe side dr wells wanted a more comprehensive overview of you status so he sent me,oh oh,0.0,0.0,0.0,0.0
+367,oh yeah you have to tell her,wait if that's his favourite area why is he being so mean to it,0.07142857,0.0,0.0,0.0
+368,i'm the supply manager,well this is ironic,0.0,0.0,0.0,0.0
+369,it was it was an amazing night,of your last two boyfriends richard didn't want to have kids and from the looks of it now pete can't,0.05,0.0,0.0,0.0
+370,yeah well that's how mad i am,we could or we can have sex in it,0.0,0.0,0.0,0.0
+371,you don't play the oboe,well let me think about that while i remove my pants,0.0,0.0,0.0,0.0
+372,oh my god i do love you how did you do it,hey i'm with you he even asked me if i thought you'd go out with him,0.125,0.0,0.0,0.0
+373,you're drunk mom and dad are gonna be maaaaadd maybe i'm a little drunk,oh oh i think i'm gonna throw up a little bit what did you say,0.26666667,0.13801311,0.0,0.0
+374,here comes the bride,i said no,0.0,0.0,0.0,0.0
+375,do you want my pickle,what,0.0,0.0,0.0,0.0
+376,it's from rachel she said that she loved the present and she will see you when you get back,what ii just figured since you're pregnant you're not gonna be seeing people,0.0,0.0,0.0,0.0
+377,oh right i completely forgot about that,goodgood don't tell him don't tell him just have him call me okay,0.0,0.0,0.0,0.0
+378,well then we'll get wet,rach look i really don't think that's such a great,0.0,0.0,0.0,0.0
+379,you think you know me so well,okay you go do it i'll come back to that set i'll meet more actors i'll meet em all,0.05263158,0.0,0.0,0.0
+380,yeah i'm just taking pledges here eh,that's okay,0.0,0.0,0.0,0.0
+381,yeah,she's still in there enjoying her fake party and uh it's too late to do any of the things i had planned so,0.0,0.0,0.0,0.0
+382,oh my god are you guys okay,you tell them to wait,0.13406401,0.0,0.0,0.0
+383,oh oh my god,okay wait wait,0.0,0.0,0.0,0.0
+384,joey,emily,0.0,0.0,0.0,0.0
+385,oh joey don't,oh nonono ohno no no emily,0.16666667,0.0,0.0,0.0
+386,yeah we got him back everything's fine,okay,0.0,0.0,0.0,0.0
+387,yeah but of course we had to update it a little bit hey by the way great thinking about catching me,nevermind,0.0,0.0,0.0,0.0
+388,we could totally be ourselves we didn't have to play any games,no ii actually thought it was unfair the way everyone reacted i mean you had just moved in,0.0,0.0,0.0,0.0
+389,and then guess what,jen,0.0,0.0,0.0,0.0
+390,pizza delivery,jen i know this may sound a little but uh would you maybe wanna grab a cup of coffee sometime or,0.0,0.0,0.0,0.0
+391,listen,sure that would be nice,0.0,0.0,0.0,0.0
+392,and you're not supposed to be gossiping,umm,0.0,0.0,0.0,0.0
+393,i bet ya ya i could fit in there,oh my number is on there give me a call,0.1,0.0,0.0,0.0
+394,oh what did i say,i will give you a call,0.16666667,0.0,0.0,0.0
+395,but youyou said black why would he want his blue blazer black,i'll see you later,0.0,0.0,0.0,0.0
+396,and if not we got to do it on a bucket,okay,0.0,0.0,0.0,0.0
+397,so,i forgot my paper,0.0,0.0,0.0,0.0
+398,we can getwhat are thosethose patches,what,0.0,0.0,0.0,0.0
+399,that's right made expressly for val kilmer and worn by him in the hit filmthat batman film he was in,okay,0.0,0.0,0.0,0.0
+400,umm i am free tomorrow night,ow,0.0,0.0,0.0,0.0
+401,they're wildly unpopular,aren't you gonna go,0.0,0.0,0.0,0.0
+402,because you're pure evil horny and alone i mean it's not fair to you,no thank you,0.00852051,0.0,0.0,0.0
+403,thanks,no rachel never pees in public restrooms,0.0,0.0,0.0,0.0
+404,so forget it,well they never have any paper in there y'know so my rule is no tissue no tuschy' well if everybody's going,0.04761905,0.0,0.0,0.0
+405,okay i'll see you tomorrow,no y'know what don't close it cause the keysare in there,0.0,0.0,0.0,0.0
+406,well what happened at dinner,oh nononononono,0.0,0.0,0.0,0.0
+407,see didn't i tell you you're getting over ross already,what's going on,0.0,0.0,0.0,0.0
+408,oh it's this big budget period movie about these three italian brothers who come to america around the turn of the century,my lighter's in there,0.0,0.0,0.0,0.0
+409,so they're constantly like having to reassure each other that they're having a good time,although don't feel like you can't visit,0.04555808,0.0,0.0,0.0
+410,do you ah want to get her something speacial get her flowers get her candy get her gum girls love gum,hey is is is chandler here,0.0,0.0,0.0,0.0
+411,oh yeah wasn't she uh,no no he's not,0.0,0.0,0.0,0.0
+412,no one of them,you guys joey just saw janice kissing her exhusband,0.0,0.0,0.0,0.0
+413,look i don't think so pheebs all right i'll do it but just because you're a friend,what so what are you going to do i mean how how are you going to tell chandler,0.16666667,0.0,0.0,0.0
+414,ohh that's too bad,well i was thinking about that and i i think the best way would be to not,0.0,0.0,0.0,0.0
+415,really,joey you can't keep this to yourself if you know about this you have to tell him,0.0,0.0,0.0,0.0
+416,i'm afraid i can't let you do that joe,it'll kill him i mean it'll it'll just kill him,0.1,0.0,0.0,0.0
+417,alright i'm gonna go pick up a few things for the trip,well you could wait til i go to the dentist maybe,0.16601831,0.0,0.0,0.0
+418,hey uh i don't mean to be presumptuous but i have these two tickets to the ballroom dancing finals tomorrow night if you want to go,well oh just ah i was just wondering when you and i split up did you get the tape that was half the last episode of,0.15384615,0.0,0.0,0.0
+419,you guys would never want to go to a lecture with me,ah yeah but now it's susan and me in mexico and the hostages coming home,0.06666667,0.0,0.0,0.0
+420,i'm fine no i'm not alone i don't know some guy,where's ben,0.0,0.0,0.0,0.0
+421,so you don't have the cameras,he's sleeping,0.0,0.0,0.0,0.0
+422,yeah you still have feelings for me,ahh ooh is this a ah is this a bad time,0.0,0.0,0.0,0.0
+423,well then what is it,umm yeah actually susan's gonna be home any minute it's kinda an anniversary,0.0,0.0,0.0,0.0
+424,there's this kid in my class who said he's in love with me,oh i thought you guys got married in uh january,0.07408182,0.0,0.0,0.0
+425,i'm monica's maid of honor okay don't try to blue pin me,it's not that kind of anniversary,0.06131324,0.0,0.0,0.0
+426,sure uh let me get it for ya,ah oh,0.0,0.0,0.0,0.0
+427,if you don't get that,sooo anyway,0.0,0.0,0.0,0.0
+428,that's great but shouldn't you be on the toilet right now,oh oh oh i'll get rainy day bear',0.0,0.0,0.0,0.0
+429,hey you can cancel plans with friends if there is the possibility for sex,because he'll know what to do oh my god you're a genius,0.0,0.0,0.0,0.0
+430,i'm gonna go kiss ben goodnight,oh god oh god it's sowed on though,0.0,0.0,0.0,0.0
+431,water breaking what do you mean what's that water breaking,give it give it,0.0,0.0,0.0,0.0
+432,ooh looklooklooklooklook i got monica naked,okay,0.0,0.0,0.0,0.0
+433,so we never got to hear about your wedding,oh,0.0,0.0,0.0,0.0
+434,where is that book that you are reading with the two women who were iceskating and wearing wearing those hats with the flowers on it,oh it's just like a bloodbath in here today,0.0,0.0,0.0,0.0
+435,i don't know i'm sorry i always slept in the back when we drove up here,yeah well there's a lot of things carol never did before i came along,0.06191985,0.0,0.0,0.0
+436,welcome back to our fall telethon now if you've been enjoying the performance of,get in here,0.0,0.0,0.0,0.0
+437,ross can i talk to you for a minute,come on,0.0,0.0,0.0,0.0
+438,we are gonna be here for a while it looks like and we still have boyfriends and your career to cover,my god you guys i don't believe you,0.0,0.0,0.0,0.0
+439,ah well this is the living room,there are children coming into the world in this very building and your negative fighting noises are not the first thing they should be hearing,0.08,0.0,0.0,0.0
+440,that's funny who are they,so just stop all the yelling just stop it,0.0,0.0,0.0,0.0
+441,calm down calm down you set me up with the woman that i've dumped twice in the last five months,yeah susan,0.0,0.0,0.0,0.0
+442,he knew we were trying to get rid of him he knew you think we could get a bathtub in our kitchen,don't make me do this again i don't like my voice like this,0.0,0.0,0.0,0.0
+443,why don't we why don't we see what kind of number he has on his speed dial and then from that we can tell who has more in common with him,ok who wants to hear something ironic,0.00463332,0.0,0.0,0.0
+444,dude what are yoyou trying to kill me,i didn't do that who would've done that,0.0,0.0,0.0,0.0
+445,that's what i do now,son of a bitch,0.0,0.0,0.0,0.0
+446,right ok ok uh ducks is heads because ducks have heads,okay maybe ask this guy,0.0,0.0,0.0,0.0
+447,y'know i mean it was really exciting at first but now it's like okay so where are we gonna eat ever,y'know sometimes the good ideas are just right in front of you aren't they,0.08664724,0.0,0.0,0.0
+448,i know we're not but frank medeio and eva trorro womba,okay i know it sounds crazy but i think it might work y'know the only problem is carl's acting is,0.15,0.08885233,0.0,0.0
+449,oh my god,the,0.0,0.0,0.0,0.0
+450,set it down over there and then you can make a contribution,yeah he's the reason i didn't get that big,0.0,0.0,0.0,0.0
+451,well chandler and i are in a bar,hey uh can i get a little piece of that cake,0.18181818,0.0,0.0,0.0
+452,no you don't,pizza we like pizza get out,0.0,0.0,0.0,0.0
+453,oh please did you hear that little drops of heaven,sure i love this part,0.0,0.0,0.0,0.0
+454,hoho i will,come on in,0.0,0.0,0.0,0.0
+455,you know what else i'm not gonna miss,in the moment yeah,0.0,0.0,0.0,0.0
+456,what,but only in the moment so do ya wanna kiss again,0.0,0.0,0.0,0.0
+457,umm jo's a girl it's short for josephine,sure new year's eve is only two weeks away can you wait,0.0,0.0,0.0,0.0
+458,oh she's not home huh,no,0.0,0.0,0.0,0.0
+459,eww,me neither,0.0,0.0,0.0,0.0
+460,dude howhow did you write this,,0.0,0.0,0.0,0.0
+461,thank you,joey you don't have to count down every time we kiss,0.09090909,0.0,0.0,0.0
+462,actually i do have one small complaint,uh yeah okay except i sorta felt like i needed a couple of seconds to get ready,0.05882353,0.0,0.0,0.0
+463,can you tell it to me when you're getting me some iced tea,okay okay,0.0,0.0,0.0,0.0
+464,well half a brownie,if i were omnipotent for a day i would want um world peace no more hunger good things for the rainforestand bigger boobs,0.04347826,0.0,0.0,0.0
+465,yes joanna really has been an incredible mentor to me,yeah see you took mine chandler what about you,0.0,0.0,0.0,0.0
+466,well now let'slet's look at this objectively i think i should date her,uh if i were omnipotent for a day i'd make myself omnipotent forever,0.07692308,0.0,0.0,0.0
+467,in fact iii was married to one of them,see there's always one guy if i had a wish i'd wish for three more wishes,0.0625,0.0,0.0,0.0
+468,we have maybe we'll be seeing each other at dinner tomorrow night say around o'clock,hey joey hi hey buddy,0.0,0.0,0.0,0.0
+469,oh okay,hey joey what would you do if you were omnipotent,0.0,0.0,0.0,0.0
+470,joey do you work here,probably kill myself,0.0,0.0,0.0,0.0
+471,okay d'y'see anybody you think could be me,excuse me,0.02489353,0.0,0.0,0.0
+472,what,hey if little joey's dead then i got no reason to live,0.0,0.0,0.0,0.0
+473,no this is pretty much it,joey uh,0.0,0.0,0.0,0.0
+474,yeah oh your mom probably won't kill herself y'know,you,0.0,0.0,0.0,0.0
+475,oh honey the earrings,well can you at least stay to the end of the play,0.08333333,0.0,0.0,0.0
+476,i can't leave it you gouged a hole in my dingy floor,i mean i'll go to the airport with ya ii wanna say good bye,0.07142857,0.0,0.0,0.0
+477,no no no i don't could you be a dear and go tell him,where are you vic,0.02052125,0.0,0.0,0.0
+478,i thought i would but the translation's no good,flight's in an hour ii gotta go,0.0,0.0,0.0,0.0
+479,well kristin kristindoes something that funnily enough wasn't even her major,vic vic,0.0,0.0,0.0,0.0
+480,not so much,in a minute,0.0,0.0,0.0,0.0
+481,all right i'll leave,so this is it victor,0.0,0.0,0.0,0.0
+482,ma you're asking me to marry you,yeah i guess it is,0.0,0.0,0.0,0.0
+483,so they ah they all took off it was pretty hard watching them go y'know,listen i ah i gotta say good bye andand i gotta say it quick cause this is killing me,0.10526316,0.0,0.0,0.0
+484,and then after that i'm gonna get so drunk i'm gonna wanna call janice,one thing you gotta know is that i will never forget you,0.07054014,0.0,0.0,0.0
+485,disneyland 'it's a small world after all',but you've got things you have to do now and so do i,0.0,0.0,0.0,0.0
+486,umm you make something up,and so i'm gonna get on this spaceship and i'm gonna go to blargon in search of alternative fuels,0.0,0.0,0.0,0.0
+487,they're actually gonna call her chandler,but when i return years from now you'll be long gone,0.0,0.0,0.0,0.0
+488,we're probably too old to do that now,but i won't have aged at all,0.0,0.0,0.0,0.0
+489,am i naked again,so you tell your greatgreatgranddaughter to look me up because adrienne baby i'm gonna want to meet her,0.0,0.0,0.0,0.0
+490,sure,so long vic,0.0,0.0,0.0,0.0
+491,i can't believe theythey didn't even tell us,see ii think that one that elton john wrote for um that guy on,0.0,0.0,0.0,0.0
+492,i'm i'm monana,what song was that pheebs,0.0,0.0,0.0,0.0
+493,unless you wanna practice the foxtrot again oror the tango,hi monica,0.0,0.0,0.0,0.0
+494,joey how do you make,hey mon,0.0,0.0,0.0,0.0
+495,are you excited,hey mon,0.0,0.0,0.0,0.0
+496,hey how's my pal toby doing today,oh my god has she slept at all,0.125,0.0,0.0,0.0
+497,i'm gonna go find that guy's car and leave a note on the windshield,nope,0.0,0.0,0.0,0.0
+498,wow imagine what our kids would look like,no it's been three nights in a row,0.0,0.0,0.0,0.0
+499,she loves you,yeah she finally stopped crying yesterday but then she found one of richard's cigar butts out on the terrace so,0.05,0.0,0.0,0.0
+500,oh yeah i should probably call them,oh okay that explains it,0.13406401,0.0,0.0,0.0
+501,i'm great i'm great i've got a great job at,i got a call at two in the morning but all i could hear was like this high squeaky sound so i thought okay its like a mouse or a opossum,0.09677419,0.05679618,0.0,0.0
+502,hello i am guru sajwhoa that's supposed to be a duck right cause otherwise this is waaay out of my league,but then i realized where would a mouse or a opossum get the money to make the phone call,0.1421191,0.0,0.0,0.0
+503,i think it's best sir,y'know what i don't know how comfortable i am going to see how hot the sex is between some guy and your girlfriend,0.04347826,0.0,0.0,0.0
+504,and then whoever does gets the phone,yeah i know but,0.0,0.0,0.0,0.0
+505,let me get it out before it sets,oh nonono i'm there,0.0,0.0,0.0,0.0
+506,you'd tell me if you were moving out right,hey,0.0,0.0,0.0,0.0
+507,hey,hey mon want some pancakes,0.2,0.0,0.0,0.0
+508,oh milwaukee,you made pancakes,0.0,0.0,0.0,0.0
+509,yeah i'm pretty confident about that,yep grab a plate,0.0,0.0,0.0,0.0
+510,i am strong i'll show you,nono stay right there gettin' closer,0.0,0.0,0.0,0.0
+511,well i told you not to walk here there okay,okay okay but don't worry because we also have cereals muffins waffles,0.08333333,0.0,0.0,0.0
+512,no wait emily no wait stop emily please,listen also we're uh we're watching the game here saturday night if people want to come over,0.0,0.0,0.0,0.0
+513,okay it'll take just a little while to prepare the embryos,oh yeah,0.0,0.0,0.0,0.0
+514,but hey y'know if you don't believe me please by my guest,yeah hero sandwiches,0.0,0.0,0.0,0.0
+515,as i was saying i should probably have the first of the three kids by the time i'm which gives me five years,well you all know that i'm a pacifist so i'm not interested in war in any way,0.0413305,0.0,0.0,0.0
+516,i mean not that sitting at home worrying about giving birth to a sixteen pound baby is not fun,when the revolution comes i will have to destroy you all,0.08785911,0.0,0.0,0.0
+517,you guys are messing with me right,not you joey,0.08786571,0.0,0.0,0.0
+518,i'm like those women that you see with shiny guys named chad,hey continuing the countdown of your favorite meals tonight no macaroni and cheese with cut up hot dogs,0.05555556,0.0,0.0,0.0
+519,boyfriend,look you have done enough okay you have to stop this now,0.0,0.0,0.0,0.0
+520,and we'll be like'man get over it it's been four years',i will but not tonight for dinner music i thought we could listen to that tape you made me,0.0,0.0,0.0,0.0
+521,oh thank god,oh the mixed tape,0.25,0.0,0.0,0.0
+522,ehwhexcuse me,the way you look tonight,0.0,0.0,0.0,0.0
+523,first of all i'm so sorry about my father yelling at you but i heard you totally held your own,you are just the sweetest,0.00995741,0.0,0.0,0.0
+524,hey,hey,1.0,0.0,0.0,0.0
+525,hey,hey guess what i'm doing tonight,0.16666667,0.0,0.0,0.0
+526,there's nothing to handle,what,0.0,0.0,0.0,0.0
+527,she is kicking so much,i'm checking out the restaurant with pete,0.0,0.0,0.0,0.0
+528,hold it nypd freeze punk,ohh monica i am so excited for you,0.0,0.0,0.0,0.0
+529,and you would read alone in your room and your puzzles,ooh actually i've been making a list of all the women i know who might be into doing this,0.0,0.0,0.0,0.0
+530,oh my god,oh wow huh boy well someone's been doing their homework,0.1,0.0,0.0,0.0
+531,dude what am i gonna,yeah ooh and i know gail rosten is in there twice but she is so,0.06666667,0.0,0.0,0.0
+532,and i haven't taught him anything that a normal yearold doesn't know anyway,oh i know y'know justjust talking about it is getting me kinda,0.15334074,0.0,0.0,0.0
+533,that'll work,oh me too,0.0,0.0,0.0,0.0
+534,and he'll be all 'yes',ross it just wouldn't have been feasible,0.0,0.0,0.0,0.0
+535,check this out can i have this,but having a dove place the ring on your finger would've been no problem,0.0,0.0,0.0,0.0
+536,no rach no i don't i don't i don't,it was really fun being married to you tonight,0.0,0.0,0.0,0.0
+537,heads up ross score you suck,yeah and and it was the easiest bucks i've ever made,0.0,0.0,0.0,0.0
+538,y'know they're not gonna get married anyway,okay ross can i uh can i ask you something,0.0,0.0,0.0,0.0
+539,oh yeah well i'm rubber you're glue whatevercan't do it listen uh gimme back my puck,yeah,3.1e-07,0.0,0.0,0.0
+540,you can't,that proposal at the planetarium,0.0,0.0,0.0,0.0
+541,ahh,i know i know it was stupid,0.0,0.0,0.0,0.0
+542,people make mistakes,are you kidding,0.0,0.0,0.0,0.0
+543,oh yeah now everybody wants to be under this hat,with the with the lilies andand the song and the stars,0.0,0.0,0.0,0.0
+544,and i was gonna go over and say hi' but then i figured he doesn't care if he looks like you,it wasreally wonderful,0.0,0.0,0.0,0.0
+545,and it kinda works out for the best,did you just make that up,0.0,0.0,0.0,0.0
+546,nono kathy,no actually i thought about it when when we were going out,0.0,0.0,0.0,0.0
+547,oh now daddy stay calm please,it's how i imagined i uh i would ask you to marry me,0.0,0.0,0.0,0.0
+548,yeah she's gay,well that would've been very hard to say no too,0.0,0.0,0.0,0.0
+549,okay,it's a good thing i didn't do it because it sounds like it would've been a very expensive wedding okay good night,0.04545455,0.0,0.0,0.0
+550,what,goodnight,0.0,0.0,0.0,0.0
+551,hope hope,even if the sidecar had a windscreen so your hair wouldn't get messed up,0.0,0.0,0.0,0.0
+552,absolutely i love the way you kiss,i will think about it,0.13406401,0.0,0.0,0.0
+553,really,that's all i'm askin',0.0,0.0,0.0,0.0
+554,and besides heyheyhey no one is even gonna,well actually ii didn't eat mine it's still in the bathroom,0.0,0.0,0.0,0.0
+555,okay blablablabla who is it,no it isn't i ate that,0.16666667,0.0,0.0,0.0
+556,they're not true,well we left ours in monica's bedroom,0.0,0.0,0.0,0.0
+557,okay well my girl from the other night was special she was a scientist too,nope got it and i got yours too,0.05210775,0.0,0.0,0.0
+558,oh ross come on this is not this is not a marriage this is the world's worst hangover ross listen if,that's fine actually i'm on the hiring committee so there'll be at least one friendly face,0.09145195,0.0,0.0,0.0
+559,you're our third call tonight,ohh that's great,0.0,0.0,0.0,0.0
+560,fraid so brown hair green eyes,you know junior miss is where i started oh i had to sleep with the,0.0,0.0,0.0,0.0
+561,i can see it from right here it'll cost you one husband,really,0.0,0.0,0.0,0.0
+562,look you guys have been to every play i've ever been in have i ever had chemistry on stage,nohoho,0.0,0.0,0.0,0.0
+563,oooh it's getting close,yeah,0.0,0.0,0.0,0.0
+564,you are so dead i'm gonna get you,i mean nonononono don't you worry i'm sure with your qualifications you won't need to sleep with some guy to get that job,0.17391304,0.0,0.0,0.0
+565,nimitz and sold over boxes,although i might need some convincing,0.0,0.0,0.0,0.0
+566,they're having their baby,well i umm,0.0,0.0,0.0,0.0
+567,i don't want to lose you,kidding god i feel wild today,0.16666667,0.0,0.0,0.0
+568,i did it,yeah but maybe it's not what we think maybe it's tell monica i'm sorry idrank the last of the milk,0.0,0.0,0.0,0.0
+569,now that is funny,or maybe hehe was writing to tell her thatthat he's changed his name y'know tell monica i'm sorry,0.0,0.0,0.0,0.0
+570,y'know what i don't i don't think phoebe really wants to come,i think it means he freaked out and left,0.15922918,0.0,0.0,0.0
+571,i'm reading your ad,don't be so negative good god isn't it possible that sorry is sitting in there right now,0.0,0.0,0.0,0.0
+572,no no no it's flattery,okay phoebe ii think ross is right what are we gonna do,0.0,0.0,0.0,0.0
+573,no i get to teach one of his advanced classes why didn't i get head of the department,lookokay i'm just gonnai'm gonna have to go find him and bring him back,0.05367695,0.0,0.0,0.0
+574,ross thank god,okay,0.0,0.0,0.0,0.0
+575,although this city is my home so,youyou make sure monica does not find out okay,0.0,0.0,0.0,0.0
+576,hey,hi hey,0.5,0.0,0.0,0.0
+577,listen can we watch cartoons on your television,do you guys know any cute guys,0.0,0.0,0.0,0.0
+578,oh well we watch it a second time and its,well of course i do my good friend joey over here,0.09090909,0.0,0.0,0.0
+579,iii of course i have more responsibilities than that,oh i'm sorry thank you chandler,0.0,0.0,0.0,0.0
+580,you should how is she,anyway there's this big charity ball this weekend and ralph lauren bought a table so i kinda have to go,0.0,0.0,0.0,0.0
+581,well i have to go now,what's the charity,0.0,0.0,0.0,0.0
+582,nothing this is not over,i don't know something either trees or diseaseralph mumbles a lot,0.0,0.0,0.0,0.0
+583,spoon so what do you think,does ralph mumble when you're not paying attention,0.0,0.0,0.0,0.0
+584,that was soso not really never,yeah it's weird but the thing is need to find a date,0.0,0.0,0.0,0.0
+585,yeah for you is that the list,well what kind of guy are you looking for,0.22222222,0.0,0.0,0.0
+586,hey ooh look at you dressydress,what are you guys doing later,0.16666667,0.0,0.0,0.0
+587,you wish,oh rachel and i have appointments to get our hair cut,0.0,0.0,0.0,0.0
+588,wow,we do,0.0,0.0,0.0,0.0
+589,y'know what i can easily get out of this but there is a chance you can get very very hurt,i want to see what he wants first,0.05578254,0.0,0.0,0.0
+590,rachel things can get incredibly complicated,i just found out that elizabeth's dad wants to meet me,0.0,0.0,0.0,0.0
+591,they have the best stuff in there,wait a minute hold the phone you're not elizabeth's dad,0.1,0.0,0.0,0.0
+592,did you not hear me say duude,come on guys ii really want this guy to like me,0.09090909,0.0,0.0,0.0
+593,yeah,itit would really help me out if you guys were here to make me look good,0.0,0.0,0.0,0.0
+594,what happened you still have the monica wedding fund don't you,of course we'll help yeah we'll be here,0.0,0.0,0.0,0.0
+595,no but don't worry i'm sure they're still there,thanks,0.0,0.0,0.0,0.0
+596,okay man,we know how tough those parentteacher conferences can be,0.0,0.0,0.0,0.0
+597,hi,i'm okay i gotta go down to the police station and look at mug shots,0.0,0.0,0.0,0.0
+598,nah i kept myself busy,thanks for having me over you guys,0.0,0.0,0.0,0.0
+599,no i don't want to hit you,tag,0.0,0.0,0.0,0.0
+600,dangerous liaisons,yyou're going,0.0,0.0,0.0,0.0
+601,well half a brownie,uh we didn't uh we didn't get the chance to talk,0.0,0.0,0.0,0.0
+602,oh yeah this is from rachel,uh so where did you say you're from again,0.11111111,0.0,0.0,0.0
+603,okay i'll be back in just a minute oh phoebe i'm sorry that i left lipstick marks on the phone,colorado,0.0,0.0,0.0,0.0
+604,hi sorry i'm late were you sleeping,ah what good are you,0.13406401,0.0,0.0,0.0
+605,now i've never been able to cry as an actor so if i'm in a scene where i have to cry i cut a hole in my pocket take a pair of tweezers and just start pulling,look um i think we should talk about what happened on the terrace,0.01214178,0.0,0.0,0.0
+606,yeah that's what i drive i make four bucks an hour i saved up for years,okay,0.0,0.0,0.0,0.0
+607,okay i guess we can lose to junior high girls some other time,ah ii never should have said what i said,0.07124227,0.0,0.0,0.0
+608,on the other hand if she wasn't kidding she's not fun she's stupid and kind of a racist,ity'know what,0.0,0.0,0.0,0.0
+609,who wants it anybody,it just doesn't matter how i feel,0.14285714,0.0,0.0,0.0
+610,apparently you're not very good at it,i mean we work together so nothing could really ever happen between us and what i would love is just to go to work on monday andand never talk about this again okay,0.0,0.0,0.0,0.0
+611,yeah oh but wait,um i'm not,0.0,0.0,0.0,0.0
+612,it's just y'know been a couple of hours and she hasn't called not that i even care y'know,oh god i knew it that i freaked you out,0.08986579,0.06698201,0.0,0.0
+613,i'm off to bed,no you didn't the only thing that freaked me out was you saying that nothing could ever happen between us,0.0,0.0,0.0,0.0
+614,you got all that from the back of her head,really,0.0,0.0,0.0,0.0
+615,yeah in fact to prove how much you mean to me here,yeah so please don't fire me for doing this,0.15922918,0.0,0.0,0.0
+616,now ii know what you're thinking fun was fine for you like ten years ago y'know but you'reyou're not getting any younger,see buddy that's all you need a bunch of toothless guys hitting each other with sticks,0.04295558,0.0,0.0,0.0
+617,this is so weird i don't even remember which one it is,pass it pass it,0.03383382,0.0,0.0,0.0
+618,jeffrey,he's open,0.0,0.0,0.0,0.0
+619,yeah,shoot shoot shoot,0.0,0.0,0.0,0.0
+620,no thank you you have given me so much i mean if it wasn't for you i would never have gotten to sing,hey look we're on that tv thing,0.0,0.0,0.0,0.0
+621,this isn't right,yeah me too,0.0,0.0,0.0,0.0
+622,yes yes it does okay look the restaurant called they wanna know if you're gonna be showing up for work,yeah wow y'know that this thing has speakers in the headrest,0.04011211,0.0,0.0,0.0
+623,are you serious,no really,0.0,0.0,0.0,0.0
+624,all right y'know what we've been talking about london too much haven't we,yeah you can hook it up to your tv,0.0,0.0,0.0,0.0
+625,aren't you with that girl over there,my chair heals itself,0.0,0.0,0.0,0.0
+626,what,yes yes i did,0.0,0.0,0.0,0.0
+627,that's cool,then do iceberg,0.0,0.0,0.0,0.0
+628,well i'm going to go into my new apartment now ehh,gsharp,0.0,0.0,0.0,0.0
+629,he's alive he's alive,g,0.0,0.0,0.0,0.0
+630,so you like the drums,what i didn't touch a guitar,0.0,0.0,0.0,0.0
+631,thatthat he's aa complex fellow who's unlikely to take a wife,no but you're questioning my method,0.0,0.0,0.0,0.0
+632,the red ross okay,no i'm not questioning it i'm saying it's stupid what,0.0,0.0,0.0,0.0
+633,during a blackout he'd get trampled,thank you,0.0,0.0,0.0,0.0
+634,if i can't have it you can't have it,y'know none of my other student thought i was stupid,0.1,0.0,0.0,0.0
+635,all right i'm nine years old,your other student was you,0.0,0.0,0.0,0.0
+636,are you sure,yeah well y'know maybe you just need to try a little harder,0.08333333,0.0,0.0,0.0
+637,in that case should i make sure it's on real good,look maybe i need to try a real teacher,0.17794165,0.0,0.0,0.0
+638,all right there are no questions in the happy place okay just the warm breeze and the moonlight flowing through the trees,right here,2.27e-05,0.0,0.0,0.0
+639,oh really that'd be great you guys can be the contestants,here,0.0,0.0,0.0,0.0
+640,hello children,andy cooper he teaches guitar and look ooh there's a nice picture of him with a little kid and,0.0,0.0,0.0,0.0
+641,that's a great idea we can,fine you go learn from your qualified instructor but don't come crying to me when everyone's sick and tired of hearing you play,0.0,0.0,0.0,0.0
+642,i'll do it,baddest man in the whole damn town,0.0,0.0,0.0,0.0
+643,no no you're not a loser,oh fine take his side,0.0,0.0,0.0,0.0
+644,i'm sorry it's not very fair to you,hey,0.0,0.0,0.0,0.0
+645,hey,no ahahahahah you can have this back when the five pages are done ahh,0.0,0.0,0.0,0.0
+646,may i see your boarding pass,hi,0.0,0.0,0.0,0.0
+647,hi all right let's go shoppin',hi umm i think there's something that we really need to talk about,0.07692308,0.0,0.0,0.0
+648,all right i have one question,i think we do why don't we go inside look uh i know why you're here,0.0625,0.0,0.0,0.0
+649,and also umm next time you see me i'm screaming don't worry that's what's supposed to happen,you do,0.00027654,0.0,0.0,0.0
+650,i think somebody needs another lap dance,yeah and to save you from any embarrassment umm i think maybe i should talk first,0.125,0.09128709,0.0,0.0
+651,i'm telling you rachel listen to janice they all say they're gonna be there until they start their real family,okay,0.0,0.0,0.0,0.0
+652,sid is still in his room,okay uh ross and rachel rachel and ross that's been one heck of a seesaw hasn't it,0.0,0.0,0.0,0.0
+653,yeah i think i suggested that,what,0.0,0.0,0.0,0.0
+654,y'know so i don't read as many important books as you do and i don't write trick poems that seem to be about one thing but are actually about something else,i mean look thatthat one night we had was fun andand certainly passionate but don't you think it's better if we just stayed friends,0.15562865,0.0,0.0,0.0
+655,well i'm sorry joe i didn't think the doctor was gonna buy that it just fell out of the socket,seriously what,0.0,0.0,0.0,0.0
+656,yeah okay scott,okay,0.13533528,0.0,0.0,0.0
+657,yes i suppose i am a dog but issac see ii happen to have a girlfriend,okay,0.0,0.0,0.0,0.0
+658,um but i saw this infomercial and um i swear to you i have neverever bought anything on tv before except for this mop,y'know what,0.0,0.0,0.0,0.0
+659,i don't know,if you want to we can do it one more time,0.0,0.0,0.0,0.0
+660,but what,i mean i'di'd be okay with that,0.0,0.0,0.0,0.0
+661,umhmm,in fact i have some time right now,0.0,0.0,0.0,0.0
+662,i'm sorry,okay y'know what can i can i talk now,0.0,0.0,0.0,0.0
+663,take my hand,oh sure,0.0,0.0,0.0,0.0
+664,oh my god,i'm pregnant ross ross okay whenever you're ready and you're the father by the waybut you got that,0.0,0.0,0.0,0.0
+665,i have to get back to,yes wow well thatthat was easy okay youyou go,0.0,0.0,0.0,0.0
+666,oh yeah oh my god that is,okay,0.0,0.0,0.0,0.0
+667,okay here we go ready,okay,0.01831564,0.0,0.0,0.0
+668,nononono,okay you know you know when your in bed with a woman,0.0,0.0,0.0,0.0
+669,all right i'm coming out hey can you turn the lights off,hmph,0.0,0.0,0.0,0.0
+670,and hassidic jewellers yeah adrienne's got bad knees you hit her right and she'll go down like a lamp,and ah you know your fooling around with her,0.109731,0.0,0.0,0.0
+671,okay they even have actors coming in to read for my part,and you get all these like mental images in your brain you know like elle macpherson or that girl at the xerox place,0.04347826,0.0,0.0,0.0
+672,yeah ii think i suggested that,with the bellybutton ring oh muhawa,0.0,0.0,0.0,0.0
+673,thanks bye,i know and then all of the sudden your mom pops into your head,0.0,0.0,0.0,0.0
+674,well yeah you look great too did you get a haircut,and your like'mom get outta here',0.07243303,0.0,0.0,0.0
+675,come on would you please pay attention i could wake up at any moment,you know but of course like after that you can't possibly think of anything else and you can't you know stop what your doing,0.04166667,0.0,0.0,0.0
+676,y'know it's a little sudden and it's a little rushed and it's totally not like me to do something like this but that doesn't mean i can't,so it's kinda like you're you know,0.01640932,0.0,0.0,0.0
+677,oh my god,you know you don't know,0.0,0.0,0.0,0.0
+678,no no give it to me,your mom your telling me your telling me about your mom what is the matter with you,0.05882353,0.0,0.0,0.0
+679,you serious,you said,0.5,0.0,0.0,0.0
+680,i know rach are you okay,i said ',0.12262648,0.0,0.0,0.0
+681,i just say someone on thethat looks just like you on the subway,look at emma,0.0,0.0,0.0,0.0
+682,okay here's your penis,i just can't decide who she looks more alike you or rachel,0.0,0.0,0.0,0.0
+683,yeah it's for our catering business,oh what are you kidding she's gorgeous it's all rachel,0.1,0.0,0.0,0.0
+684,my friend's name is joey,i'm sorry for the last time why aren't you two together again,0.0,0.0,0.0,0.0
+685,oh god,no i know,0.0,0.0,0.0,0.0
+686,there you go,i know because you're not in that place,0.0,0.0,0.0,0.0
+687,pregnant woman slays four,which would be fine except you totally are,0.0,0.0,0.0,0.0
+688,but youyouyou could write that umm your love lets me orbit the moon twice and return safely,it'sit's complicated okay,0.0,0.0,0.0,0.0
+689,that's all,yeah that's true yeah you love her you always have you have a child together there is no right answer,0.05,0.0,0.0,0.0
+690,but you gotta have turkey on thanksgiving,look we've been together,0.0,0.0,0.0,0.0
+691,y'know that'sthat's fine but the line is hmm soup,okay,0.0,0.0,0.0,0.0
+692,kay,and then apart and then together and then apart and now we have a baby,0.0,0.0,0.0,0.0
+693,honey what's the matter,it's just ifif we got together again and it didn't work outi could never do that to emma,0.0,0.0,0.0,0.0
+694,okay so i,i mean sheshe thinking everything oh that'snow me,0.125,0.0,0.0,0.0
+695,you are asking me to be your wife,what do they put something in the water in this place,0.0,0.0,0.0,0.0
+696,like it would help,since rachel and i we're doing really we're doing really well right now,0.0,0.0,0.0,0.0
+697,oh i am,i know i know i know i know and if you try to make it more you might wreck it,0.05,0.0,0.0,0.0
+698,uhhuh me too ross maybe i should've specified that i'd be needing a grown up doctor,yeah exactly,0.0,0.0,0.0,0.0
+699,okay now will you guys get out of here i want this is to be a surprise and she's gonna know,right or you might get everything you've wanted since you were fifteen,0.07872776,0.0,0.0,0.0
+700,if you said big lima bean bubbling up would she understand the difference,you don't have a,0.02634981,0.0,0.0,0.0
+701,doesn't matter i'm never gonna get to meet her anyway,oh ross you're so tense you just gotta relax okay just need to relax all right just need to relax,0.05,0.0,0.0,0.0
+702,even though you do do a good bob impression i'm thinkin' when she sees you tomorow she's probably gonna realize hey you're not bob,whatwhat are you doing are youokay that's not funny just stop horsing around,0.06600954,0.0,0.0,0.0
+703,now i look around this cafeteria and y'know what i see i seei see division,i am not horsing around okay i am porsching around,0.1819592,0.0,0.0,0.0
+704,the fake kind,uhoh,0.0,0.0,0.0,0.0
+705,that's right you just enjoy,okay stay calm nothing is going to happen to you you are not in that much trouble,0.05882353,0.0,0.0,0.0
+706,all right i have one question,really you think so,0.0,0.0,0.0,0.0
+707,i think it's the most beautiful table i've ever seen,i was talking to myself you're going down,0.0973501,0.0,0.0,0.0
+708,last time i do that i promise,oh yeah,0.0,0.0,0.0,0.0
+709,all right i'll see you guys later,yeah what d'you wanna do tonight,0.0,0.0,0.0,0.0
+710,that'll work,oh well maybe we could,0.0,0.0,0.0,0.0
+711,okay that's you know what that is,ok trying to turn me on by making a mess,0.0,0.0,0.0,0.0
+712,really okay so why don't you tell me what happened to ross junior year at,know your audience,0.0,0.0,0.0,0.0
+713,would you mind spending some time on my siadic area it's been killing me today,besides tomorrow we're doing those fertility tests and until then you need to keep your tadpoles in the tank,0.05263158,0.0,0.0,0.0
+714,i might have some kind of life like i haven't been sitting around here honing for the past few hours,we really need to take those tests,0.0,0.0,0.0,0.0
+715,there's only room for one so i guess one of you will have to stay at joey's,honey we've been trying to have a baby for over a year,0.16481016,0.0,0.0,0.0
+716,oh i'm so sorry,i think it's a good idea to find out if everything's ok just a few routine tests,0.0,0.0,0.0,0.0
+717,well okay i'll swing by later do you live in this building,but i don't wanna do it in a cup,0.15922918,0.0,0.0,0.0
+718,uh i just liked it better before it was better,no have you seen david,0.0,0.0,0.0,0.0
+719,which one do you think she is,no no he hasn't been around,0.0,0.0,0.0,0.0
+720,i broke up with her,well if you see him tell him to pack his bags we are going to minsk,0.0,0.0,0.0,0.0
+721,actually i did,minsk,0.0,0.0,0.0,0.0
+722,no reason,minsk it's in russia,0.0,0.0,0.0,0.0
+723,and,i know where minsk is,0.0,0.0,0.0,0.0
+724,oh yeah what are you reading,we got the grant three years all expenses paid,0.0,0.0,0.0,0.0
+725,and sometimes i'll want you to steal third and i'll go like this,so when when do you leave,0.05190054,0.0,0.0,0.0
+726,yeah i know isn't it great one less person we have to make small talk with,january first,0.0,0.0,0.0,0.0
+727,oh like you've never gotten a little rambunctious with ross,yes yes please come in,0.0,0.0,0.0,0.0
+728,i can't believe theythey didn't even tell us,oooo,0.0,0.0,0.0,0.0
+729,phoebe sandra's mad at you too itit doesn't bother you,damn those robots they're supposed to be our,0.0,0.0,0.0,0.0
+730,rachel would be phoebe's i would be rachel's that way we all get to do it once and no one would get upset,anyway it wasn't the robot it was the guy who controls him,0.0333208,0.0,0.0,0.0
+731,she could be out of town maybe she'll be gone for months,yeah he doesn't like me,0.0,0.0,0.0,0.0
+732,but youyou can't leave me with them wewe're a team we're playing a zone they're gonna triple team me,ohh,0.0,0.0,0.0,0.0
+733,oh my god,well why don't you just get him fired,0.0,0.0,0.0,0.0
+734,really y'think so i don't,i may have to i hate to do it but i'm the star,0.07692308,0.0,0.0,0.0
+735,why,y'know,0.0,0.0,0.0,0.0
+736,does it bug you,there's a limit to how many sandwiches i can eat off the floor,0.0,0.0,0.0,0.0
+737,i told you we're adding new operators all the time could we concentrate on my training,excuse me,0.0,0.0,0.0,0.0
+738,oh sorry,joey tribbiani,0.0,0.0,0.0,0.0
+739,hmm noodle soup,joe i'm glad i found ya i got an audition for ya,0.0,0.0,0.0,0.0
+740,oh yeah,wow,0.0,0.0,0.0,0.0
+741,hi guys,the thing is it's kinda on the qt,0.0,0.0,0.0,0.0
+742,all right fine if it means that much to you but justthere's gonna be a ton left over,the actor who has the part doesn't know he might be fired,0.05054422,0.0,0.0,0.0
+743,what are you talking about if you get married in vegas you're married everywhere,it's the lead in a series mac and cheese,0.06375038,0.0,0.0,0.0
+744,yes of course,i'm the lead in mac and cheese,0.0,0.0,0.0,0.0
+745,yeah,what is going on with you since when are you so crazy about babies,0.0,0.0,0.0,0.0
+746,no no that's not what i want uh i'm glad you guys were bonding but i,i'm not crazy about babies i'm crazy about us,0.10209463,0.0,0.0,0.0
+747,and then when we do it they're left with a big black pencil line right down the center of their face,what,0.0,0.0,0.0,0.0
+748,some guy bought it i'm sorry i tired to stop it but they put me in jail,look we've always talked about having babies someday,0.0,0.0,0.0,0.0
+749,and ross gave me this great book holds up the,i'm not saying it has to be right now but i'm starting to think that we can handle it,0.0,0.0,0.0,0.0
+750,i'm not listening to you,we're good,0.0,0.0,0.0,0.0
+751,what was that,we're really good,0.0,0.0,0.0,0.0
+752,no,whwhat did he say,0.0,0.0,0.0,0.0
+753,carol our sex life isit's just not working,he said nice to meet you glenda well obviously i couldn't give him my real name,0.0,0.0,0.0,0.0
+754,so if you just give me another chance to make a good impression,why why not,0.0,0.0,0.0,0.0
+755,because because ititit's it'd be like you having this guitar andand never playing it okay this guitar,come on you saw the way he ran out of here,0.05268893,0.0,0.0,0.0
+756,i had a crush on a teacher once and it was so hard,he's gonna stick around and talk to the daughter he abandoned,0.07579572,0.0,0.0,0.0
+757,who cares about them,what did you say to him,0.0,0.0,0.0,0.0
+758,i uh i just came by because ii want to talk to you about something,well i said i told him y'know that i was the executor person of francis' will and that i needed to talk to him so i'm gonna meet him at the coffee house later,0.14705882,0.09440686,0.0653059,0.0
+759,oh my god,okay in about ten seconds you're gonna see him kiss me,0.0,0.0,0.0,0.0
+760,no i'm gonna,and in about five seconds you're gonna see why,0.11111111,0.0,0.0,0.0
+761,well okay fine use my happy place,ross did i ever tell you about the time that i went backpacking through western europe,0.0,0.0,0.0,0.0
+762,i might have some kind of life like i haven't been sitting around here honing for the past few hours,okay get ready to see some beggin',0.02230258,0.0,0.0,0.0
+763,well surejust a sec though 'cause paolo's on his way over,oh you came on to ross,0.07243303,0.0,0.0,0.0
+764,oh you did there are twenty in here,what,0.0,0.0,0.0,0.0
+765,that's right made expressly for val kilmer and worn by him in the hit filmthat batman film he was in,now i'm so happy,0.0,0.0,0.0,0.0
+766,so i'm gonna take off then,what are you talking about,0.0,0.0,0.0,0.0
+767,okay rachel you wanna put the marshmellows in concentric circles,you used the europe story,0.14715178,0.0,0.0,0.0
+768,y'know we work in a museum of natural history and yet there is something unnatural about the way we eat lunch,that's the magic story you use when you wanna have sex,0.03662639,0.0,0.0,0.0
+769,umm okay i would like to talk to you about your toner needs,how do you know about that story,0.12124938,0.0,0.0,0.0
+770,well i mean if uh if emily gave me a choice,how do,0.0,0.0,0.0,0.0
+771,i'm not fine here she comes,i heard it from my friend irene who heard it from some guy,0.0,0.0,0.0,0.0
+772,come on they were not that huge,some guy,0.0,0.0,0.0,0.0
+773,do you want my pickle,no no she told me his name was ken adams,0.0,0.0,0.0,0.0
+774,honey relax ross is great with him don't look so surprised i'm a lovely person,ken adams,0.0,0.0,0.0,0.0
+775,okay there was,mom already called this morning to remind me not to wear my hair up did you know my ears are not my best feature,0.0,0.0,0.0,0.0
+776,okay ow owohoh,some days it's all i can think about,0.0,0.0,0.0,0.0
+777,y'know if you're gonna work late i could look in on him for you,hi sorry i'm late i couldn't find my bearings,0.12750076,0.09562557,0.0,0.0
+778,oh honey he doesn't need my help,well umm alexandra has been,0.0,0.0,0.0,0.0
+779,then why are you answering do you at least know what route we're on,oh it has a name,0.0,0.0,0.0,0.0
+780,all right look you're not really gonna buy that are you don't you think you've embarrassed me enough for one day,phoebe don't get upset,0.00356606,0.0,0.0,0.0
+781,actually i did,okayoop too late i'm leaving come on chandler let's go,0.0,0.0,0.0,0.0
+782,no no no it's flattery,well phoebe i thought i'dyeah what the hell,0.0,0.0,0.0,0.0
+783,nonono,oh that's good maybe he'll hear you and pull the cord,0.0,0.0,0.0,0.0
+784,do you love her,stop the bus wait wait wait,0.0,0.0,0.0,0.0
+785,oh come on she wants to snuggle now,are you sure he didn't break it because it really hurts,0.0,0.0,0.0,0.0
+786,really,no it's just a good bone bruise and right here is the puncture wound from your ring,0.0,0.0,0.0,0.0
+787,carol called me to thank me for the lasagna i asked she told me,oh i'm sorry i'm really sorry,0.0,0.0,0.0,0.0
+788,well okay i'll swing by later do you live in this building,sorry,0.0,0.0,0.0,0.0
+789,look you have not been out with a woman since janice,sorry,0.0,0.0,0.0,0.0
+790,where's chandler,i got my s's back,0.0,0.0,0.0,0.0
+791,i'm telling you i think phoebe thinks i'm foxy,which we can celebrate later,0.0,0.0,0.0,0.0
+792,huh what'd ya say joe i'll be right there,celebrate,0.0,0.0,0.0,0.0
+793,uh let me ask you something was kip a better roommate than me,rachel how did this happen,0.0,0.0,0.0,0.0
+794,toby oh for god's sake i don't know what she's talking about,i don't know i just kinda ran into him last night,0.24902747,0.21325438,0.1664782,0.0
+795,come on,where,0.0,0.0,0.0,0.0
+796,anyway i should go okay bye,at his apartment is this juice,0.0,0.0,0.0,0.0
+797,i'm so sorry,whoa whoa and the fact that you dumped him because he hit on phoebe,0.0,0.0,0.0,0.0
+798,dude what are yoyou trying to kill me,oh god i know i'm a pathetic loser,0.0,0.0,0.0,0.0
+799,well i'm upsetfor you i mean having sex with an endless line of beautiful women must be very unfulfilling for you,it's breast milk,0.0,0.0,0.0,0.0
+800,that's interesting but check this out i date her,so,0.0,0.0,0.0,0.0
+801,i'm funny,phoebe that is juice squeezed from a person,0.0,0.0,0.0,0.0
+802,wow nice manly and also kind of a slut,what is the big deal,0.0,0.0,0.0,0.0
+803,eh y'know what she's to political she probably wouldn't let you do it unless you donated four cans of food first,what did you just do,0.02445732,0.0,0.0,0.0
+804,you're the first guest at hotel monica,ok would people stop drinking the breast milk,0.125,0.0,0.0,0.0
+805,thank god,you won't even taste it,0.0,0.0,0.0,0.0
+806,it's not even a song,no,0.0,0.0,0.0,0.0
+807,you decided to go into the outofwork actor business,not even if you just pretend that it's milk,0.11111111,0.0,0.0,0.0
+808,right here,not even if carol's breast had a picture of a missing child on it,0.0,0.0,0.0,0.0
+809,ow did you just bite me,hey pheebs could you please not put your feet up on my newold sheet,0.07142857,0.0,0.0,0.0
+810,ross you're like my best friend,oh sure noo,0.0,0.0,0.0,0.0
+811,well so now do you guys have a lot of big plans,ohh,0.0,0.0,0.0,0.0
+812,i'm sorry i'm late did i miss anything,my apothecary table,0.0,0.0,0.0,0.0
+813,and i'll cook anything you want in here and do anything in there,what,0.0,0.0,0.0,0.0
+814,intense and creepy,noooooo,0.0,0.0,0.0,0.0
+815,shut up,ross where did you get this,0.0,0.0,0.0,0.0
+816,you have chalk on your face,oh my god phoebe,0.0,0.0,0.0,0.0
+817,pheebs if i had never met him this never would have happened,wow oh my god well if they've ripped off our table ours must be much more than one and fifty dollars,0.04761905,0.0,0.0,0.0
+818,hold it hold it,well this doesn't even smell like opium,0.0,0.0,0.0,0.0
+819,oh what did i say,of course not it smells like wine which you spilled and thanks for wrecking my sheet by the way,0.0,0.0,0.0,0.0
+820,i'm sorry it's just phoebe just always thought you were you were charming in a in a sexless kind of way,it's too soon to tell she's resting which is a good sign,0.07872776,0.0,0.0,0.0
+821,really i no i think girls night out is a great idea,how's the hair,0.0,0.0,0.0,0.0
+822,i'm sorry i do that,i'm not gonna lie to you ross it doesn't look good,0.09090909,0.0,0.0,0.0
+823,oh yeah really is it ross yeah okay well let me make this a just a little bit easier for you,i put a clip on one side which seems to have stopped the curling,0.04332362,0.0,0.0,0.0
+824,i used to think of you as somebody that would never ever hurt me ever,can we see her,0.0,0.0,0.0,0.0
+825,so uh do you live around here,your hair looks too good i think it would upset her ross why don't you come on in,0.05555556,0.0,0.0,0.0
+826,likelikelikelikelike i did something terrible to you,how're you doing,0.08786571,0.0,0.0,0.0
+827,and the cream,ross you're being silly i've tried it it's no big deal just taste it,0.0,0.0,0.0,0.0
+828,and the chefs eat with the other chefs right,that would be no,0.0,0.0,0.0,0.0
+829,all right that's it i want both of you out,come on it doesn't taste bad,0.08556952,0.0,0.0,0.0
+830,i don't mind paying my dues y'know its just how much am i gonna learn about fashion by walking mira the arthritic seamstress to the bathroom,yeah it's kinda sweet sorta like uh,0.0,0.0,0.0,0.0
+831,does that mean the same thing in england as it does in america,cantaloupe juice,0.0,0.0,0.0,0.0
+832,i am brave,exactly,0.0,0.0,0.0,0.0
+833,yeah,you've tasted it you've tasted it,0.0,0.0,0.0,0.0
+834,i mean can't you just have one,uh huh,0.0,0.0,0.0,0.0
+835,it's that whole sensitive thing,oh you've tasted it,0.0,0.0,0.0,0.0
+836,all right look if you insist on wearing that in public y'know you're gonna spend the rest of the afternoon all by yourself,you can keep saying it but it won't stop being true,0.03053736,0.0,0.0,0.0
+837,oh my god i'm your,gimme the bottle gimme the towel,0.0,0.0,0.0,0.0
+838,but no i actually smoke the regular ones all all the time,y'know if they knew what they were doing they probably didn't give you real names either,0.0,0.0,0.0,0.0
+839,when my sisters were pregnant they got every weird feeling in the book it was always nothing,okay maybe people give out fake numbers but they don't give out fake names,0.05765127,0.0,0.0,0.0
+840,limited seating my ass let's see who made the cut hi,oh yeah hi ken adams nice to meet you,0.08897082,0.0,0.0,0.0
+841,hi,regina philange,0.0,0.0,0.0,0.0
+842,not in my head,i still don't get it we didn't do anything wrong,0.0,0.0,0.0,0.0
+843,no they're not can i take a message,i know although you did tell an awful lot of jokes,0.09090909,0.0,0.0,0.0
+844,no no you can't arrest me no i won't go back i won't go back to that hell hole,i thought you said those jokes were funny joke joke joke,0.08785911,0.0,0.0,0.0
+845,it's pretty clear,joke joke blah blah,0.0,0.0,0.0,0.0
+846,it was it was an amazing night,well maybe it was all of your questions,0.25,0.18898224,0.0,0.0
+847,come on,what about my questions,0.0,0.0,0.0,0.0
+848,so it's y'know it's uh it's cool,oh i'll get it,0.0,0.0,0.0,0.0
+849,well we're starving why don't we all go get something to eat,wow i usually get to know a girl a little better before i let her spoon me,0.11764706,0.0,0.0,0.0
+850,grasp one of those for me,relax it's not like we're forking,0.0,0.0,0.0,0.0
+851,joey do you have a minute,hey,0.0,0.0,0.0,0.0
+852,i just wanted to let you know i've changed my mind i'm gonna do it i'm gonna kiss joey,hello,0.0,0.0,0.0,0.0
+853,my uncle dragged us there but it actually it turned out to be really interesting,oh ooh oh monica it's so beautiful,0.0,0.0,0.0,0.0
+854,i have a question about this scene,i know,0.0410425,0.0,0.0,0.0
+855,now you'll be heading a whole division so you'll have a lot of duties,so i'm here ready to play,0.04393286,0.0,0.0,0.0
+856,so i'm gonna go now,okay,0.0,0.0,0.0,0.0
+857,nononono,i brought a bunch of stuff for the house so check it out haha,0.0,0.0,0.0,0.0
+858,really,what's this,0.0,0.0,0.0,0.0
+859,i want to let her know that there was a cancellation and if she's still interested in having the binggeller wedding at our facility it is available,that's a dog every house should have a dog,0.01503725,0.0,0.0,0.0
+860,the best man wow,not one that can pee on the roof,0.125,0.0,0.0,0.0
+861,youyouyou didn't know that well i guess my work here is done,well maybe it's so big because the house was built on radioactive waste,0.07692308,0.0,0.0,0.0
+862,and who knows what science will come up with in the future but chandler what if i die an unsuccessful regular sized man,and is this in case the house sneezes,0.05750811,0.0,0.0,0.0
+863,enh sure,no no that's the ghost for the attic,0.0,0.0,0.0,0.0
+864,they're all tourists,i don't want a ghost,0.0,0.0,0.0,0.0
+865,and that they're going to be drinking alot,well nobody wants a ghost but you've got one because the house is sitting on an ancient indian burial ground,0.0,0.0,0.0,0.0
+866,i am,wait a minute the house was built on radioactive waste and an ancient indian burial ground that would never happen,0.0,0.0,0.0,0.0
+867,that's a good one,okay obviously you don't know much about the us government,0.0,0.0,0.0,0.0
+868,okay,hey,0.0,0.0,0.0,0.0
+869,hey,hello,0.0,0.0,0.0,0.0
+870,hello is ross there,i need to talk to you,0.0,0.0,0.0,0.0
+871,no there were two,sure what's up,0.0,0.0,0.0,0.0
+872,we're sorry,please i'm not going for anything,0.0,0.0,0.0,0.0
+873,me on,well if you don't i will,0.0,0.0,0.0,0.0
+874,all right,would you please go,0.0,0.0,0.0,0.0
+875,well what'd you do,i would,0.0,0.0,0.0,0.0
+876,weekend at bernie's,uhhuh,0.0,0.0,0.0,0.0
+877,so that's dumb what i said don't tell him i said that,watch watch,0.0,0.0,0.0,0.0
+878,there's no way to do this without her,ahhhh,0.0,0.0,0.0,0.0
+879,oh god phoebe oh that's it that's it right there oh oooohooohooooh,hey my father's house does that,0.0,0.0,0.0,0.0
+880,ahah,ooookay how did it go tell me everything,0.0,0.0,0.0,0.0
+881,you said there was a gas leak in here,well the movie was great dinner was great and there's nothing like a cool crisp new york evening,0.11111111,0.0,0.0,0.0
+882,now have you told anyone else,what,0.0,0.0,0.0,0.0
+883,yeah why are you getting so upset,oh honey but you love that name,0.14285714,0.0,0.0,0.0
+884,you guys make a,yeah but i love you more,0.16666667,0.0,0.0,0.0
+885,sure listen i was gonna order some pizza you wanna share one,besides y'know nothing goes with bing,0.0,0.0,0.0,0.0
+886,oh i wouldn't miss it for the world,so i'm screwed,0.0,0.0,0.0,0.0
+887,all right i guess i can hold out a little longer let's have a game,nice try,0.0,0.0,0.0,0.0
+888,way i'm gonna go check it out and see if it's still available,wait wait wait,0.0,0.0,0.0,0.0
+889,wait until uh wait until the first time your baby grabs your finger,look monica,0.0,0.0,0.0,0.0
+890,all right y'know what we've been talking about london too much haven't we,look,0.0,0.0,0.0,0.0
+891,okay does this look like a garbage can to you,this is not going to work,0.17113904,0.0,0.0,0.0
+892,no i don't want to tell anybody else because i don't want monica to find out,i bet this will work,0.02216063,0.0,0.0,0.0
+893,all right then we'll have a definite answer for you on monday but i think i can say with some confidence you'll fit in well here,you are so great i love you,0.01892922,0.0,0.0,0.0
+894,we could be like the patch sisters,what,0.0,0.0,0.0,0.0
+895,look how nervous he gets we haven't slept together in years,nothing i said i said you're so great and then i just i just stopped talking,0.0,0.0,0.0,0.0
+896,oh yeah,you said you loved me i can't believe this,0.0,0.0,0.0,0.0
+897,sure yeah las vegas number one,no i didn't,0.0,0.0,0.0,0.0
+898,no i'm serious we should tell each other,yes you did,0.0,0.0,0.0,0.0
+899,yeah listen closely devon has got a weak ankle,no i didn't,0.0,0.0,0.0,0.0
+900,ugh well i will just have to soak up every once of chandler bing until that moment comes,you love me,0.0,0.0,0.0,0.0
+901,wanna peek,no i don't stop it stop it stop it stop it,0.0,0.0,0.0,0.0
+902,what what kind of a regatta gala starts at night,jenny's been giving it out since they moved,0.0,0.0,0.0,0.0
+903,no what did that was really sweet,jenny that is so jenny,0.13406401,0.0,0.0,0.0
+904,i got it,hey listen umm how would you like to get together,0.0,0.0,0.0,0.0
+905,okay i'm next don't don't start another game i said i'm next phoebe,say next saturday,0.01189133,0.0,0.0,0.0
+906,byebye,okay how about sunday,0.0,0.0,0.0,0.0
+907,well ah actually i kinda need to talk to you too,okay umm the week after that,0.0,0.0,0.0,0.0
+908,okay but wouldn't it be easier if you had to tell me something that you could tell me,the week after that,0.00754935,0.0,0.0,0.0
+909,big deal,y'know what greg,0.0,0.0,0.0,0.0
+910,y'know what you're right phoebe you're right thank you,we are good interesting funny people with,0.0,0.0,0.0,0.0
+911,joey do you have a minute,oh yeah dana keystone she was in my movement class,0.0,0.0,0.0,0.0
+912,boutros boutros gali,what's a movement class,0.0,0.0,0.0,0.0
+913,okay but wouldn't it be easier if you had to tell me something that you could tell me,it's chandler's way of pretending he didn't take mime,0.0,0.0,0.0,0.0
+914,oh god,oh well listen anyway she's directing the new al pacino movie you gotta get me an audition,0.05882353,0.0,0.0,0.0
+915,oh hey great you're up rachel this is my sister krista krista this is rachel,oh i don't know man i haven't talked to her in like ten years,0.06650448,0.0,0.0,0.0
+916,i think you're better than you think you are,joey what are you talking about you're a terrific actor,0.3,0.0,0.0,0.0
+917,oh monica we are so sorry,you really think so,0.15163266,0.0,0.0,0.0
+918,yeah i really do,ugh how can you even ask that question,0.0,0.0,0.0,0.0
+919,right,oh okay i'm having another one,0.0,0.0,0.0,0.0
+920,i'm sorry,this one doesn't hurt eitherooh yes it does,0.0,0.0,0.0,0.0
+921,it's a diaper commercial,ow,0.0,0.0,0.0,0.0
+922,open your drapes open your drapes,ow,0.0,0.0,0.0,0.0
+923,maybe,ow,0.0,0.0,0.0,0.0
+924,he does,ow,0.0,0.0,0.0,0.0
+925,i'm sorry it's just phoebe just always thought you were you were charming in a in a sexless kind of way,ooh,0.0,0.0,0.0,0.0
+926,yeah okay here you go,oh i was kinda hoping that was it,0.0,0.0,0.0,0.0
+927,all right first thing we gotta do damage control,hey where are monica and rachel anyway,0.0,0.0,0.0,0.0
+928,yeah,yeah i love you okay bye hi,0.14285714,0.0,0.0,0.0
+929,yeah i gotta go,hi,0.0,0.0,0.0,0.0
+930,don't you look at her you sick bastard,that was alice's mom she said she left five hours ago she should be here by now,0.0,0.0,0.0,0.0
+931,yeah we both auditioned for the part and uh as it turned out they ah they liked the stupid gay thing and cast him,oh honey don't worry she's gonna make it on time,0.0246597,0.0,0.0,0.0
+932,whoa wait pheebs wait a second don't you wanna stay here and talk about it,yeah,0.0,0.0,0.0,0.0
+933,yeah they think they can charge me for some dirty movie and a bag of mashuga nuts they got another think coming,but sadly i could not be enticed,0.0,0.0,0.0,0.0
+934,all right fine if it means that much to you but justthere's gonna be a ton left over,unbelievable i mean you really kept joey's underwear why why would you do that,0.1073539,0.0,0.0,0.0
+935,in the hall,i'm monica i'm disgusting i stalk guys and keep their underpants,0.0,0.0,0.0,0.0
+936,either they're too old or they're too young and then there's pete who'swho's crazy about me and who's absolutely perfect for me and there's like zip going on,well i think we've all learned something about who's disgusting and who's not,0.07278952,0.04374106,0.0,0.0
+937,look he gave me his night vision goggles and everything,eh,0.0,0.0,0.0,0.0
+938,and i never used to be able to just talk to girls in bars but i got like phone numbers last night,all right now i'm going to get back to my bucket,0.06688717,0.0,0.0,0.0
+939,yeah,i'm only eating the skin so the chicken's up for grabs,0.0,0.0,0.0,0.0
+940,ohh oh that's okay i hate when people come back to complement the chef,yeah,0.0,0.0,0.0,0.0
+941,no i mean it's okay i mean they'rethey're my friends,well what period is it from,0.0,0.0,0.0,0.0
+942,i'm sorry i wa i wa i was just ah,uh it's from yore like the days of yore y'know,0.0,0.0,0.0,0.0
+943,i'm sorry i'm sorry you're right come on do it do it go come on,yes yes i do,0.01598197,0.0,0.0,0.0
+944,thank you,god oh it's just perfect,0.0,0.0,0.0,0.0
+945,oh i wouldn't miss it for the world,i bet it has a great story behind it too,0.2,0.0,0.0,0.0
+946,it's a four,white plains oh it sounds like such a magical place,0.1,0.0,0.0,0.0
+947,you want some help with that,huh,0.0,0.0,0.0,0.0
+948,yes yes that's right,i saw you checking me out during the game last night,0.0,0.0,0.0,0.0
+949,but remember no trading,goodbye phoebe and ursula i'll miss you ps your mom lives in montauk you just wrote this,0.0,0.0,0.0,0.0
+950,the wedding is off sloppy and immature,well it's pretty much the gist well except for the poem you read the poem right,0.0625,0.0,0.0,0.0
+951,ready annabelle,noooo,0.0,0.0,0.0,0.0
+952,oh and he's got such a good heart doesn't he have a good heart,all right hang on,0.0,0.0,0.0,0.0
+953,y'know what hold on let me go get chandler,but i,0.0,0.0,0.0,0.0
+954,right,nono wait,0.0,0.0,0.0,0.0
+955,and he's being mr joe sensitive and she starts thinking'maybe this is the guy for me because he understands me',and it,6.17e-05,0.0,0.0,0.0
+956,i can't believe it can i tell you something i'm a little mad at him now,it is really,0.00437458,0.0,0.0,0.0
+957,all right i'll see you in the morning,yeah sweetie,0.0,0.0,0.0,0.0
+958,hey,i mean we're not we're not gonna live together anymore,0.0,0.0,0.0,0.0
+959,no no that's just chuck magioni ii sold him a house last year,no,6.14e-06,0.0,0.0,0.0
+960,we're not gonna do that,what oh my god i'm gonna miss you so much,0.1,0.0,0.0,0.0
+961,well either that or uh,i'm gonna miss you,0.0,0.0,0.0,0.0
+962,i'm smarter than,i mean it's the end of an era,0.0,0.0,0.0,0.0
+963,yeah i've been around,i know,0.0,0.0,0.0,0.0

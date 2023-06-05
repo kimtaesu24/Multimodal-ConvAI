@@ -11,6 +11,10 @@ from nltk.translate.bleu_score import sentence_bleu
 from statistics import mean 
 from . import modules
 
+# Yongsik Part 
+from nltk.translate.bleu_score import sentence_bleu
+from eval_metric.coco_eval import calculate_eval_matric
+
 class MyArch(torch.nn.Module):
     def __init__(
             self,
@@ -280,13 +284,33 @@ class MyArch(torch.nn.Module):
     
     def get_bleu_score(self, output, ref):
         outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
-        ref_sentence = self.tokenizer.decode(ref.tolist()[0], skip_special_tokens=True)
-        outputs_values = outputs_sentence.replace('!','').replace('.','').split()
-        ref_values = [ref_sentence.replace('!','').replace('.','').split()]
+        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)
         
-        bleu_1 = sentence_bleu(ref_values, outputs_values, weights=(1, 0, 0, 0))
-        bleu_2 = sentence_bleu(ref_values, outputs_values, weights=(0.5, 0.5, 0, 0))
-        bleu_3 = sentence_bleu(ref_values, outputs_values, weights=(1/3, 1/3, 1/3, 0))
-        bleu_4 = sentence_bleu(ref_values, outputs_values, weights=(0.25, 0.25, 0.25, 0.25))
+        outputs_values = outputs_sentence['a'].replace('!','').replace('.','').split()
+        ref_values = [ref_sentence['ref'].replace('!','').replace('.','').split()]
         
-        return [bleu_1, bleu_2, bleu_3, bleu_4]
+        bleu_1 = format(sentence_bleu(ref_values, outputs_values, weights=(1, 0, 0, 0)), '.8f')
+        bleu_2 = format(sentence_bleu(ref_values, outputs_values, weights=(0.5, 0.5, 0, 0)), '.8f')
+        bleu_3 = format(sentence_bleu(ref_values, outputs_values, weights=(1/3, 1/3, 1/3, 0)), '.8f')
+        bleu_4 = format(sentence_bleu(ref_values, outputs_values, weights=(0.25, 0.25, 0.25, 0.25)), '.8f')
+
+        return bleu_1, bleu_2, bleu_3, bleu_4
+    
+    def get_eval_matric(self, output, ref):
+        outputs_sentence = self.tokenizer.decode(output.tolist()[0], skip_special_tokens=True)
+        ref_sentence = self.tokenizer.decode(ref['input_ids'].tolist()[0], skip_special_tokens=True)
+        
+        eval_result = calculate_eval_matric(outputs_sentence, ref_sentence)
+        
+        ## For Taesoo 
+        # bleu_1 = eval_result['Bleu_1']
+        # bleu_2 = eval_result['Bleu_2']
+        # bleu_3 = eval_result['Bleu_3']
+        # bleu_4 = eval_result['Bleu_4']
+        
+        # meteor = eval_result['METEOR']
+        # rouge = eval_result['ROUGE_L']
+        # cider = eval_result['CIDEr']
+        # spice = eval_result['SPICE']
+        return eval_result 
+ 

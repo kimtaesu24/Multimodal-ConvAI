@@ -1,0 +1,11 @@
+*.pyc
+.cenv
+
+# To ignore files from cocoeval
+*.log
+pycocoevalcap/tokenizer/tmp*
+pycocoevalcap/spice/cache
+pycocoevalcap/spice/lib/stanford-corenlp-3.6.0-models.jar
+pycocoevalcap/spice/lib/stanford-corenlp-3.6.0.jar
+pycocoevalcap/spice/tmp
+pycocoevalcap/meteor/data/paraphrase-en.gz
