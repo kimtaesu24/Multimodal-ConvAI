@@ -133,17 +133,20 @@ def audio_word_align(waveform, audio_path, start, end, audio_padding=50):
     
     a = (waveform.shape[0] / duration)
     waveform_start = torch.tensor(start).clone() * a
+    waveform_start = [ int(x)+1 for x in waveform_start ]
     waveform_end = torch.tensor(end).clone() * a
+    waveform_end = [ int(x)+1 for x in waveform_end ]
     
     audio_feature = []
     for i, (s, e) in enumerate(zip(waveform_start, waveform_end)):
-        if (i != 0) and (s == 0.) and (e == 0.):  # padding appear
+        if (i != 0) and (s == 1) and (e == 1):  # padding appear
             word_waveform = torch.zeros(audio_padding, waveform.shape[-1])
         else:
-            word_waveform = waveform[int(s):int(e), :]  # split waveform along to word duration
+            word_waveform = waveform[s:e, :]  # split waveform along to word duration
             word_waveform = audio_pad(word_waveform, audio_padding)
         audio_feature.append(word_waveform)
-    return torch.stack(audio_feature, dim=0)  # list to torch.tensor
+    torch_audio_feature = torch.stack(audio_feature, dim=0)  # list to torch.tensor
+    return torch_audio_feature, waveform_start
 
 def img_to_landmark(img_path, detector, processor):
     image = cv2.imread(img_path)
@@ -180,3 +183,15 @@ def get_landmark(dir_path, start, fps):
     # # print(landmark_list)
     # return torch.tensor(np.array(landmark_list), dtype=torch.float32)
     return torch.tensor([])
+
+def get_aligned_landmark(landmark_set, waveform_start):
+    output_landmark = []
+    for s in waveform_start:
+        if s >= landmark_set.shape[0]:  # padding appear
+            output_landmark.append(torch.zeros(landmark_set.shape[-1]))
+        else:
+            output_landmark.append(landmark_set[s])
+            
+    return torch.stack(output_landmark, dim=0)  # list to torch.tensor
+        
+    

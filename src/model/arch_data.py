@@ -28,15 +28,15 @@ class MyArch_Dataset(Dataset):
         # self.label_tokenizer.bos_token = '#'
         
         if mode == 'train':
-            self.FA = pd.read_csv(self.data_path + 'train_FA_matched.csv')
-            self.fer = pd.read_csv(self.data_path + 'train_fer_matched.csv')
-            self.emotion = pd.read_csv(self.data_path + 'train_emotion_matched.csv')
-            # self.landmark = pd.read_csv(self.data_path + 'train_lm_matched.csv')
+            self.FA = pd.read_csv(self.data_path + 'new_train_FA_matched.csv')
+            self.fer = pd.read_csv(self.data_path + 'new_train_FER_matched.csv')
+            self.emotion = pd.read_csv(self.data_path + 'new_train_emotion_matched.csv')
+            self.landmark = pd.read_csv(self.data_path + 'new_train_LM_matched.csv')
         else:
-            self.FA = pd.read_csv(self.data_path + 'valid_FA_matched.csv')
-            self.fer = pd.read_csv(self.data_path + 'valid_fer_matched.csv')
-            self.emotion = pd.read_csv(self.data_path + 'valid_emotion_matched.csv')
-            # self.landmark = pd.read_csv(self.data_path + 'valid_lm_matched.csv')
+            self.FA = pd.read_csv(self.data_path + 'new_valid_FA_matched.csv')
+            self.fer = pd.read_csv(self.data_path + 'new_valid_FER_matched.csv')
+            self.emotion = pd.read_csv(self.data_path + 'new_valid_emotion_matched.csv')
+            self.landmark = pd.read_csv(self.data_path + 'new_valid_LM_matched.csv')
             
         self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
         self.manual_index = 0
@@ -44,8 +44,9 @@ class MyArch_Dataset(Dataset):
     def __len__(self):
         length = 0
         for idx in range(len(self.FA) - 1):
-            if (self.FA['Utterance_ID'][idx] == (self.FA['Utterance_ID'][idx+1] -1)):
-                length += 1
+            if (self.FA['Dialogue_ID'][idx] == self.FA['Dialogue_ID'][idx+1]):  # same dialogue
+                if (self.FA['Utterance_ID'][idx] == (self.FA['Utterance_ID'][idx+1] -1)):  # next utterance
+                    length += 1
         return length
 
     def __getitem__(self, idx):
@@ -53,13 +54,13 @@ class MyArch_Dataset(Dataset):
             self.manual_index = 0  # initialize
             
         idx += self.manual_index
-        if self.FA['Dialogue_ID'][idx] != self.FA['Dialogue_ID'][idx+1]:  # next dialogue appear
+        while((self.FA['Dialogue_ID'][idx] != self.FA['Dialogue_ID'][idx+1]) or (self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1))):  # next dialogue appear OR empty uttrance appear
             self.manual_index += 1
             idx += 1
             
-        while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):  # empty uttrance appear
-            self.manual_index += 1
-            idx += 1
+        # while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):  # empty uttrance appear
+        #     self.manual_index += 1
+        #     idx += 1
         
         context = ' '.join(ast.literal_eval(self.FA['word'][idx])).lower() + '.'
         response = ' '.join(ast.literal_eval(self.FA['word'][idx+1])).lower() + '.'
@@ -86,13 +87,15 @@ class MyArch_Dataset(Dataset):
         waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
         if self.forced_align:
             audio_path = self.single_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
-            audio_feature = modules.audio_word_align(waveform, audio_path, start, end, self.audio_padding)
+            audio_feature, waveform_start = modules.audio_word_align(waveform, audio_path, start, end, self.audio_padding)
         else:
             audio_feature = torch.mean(waveform, dim=1)
+            waveform_start = None
         
         if self.landmark_append:
             # landmarks = modules.get_landmark(self.single_file_path+'/dia{0}/utt{1}/'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), start, self.fps)
-            landmarks = ast.literal_eval(self.landmark['landmark_list'][idx])[0]
+            landmark_set = torch.tensor(ast.literal_eval(self.landmark['landmark_list'][idx]))
+            landmarks = modules.get_aligned_landmark(landmark_set, waveform_start)
         else:
             landmarks = torch.tensor([])
             

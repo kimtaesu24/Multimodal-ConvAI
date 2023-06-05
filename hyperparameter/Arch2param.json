@@ -19,5 +19,6 @@
     "dropout": 0.2,
     "decay_rate": 0.98,
     "save_at_every": 20,
+    "metric_at_every": 10,
     "debug": false
 }

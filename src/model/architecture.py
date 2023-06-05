@@ -86,7 +86,7 @@ class MyArch(torch.nn.Module):
         self.loss_function = nn.CrossEntropyLoss(ignore_index=self.tokenizer.pad_token_id)
 
 
-    def forward(self, inputs, labels):
+    def forward(self, inputs, labels, validation=False):
         start = inputs[0]   # [batch, max_length]
         end = inputs[1]     # [batch, max_length]
         T = inputs[2]       # [batch, T_len]
@@ -147,7 +147,7 @@ class MyArch(torch.nn.Module):
                 if self.multi_task:
                     emotion_logits = self.emotion_analysis(emotions)
                     emotion_analysis_loss = self.loss_function(emotion_logits.contiguous().view(-1,self.num_emotion), emotion_label.contiguous().view(-1))
-                    print(self.reverse_emotion_dic.get(int(torch.argmax(emotion_logits))))
+                    # print(self.reverse_emotion_dic.get(int(torch.argmax(emotion_logits))))
         
         
         # ==== step 4. Generate next sentence ====
@@ -162,42 +162,20 @@ class MyArch(torch.nn.Module):
 
         p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), tokens_labels['input_ids'][:, :].contiguous().view(-1))
         
-        output = self.gpt_model.generate(max_length=100,
-                                pad_token_id=self.tokenizer.pad_token_id,
-                                inputs_embeds=inputs_embeds,
-                                attention_mask=tokens['attention_mask'],
-                                # do_sample=True,
-                                # top_k=50,
-                                # top_p=0.90,
-                                )
-
-        # bleu_1 = []
-        # bleu_2 = []
-        # bleu_3 = []
-        # bleu_4 = []
-        # for o_sentence, label_sentence in zip(output, labels[0]['input_ids']):
-        #     eval_result = self.get_eval_matric(o_sentence, label_sentence)
-        #     bleu_1 = eval_result['Bleu_1']
-        #     bleu_2 = eval_result['Bleu_2']
-        #     bleu_3 = eval_result['Bleu_3']
-        #     bleu_4 = eval_result['Bleu_4']
+        if validation:
+            output = self.gpt_model.generate(max_length=100,
+                                    pad_token_id=self.tokenizer.pad_token_id,
+                                    inputs_embeds=inputs_embeds,
+                                    attention_mask=tokens['attention_mask'],
+                                    # do_sample=True,
+                                    # top_k=50,
+                                    # top_p=0.90,
+                                    )
+        
+            eval_result = self.get_eval_matric(output, tokens_labels['input_ids'])
+        else:
+            eval_result = None
             
-        #     meteor = eval_result['METEOR']
-        #     rouge = eval_result['ROUGE_L']
-        #     cider = eval_result['CIDEr']
-        #     spice = eval_result['SPICE']
-        # bleus = [mean(bleu_1),mean(bleu_2),mean(bleu_3),mean(bleu_4)]
-        
-        # eval_result = self.get_eval_matric(output, tokens_labels['input_ids'])
-        eval_result =             {'Bleu_1': 0.1353352829659427, 
-            'Bleu_2': 0.00013533528303361024, 
-            'Bleu_3': 1.3533528305616618e-05, 
-            'Bleu_4': 4.2796774227674215e-06, 
-            'METEOR': 0.14814814814814814, 
-            'ROUGE_L': 0.45864661654135336, 
-            'CIDEr': 0.0, 
-            'SPICE': 0.0}
-        
         return p_loss + emotion_analysis_loss, eval_result
         
 
@@ -296,8 +274,7 @@ class MyArch(torch.nn.Module):
         print("==== Step 4. [Generate next sentence]\t spent time: {:.4f} ====".format(time.time()-step4))
         
         return output
-
-    
+ 
     def get_eval_matric(self, output, ref):
         '''
         output: metric dictionary
@@ -312,14 +289,7 @@ class MyArch(torch.nn.Module):
         '''
         outputs_sentence = self.tokenizer.batch_decode(output, skip_special_tokens=True)
         ref_sentence = self.tokenizer.batch_decode(ref, skip_special_tokens=True)
-        print(outputs_sentence)
-        print(type(outputs_sentence))
-        print(type(outputs_sentence[0]))
-        print(ref_sentence)
-        print(type(ref_sentence))
-        print(type(ref_sentence[0]))
         
         eval_result = calculate_eval_matric(outputs_sentence, ref_sentence)
         
         return eval_result 
- 

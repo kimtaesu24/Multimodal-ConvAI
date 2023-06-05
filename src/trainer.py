@@ -41,7 +41,8 @@ def main(model='MyArch',
          alpha=2,
          dropout=0.2,
          decay_rate=0.98,
-         save_at_every=20,
+         save_at_every=10,
+         metric_at_every=10,
          debug=False,
          ):
 
@@ -63,6 +64,7 @@ def main(model='MyArch',
     param['trans_encoder'] = trans_encoder
     param['multi_task'] = multi_task
     param['save_at_every'] = save_at_every
+    param['metric_at_every'] = metric_at_every
     param['debug'] = debug
     log_param(param)
 

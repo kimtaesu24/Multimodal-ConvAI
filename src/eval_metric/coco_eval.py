@@ -31,7 +31,7 @@ def calculate_eval_matric(output='Test word', ref='Testing word') -> dict:
     #         ]
     
     eval_results = _coco_evaluation(output, ref)
-    print(eval_results) #### <- 점수 확인
+    # print(eval_results) #### <- 점수 확인
     return eval_results
 
 '''
