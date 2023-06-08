@@ -29,6 +29,7 @@ def main_wrapper(arch_name=''):
          batch_size=param.batch_size,
          learning_rate=param.learning_rate,
          max_length=param.max_length,
+         history_length=param.history_length,
          audio_pad_size=param.audio_pad_size,
          alpha=param.alpha,
          dropout=param.dropout,

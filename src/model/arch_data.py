@@ -2,26 +2,30 @@ import numpy as np
 import pandas as pd
 import torch
 import ast
+import json
+
 from . import modules
 from torch.utils.data import Dataset
 from transformers import AutoTokenizer
 
 class MyArch_Dataset(Dataset):
-    def __init__(self, data_path, device, mode='train', max_length=30, FA=True, LM=True, audio_padding=50, fps=24):
+    def __init__(self, data_path, device, hyper_param, param, mode='train'):
         self.data_path = data_path
         self.device = device
         self.audio_feature_path = self.data_path + 'audio_feature/'+ mode
         self.single_file_path = self.data_path + mode
-        self.max_length = max_length
-        self.forced_align = FA
-        self.landmark_append = LM
-        self.audio_padding = audio_padding
-        self.fps = fps
+        self.max_length = hyper_param["max_length"]
+        self.history_length = hyper_param["history_length"]
+        self.audio_padding = hyper_param["audio_pad_size"]
+        self.forced_align = param["forced_align"]
+        self.landmark_append = param["landmark_append"]
+        self.fps = param["fps"]
         
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
         # self.tokenizer.pad_token = '!'
         # self.tokenizer.bos_token = '#'
         self.tokenizer.padding_side = 'left'
+        self.tokenizer.truncation_side = 'left'
         
         self.label_tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", pad_token='!', bos_token='#')
         # self.label_tokenizer.pad_token = '!'
@@ -38,6 +42,7 @@ class MyArch_Dataset(Dataset):
             self.emotion = pd.read_csv(self.data_path + 'new_valid_emotion_matched.csv')
             self.landmark = pd.read_csv(self.data_path + 'new_valid_LM_matched.csv')
             
+        self.history_path = self.data_path+ mode
         self.T_padding = max(len(i) for i in self.fer['T_list'].apply(eval))  # 459
         self.manual_index = 0
 
@@ -57,10 +62,6 @@ class MyArch_Dataset(Dataset):
         while((self.FA['Dialogue_ID'][idx] != self.FA['Dialogue_ID'][idx+1]) or (self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1))):  # next dialogue appear OR empty uttrance appear
             self.manual_index += 1
             idx += 1
-            
-        # while(self.FA['Utterance_ID'][idx] != (self.FA['Utterance_ID'][idx+1] - 1)):  # empty uttrance appear
-        #     self.manual_index += 1
-        #     idx += 1
         
         context = ' '.join(ast.literal_eval(self.FA['word'][idx])).lower() + '.'
         response = ' '.join(ast.literal_eval(self.FA['word'][idx+1])).lower() + '.'
@@ -83,7 +84,7 @@ class MyArch_Dataset(Dataset):
                                 return_attention_mask=True,
                                 return_tensors='pt'
                                 )
-
+        
         waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
         if self.forced_align:
             audio_path = self.single_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
@@ -99,6 +100,20 @@ class MyArch_Dataset(Dataset):
         else:
             landmarks = torch.tensor([])
             
+        with open(f"{self.history_path}/dia{self.FA['Dialogue_ID'][idx]}/utt{self.FA['Utterance_ID'][idx]}/dia{self.FA['Dialogue_ID'][idx]}_utt{self.FA['Utterance_ID'][idx]}_history.json", "r") as json_file:
+            historys = json.load(json_file)
+            
+        input_historys = ""
+        for utt_hist in historys:
+            input_historys += utt_hist+self.tokenizer.eos_token
+            
+        input_historys_tokens = self.tokenizer(input_historys,
+                                                padding='max_length',
+                                                max_length=self.history_length,
+                                                truncation=True,
+                                                return_attention_mask=True,
+                                                return_tensors='pt'
+                                                )
         tokens_labels = self.label_tokenizer(response + self.label_tokenizer.eos_token,
                                             padding='max_length',
                                             max_length=self.max_length,
@@ -113,6 +128,7 @@ class MyArch_Dataset(Dataset):
                   tokens.to(self.device),
                   audio_feature,
                   landmarks.to(self.device),
+                  input_historys_tokens.to(self.device),
                   ]
         
         labels = [tokens_labels.to(self.device),

@@ -11,14 +11,15 @@
     "multi_task": false,
     "epochs": 200,
     "act": "relu",
-    "batch_size": 32,
+    "batch_size": 8,
     "learning_rate": 5e-5,
     "max_length": 60,
+    "history_length": 256,
     "audio_pad_size": 50,
     "alpha": 2,
     "dropout": 0.2,
     "decay_rate": 0.98,
-    "save_at_every": 20,
+    "save_at_every": 10,
     "metric_at_every": 10,
     "debug": false
 }

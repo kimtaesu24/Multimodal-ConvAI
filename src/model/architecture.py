@@ -15,6 +15,8 @@ from . import modules
 # from nltk.translate.bleu_score import sentence_bleu
 from eval_metric.coco_eval import calculate_eval_matric
 
+torch.set_printoptions(profile="full")
+
 class MyArch(torch.nn.Module):
     def __init__(
             self,
@@ -64,20 +66,27 @@ class MyArch(torch.nn.Module):
             self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=6)
         
         if self.forced_align:
-            self.projection_layer = nn.Linear(self.audio_feature_dimension * 2, self.word_dimension, bias=False)
+            self.audio_projection_layer = nn.Linear(self.audio_feature_dimension * 2, self.word_dimension, bias=False)
+            self.audio_projection_layer.weight = torch.nn.init.xavier_uniform_(self.audio_projection_layer.weight)
             if self.landmark_append:
+                self.visual_projection_layer = nn.Linear(self.landmark_dimension, self.landmark_dimension, bias=False)
+                self.visual_projection_layer.weight = torch.nn.init.xavier_uniform_(self.visual_projection_layer.weight)
                 self.MMfusion = nn.Linear((self.audio_padding//2 + 1) * self.word_dimension + self.landmark_dimension, self.word_dimension, bias=True)
+                self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
             else:
                 self.MMfusion = nn.Linear((self.audio_padding//2 + 1) * self.word_dimension, self.word_dimension, bias=True)
+                self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         else:
-            self.projection_layer = nn.Linear(self.audio_feature_dimension, self.audio_feature_dimension, bias=False)
+            self.audio_projection_layer = nn.Linear(self.audio_feature_dimension, self.audio_feature_dimension, bias=False)
+            self.audio_projection_layer.weight = torch.nn.init.xavier_uniform_(self.audio_projection_layer.weight)
             if self.landmark_append:
                 self.MMfusion = nn.Linear(self.word_dimension + self.audio_feature_dimension + self.landmark_dimension, self.word_dimension, bias=True)
+                self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
+                self.visual_projection_layer = nn.Linear(self.landmark_dimension, self.landmark_dimension, bias=False)
+                self.visual_projection_layer.weight = torch.nn.init.xavier_uniform_(self.visual_projection_layer.weight)
             else:
                 self.MMfusion = nn.Linear(self.word_dimension + self.audio_feature_dimension, self.word_dimension, bias=True)
-        
-        self.projection_layer.weight = torch.nn.init.xavier_uniform_(self.projection_layer.weight)
-        self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
+                self.MMfusion.weight = torch.nn.init.xavier_uniform_(self.MMfusion.weight)
         
         if self.multi_task:
             self.emotion_analysis = nn.Linear(self.word_dimension, self.num_emotion, bias=True)
@@ -93,6 +102,7 @@ class MyArch(torch.nn.Module):
         tokens = inputs[3]
         audio_feature = inputs[4]   # [batch, 1, feature_dim]
         landmarks = inputs[5]  # [batch, max_length, landmark_dim]
+        history_tokens = inputs[6]
         
         tokens_labels = labels[0]
         emotion_label = labels[1]
@@ -101,6 +111,8 @@ class MyArch(torch.nn.Module):
         # ==== step 0. preprocess ====
         tokens['input_ids'] = torch.squeeze(tokens['input_ids'], dim=1)  # [batch_size, padding_size]
         tokens['attention_mask'] = torch.squeeze(tokens['attention_mask'], dim=1)
+        history_tokens['input_ids'] = torch.squeeze(history_tokens['input_ids'], dim=1)  # [batch_size, padding_size]
+        history_tokens['attention_mask'] = torch.squeeze(history_tokens['attention_mask'], dim=1)
         tokens_labels['input_ids'] = torch.squeeze(tokens_labels['input_ids'], dim=1)
         tokens_labels['attention_mask'] = torch.squeeze(tokens_labels['attention_mask'], dim=1)
         
@@ -116,10 +128,11 @@ class MyArch(torch.nn.Module):
         else:
             audio_feature = torch.squeeze(audio_feature, dim=1)
         audio_feature = torch.squeeze(audio_feature, dim=1)
-        audio_feature = self.projection_layer(audio_feature.to(self.device))
+        audio_feature = self.audio_projection_layer(audio_feature.to(self.device))
         
         
         # ==== step 3. multimodal encoding ====
+        history_embeds = self.embedding_layer.weight.data[history_tokens['input_ids']]  # get the embedding layer weights
         inputs_embeds = self.embedding_layer.weight.data[tokens['input_ids']]  # get the embedding layer weights
         labels_embeds = self.embedding_layer.weight.data[tokens_labels['input_ids']]  # get the embedding layer weights
         
@@ -128,10 +141,12 @@ class MyArch(torch.nn.Module):
             if self.forced_align:
                 x = modules.forced_alignment_multimodal_concat(inputs_embeds, audio_feature)  # [batch, max_length, -1]
                 if self.landmark_append:
+                    landmarks = self.visual_projection_layer(landmarks)
                     x = torch.cat((x, landmarks), dim=2)
             else:
                 x = modules.multimodal_concat(inputs_embeds, audio_feature)  # [batch, max_length, audio_feature_dim + word_dimension]
                 if self.landmark_append:
+                    landmarks = self.visual_projection_layer(landmarks)
                     x = torch.cat((x, landmarks), dim=2)
             inputs_embeds = self.act(self.MMfusion(x))
             
@@ -151,35 +166,36 @@ class MyArch(torch.nn.Module):
         
         
         # ==== step 4. Generate next sentence ====
-        concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)  # [batch, sentence_length*2, word_dimension]
-        concat_mask = torch.cat([tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  # [batch, sentence_length*2]
-        
+        concat_inputs = torch.cat([history_embeds, inputs_embeds, labels_embeds], dim=1)
+        concat_mask = torch.cat([history_tokens['attention_mask'], tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  
+        # concat_mask = torch.cat([history_tokens['attention_mask'], torch.ones(tokens['attention_mask'].shape).to(self.device), tokens_labels['attention_mask']], dim=1)  
         
         outputs = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
                                 )
-        sft_idx = tokens['input_ids'].shape[-1]
-
+        
+        sft_idx = tokens['input_ids'].shape[-1] + history_tokens['input_ids'].shape[-1]
         p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), tokens_labels['input_ids'][:, :].contiguous().view(-1))
         
         if validation:
             output = self.gpt_model.generate(max_length=100,
-                                    pad_token_id=self.tokenizer.pad_token_id,
-                                    inputs_embeds=inputs_embeds,
-                                    attention_mask=tokens['attention_mask'],
-                                    # do_sample=True,
-                                    # top_k=50,
-                                    # top_p=0.90,
-                                    )
+                                            pad_token_id=self.tokenizer.pad_token_id,
+                                            inputs_embeds=inputs_embeds,
+                                            attention_mask=tokens['attention_mask'],
+                                            num_beam=5,
+                                            do_sample=True,
+                                            top_k=50,
+                                            top_p=0.90,
+                                            )
         
             eval_result = self.get_eval_matric(output, tokens_labels['input_ids'])
         else:
             eval_result = None
-            
+        
         return p_loss + emotion_analysis_loss, eval_result
         
 
-    def inference(self, inputs, greedy=True):
+    def inference(self, inputs, greedy=False):
         frames = inputs[0]
         audio_path = inputs[1]
         tokens = inputs[2].to(self.device)
@@ -267,6 +283,7 @@ class MyArch(torch.nn.Module):
                                             pad_token_id=self.tokenizer.pad_token_id,
                                             inputs_embeds=inputs_embeds,
                                             attention_mask=tokens['attention_mask'],
+                                            num_beam=5,
                                             do_sample=True,
                                             top_k=50,
                                             top_p=0.90,

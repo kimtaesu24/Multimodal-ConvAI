@@ -59,8 +59,8 @@ class MyTrainer:
         
         model = MyArch(param, hyper_param).to(self.device)
         
-        train_dataset = MyArch_Dataset(self.data_path, mode='train', max_length=max_length, FA=param['forced_align'], LM=param['landmark_append'], audio_padding=audio_pad_size, fps=fps, device=self.device)
-        valid_dataset = MyArch_Dataset(self.data_path, mode='valid', max_length=max_length, FA=param['forced_align'], LM=param['landmark_append'], audio_padding=audio_pad_size, fps=fps, device=self.device)
+        train_dataset = MyArch_Dataset(self.data_path, mode='train', device=self.device, hyper_param=hyper_param, param=param)
+        valid_dataset = MyArch_Dataset(self.data_path, mode='valid', device=self.device, hyper_param=hyper_param, param=param)
         
         train_dataloader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
         valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False)
