@@ -93,6 +93,7 @@ class MyArch(torch.nn.Module):
             self.emotion_analysis.weight = torch.nn.init.xavier_uniform_(self.emotion_analysis.weight)
         # self.feat_drop = nn.Dropout(self.dropout) if self.dropout > 0 else None
         self.loss_function = nn.CrossEntropyLoss(ignore_index=self.tokenizer.pad_token_id)
+        self.emo_loss = nn.CrossEntropyLoss()
 
 
     def forward(self, inputs, labels, validation=False):
@@ -158,31 +159,36 @@ class MyArch(torch.nn.Module):
                 
                 feature = self.transformer_encoder(bos_multimodal_embedding, src_key_padding_mask=bos_concat_mask)
                 inputs_embeds = feature[:,1:,:]
-                emotions = feature[:,:1,:]
+                emotions = feature[:,:1,:]  # [batch, 1, word_dimension]
                 if self.multi_task:
-                    emotion_logits = self.emotion_analysis(emotions)
-                    emotion_analysis_loss = self.loss_function(emotion_logits.contiguous().view(-1,self.num_emotion), emotion_label.contiguous().view(-1))
+                    emotion_logits = self.emotion_analysis(torch.squeeze(emotions, dim=1))  # [batch, num_emotion]
+                    # emotion_analysis_loss = self.emo_loss(emotion_logits.contiguous().view(-1,self.num_emotion), emotion_label.contiguous().view(-1))
+                    emotion_analysis_loss = self.emo_loss(emotion_logits, emotion_label)                    
                     # print(self.reverse_emotion_dic.get(int(torch.argmax(emotion_logits))))
         
         
         # ==== step 4. Generate next sentence ====
         concat_inputs = torch.cat([history_embeds, inputs_embeds, labels_embeds], dim=1)
         concat_mask = torch.cat([history_tokens['attention_mask'], tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  
-        # concat_mask = torch.cat([history_tokens['attention_mask'], torch.ones(tokens['attention_mask'].shape).to(self.device), tokens_labels['attention_mask']], dim=1)  
+        # concat_inputs = torch.cat([inputs_embeds, labels_embeds], dim=1)
+        # concat_mask = torch.cat([tokens['attention_mask'], tokens_labels['attention_mask']], dim=1)  
+        
         
         outputs = self.gpt_model(inputs_embeds=concat_inputs,
                                 attention_mask=concat_mask,
                                 )
         
         sft_idx = tokens['input_ids'].shape[-1] + history_tokens['input_ids'].shape[-1]
+        # sft_idx = tokens['input_ids'].shape[-1]
         p_loss = self.loss_function(outputs.logits[:,sft_idx-1:-1].contiguous().view(-1,50257), tokens_labels['input_ids'][:, :].contiguous().view(-1))
+        
         
         if validation:
             output = self.gpt_model.generate(max_length=100,
                                             pad_token_id=self.tokenizer.pad_token_id,
                                             inputs_embeds=inputs_embeds,
                                             attention_mask=tokens['attention_mask'],
-                                            num_beam=5,
+                                            num_beams=5,
                                             do_sample=True,
                                             top_k=50,
                                             top_p=0.90,
@@ -192,6 +198,9 @@ class MyArch(torch.nn.Module):
         else:
             eval_result = None
         
+        # if torch.isnan(torch.tensor(emotion_analysis_loss)):
+        #     print("emotion_analysis_loss")
+        #     exit()
         return p_loss + emotion_analysis_loss, eval_result
         
 
@@ -201,8 +210,7 @@ class MyArch(torch.nn.Module):
         tokens = inputs[2].to(self.device)
         transcript= inputs[3]
         waveform = inputs[4].to(self.device)
-        # landmarks = inputs[5]
-        landmarks=0
+        landmarks = inputs[5]
         
         # ==== step 0. preprocess ====
         step0 = time.time()
@@ -223,7 +231,7 @@ class MyArch(torch.nn.Module):
         step1 = time.time()
         if self.give_weight:
             tokens = modules.weighted_word(T, start, end, tokens, self.fps, self.alpha)
-        print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))            
+        print("==== Step 1. [Facial Expression Recog]\t spent time: {:.4f} ====".format(time.time()-step1))
                 
                 
         # ==== step 2. Extract audio feature ====
@@ -234,7 +242,7 @@ class MyArch(torch.nn.Module):
             audio_feature = audio_feature.view(audio_feature.shape[0], audio_feature.shape[1], audio_feature.shape[2]//2, -1)  # [batch, max_length, audio_pad_len/2, feature_dim*2]
         else:
             audio_feature = torch.mean(waveform, dim=1)
-        audio_feature = self.projection_layer(audio_feature.contiguous().to(self.device))
+        audio_feature = self.audio_projection_layer(audio_feature.contiguous().to(self.device))
         print("==== Step 2. [Extract audio feature]\t spent time: {:.4f} ====".format(time.time()-step2))
 
 
@@ -246,10 +254,12 @@ class MyArch(torch.nn.Module):
             if self.forced_align:
                 x = modules.forced_alignment_multimodal_concat(inputs_embeds, audio_feature)
                 if self.landmark_append:
+                    landmarks = self.visual_projection_layer(landmarks)
                     x = torch.cat((x, landmarks), dim=2)
             else:
                 x = modules.multimodal_concat(inputs_embeds, audio_feature)
                 if self.landmark_append:
+                    landmarks = self.visual_projection_layer(landmarks)
                     x = torch.cat((x, landmarks), dim=2)
             inputs_embeds = self.act(self.MMfusion(x))
             if self.trans_encoder:
@@ -283,7 +293,7 @@ class MyArch(torch.nn.Module):
                                             pad_token_id=self.tokenizer.pad_token_id,
                                             inputs_embeds=inputs_embeds,
                                             attention_mask=tokens['attention_mask'],
-                                            num_beam=5,
+                                            num_beams=5,
                                             do_sample=True,
                                             top_k=50,
                                             top_p=0.90,
