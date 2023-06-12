@@ -29,8 +29,6 @@ class MyTrainer:
         learning_rate = hyper_param['learning_rate']
         decay_rate = hyper_param['decay_rate']
         batch_size = hyper_param['batch_size']
-        max_length = hyper_param['max_length']
-        audio_pad_size = hyper_param['audio_pad_size']
         
         if param['give_weight'] == True:
             give_weight = 'give_weight_T'
@@ -74,6 +72,7 @@ class MyTrainer:
             sentence = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             print("Response: {}".format(sentence))
         '''
+        
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=decay_rate)
         

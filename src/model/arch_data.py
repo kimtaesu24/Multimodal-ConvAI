@@ -85,7 +85,7 @@ class MyArch_Dataset(Dataset):
                                 return_tensors='pt'
                                 )
         
-        waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]), map_location=self.device)
+        waveform = torch.load(self.audio_feature_path+'/dia{}_utt{}_16000.pt'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx]))
         if self.forced_align:
             audio_path = self.single_file_path+'/dia{0}/utt{1}/dia{0}_utt{1}_16000.wav'.format(self.FA['Dialogue_ID'][idx], self.FA['Utterance_ID'][idx])
             audio_feature, waveform_start = modules.audio_word_align(waveform, audio_path, start, end, self.audio_padding)
@@ -126,7 +126,7 @@ class MyArch_Dataset(Dataset):
                   torch.tensor(end).to(self.device), 
                   torch.tensor(T).to(self.device), 
                   tokens.to(self.device),
-                  audio_feature,
+                  audio_feature.to(self.device),
                   landmarks.to(self.device),
                   input_historys_tokens.to(self.device),
                   ]

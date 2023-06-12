@@ -32,6 +32,7 @@ def main_wrapper(arch_name=''):
          history_length=param.history_length,
          audio_pad_size=param.audio_pad_size,
          alpha=param.alpha,
+         beta=param.beta,
          dropout=param.dropout,
          decay_rate=param.decay_rate,
          save_at_every=param.save_at_every,
